@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Signin } from './pages/sign'
+import { Signin } from './Sign/sign'
 import './App.css'
 
 function App() {
