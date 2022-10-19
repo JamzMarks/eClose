@@ -1,4 +1,4 @@
-import './styles.ts'
+import {Title} from './styles'
 
 export function Signin(){
     return(
@@ -10,6 +10,7 @@ export function Signin(){
           <button type='submit'>Login</button>
           <p>Não possui uma conta? <a href="">Cadastra-se</a></p>
         </form>
+        <Title>asdasd</Title>
       </div>  
     )
 }
