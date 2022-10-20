@@ -4,7 +4,13 @@ export const Theme = {
       SEC: "#dc2430",
       GREY: "#5f5f5f",
       MAING: "#444",
-      LIGHTG: "#CCC"
+      LIGHTG: "#CCC",
+      BACK:"#444"
 
     },
+    FONT:{
+      LG: 24,
+      MD: 16,
+      SM: 12,
+    }
   };

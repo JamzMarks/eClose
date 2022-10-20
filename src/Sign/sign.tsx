@@ -1,54 +1,51 @@
-import {Text, Container, Input} from './styles'
+import {Text, Container, Input, Button, Form, TabList, TabTrigger, MinText} from './styles'
 import * as Tabs from '@radix-ui/react-tabs';
+
 
 export function Signin(){
   
     return(
       <Tabs.Root>
-        <Tabs.List>
-            <Tabs.Trigger value="login">Login</Tabs.Trigger>
-            <Tabs.Trigger value="register">Cadastro</Tabs.Trigger>
-          </Tabs.List>
+        <TabList>
+            <TabTrigger value="login">Login</TabTrigger>
+            <TabTrigger value="register">Cadastro</TabTrigger>
+          </TabList>
 
       <Container>
         
           <Tabs.Content value="login">
-            <div>
-              <form action="" className="SignForm">
+            
+              <Form action="" className="SignForm">
+
+                <Text>Entre e divirta-se com seus amigos</Text>
+
                 <Input type="text" placeholder='Usuário'/>
                 <Input type="password" placeholder='Senha'/>
+
                 <Text>
                   <a href="#">Esqueceu sua senha?</a>
                 </Text>
-                <button type='submit'>Login</button>
-                
-              </form>
-            </div>
+
+                <Button type='submit'>Login</Button> 
+
+              </Form>
           </Tabs.Content>
 
           <Tabs.Content value="register">
-            <div>
-              <form action="" className="">
+              <Form action="" className="">
+                <Text>Cadastre-se e explore os eventos.</Text>
+
                 <Input type="text" placeholder='Nome'/>
                 <Input type="text" placeholder='E-mail'/>
                 <Input type="text" placeholder='Usuário'/>
                 <Input type="password" placeholder='Senha'/>
-                <button type='submit'>Cadastrar</button>
-                
-              </form>
-            </div>
+
+                <MinText>
+                  Ao se cadastrar, você concorda com nossos <strong>Termos</strong>, <strong>Política de Dados</strong> e <strong>Política de Cookies.</strong>
+                </MinText>
+                <Button type='submit'>Cadastrar</Button>
+              </Form>
           </Tabs.Content>
-      </Container>
-      <Container>
-
-        <Tabs.Content value='login'>
-            <Text>Não possui uma conta? <a href="">Cadastra-se</a></Text>
-        </Tabs.Content>
-
-        <Tabs.Content value='register'>
-            <Text>Já possui uma conta? <a href="">Logar-se</a></Text>
-        </Tabs.Content>
-
       </Container>
       </Tabs.Root>
 
