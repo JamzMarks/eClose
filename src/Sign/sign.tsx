@@ -12,7 +12,7 @@ export function Signin(){
           </TabList>
 
       <Container>
-        
+          <Text>eClose</Text>
           <Tabs.Content value="login">
             
               <Form action="" className="SignForm">
@@ -22,9 +22,9 @@ export function Signin(){
                 <Input type="text" placeholder='Usuário'/>
                 <Input type="password" placeholder='Senha'/>
 
-                <Text>
+                <MinText>
                   <a href="#">Esqueceu sua senha?</a>
-                </Text>
+                </MinText>
 
                 <Button type='submit'>Login</Button> 
 
@@ -40,10 +40,11 @@ export function Signin(){
                 <Input type="text" placeholder='Usuário'/>
                 <Input type="password" placeholder='Senha'/>
 
-                <MinText>
-                  Ao se cadastrar, você concorda com nossos <strong>Termos</strong>, <strong>Política de Dados</strong> e <strong>Política de Cookies.</strong>
-                </MinText>
+                
                 <Button type='submit'>Cadastrar</Button>
+                <MinText>
+                  Ao se cadastrar, você concorda com nossos <br></br><strong>Termos</strong>, <strong>Política de Dados</strong> e <strong>Política de Cookies.</strong>
+                </MinText>
               </Form>
           </Tabs.Content>
       </Container>
