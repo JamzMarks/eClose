@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import Routes from "./routes";
 import { Signin } from './Sign/sign'
 
 import './App.css'

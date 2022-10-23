@@ -95,10 +95,12 @@ export const MinText = styled.p({
     strong:{
         color: "black"
     },
+    
     a:{
         color: Theme.COLORS.MAIN,
         transition:"0.3s ease",
-        '&:hover': {color: Theme.COLORS.GREY}
+        '&:hover': {color: Theme.COLORS.GREY},
+        textAlign: 'right',
     }
     
 })
