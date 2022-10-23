@@ -1,17 +1,13 @@
 import { useState } from 'react'
-import Routes from "./routes";
-import { Signin } from './Sign/sign'
-
 import './App.css'
 
-function App() {
+function As() {
   const [count, setCount] = useState(0)
 
   return (
     <div className="App">
-      <Signin></Signin>
     </div>
   )
 }
 
-export default App
+export default As

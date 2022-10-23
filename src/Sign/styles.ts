@@ -44,7 +44,7 @@ export const TabList = styled(TabsPrimitive.List)({
     borderBottom: 'none',
     '&:first-child': { borderTopLeftRadius: 6, borderRight: 'none' },
     '&:last-child': { borderTopRightRadius: 6, borderLeft: 'none' },
-    '&:hover': { color: Theme.COLORS.MAIN },
+    '&:hover': { color: Theme.COLORS.MAIN, borderColor:`${Theme.COLORS.LIGHTG}`},
     '&[data-state="active"]': {
       color:  Theme.COLORS.MAIN,
       boxShadow: 'inset 0 -1px 0 0 currentColor, 0 1px 0 0 currentColor',
