@@ -1,11 +1,21 @@
-export const TOKEN_KEY = "@airbnb-Token";
-export const isAuthenticated = () => localStorage.getItem(TOKEN_KEY) !== null;
-export const getToken = () => localStorage.getItem(TOKEN_KEY);
+import {v4 as uuid} from 'uuid'
 
+type SignInRequestData = {
+    email: string;
+    password: string;
+}
 
-export const login = (token: string) => {
-  localStorage.setItem(TOKEN_KEY, token);
-};
-export const logout = () => {
-  localStorage.removeItem(TOKEN_KEY);
-};
+const delay = (amount = 750) => new Promise(resolve => setTimeout(resolve, amount))
+
+export async function signInRequest(data: SignInRequestData){
+    await delay()
+
+    return{
+        token: uuid(),
+        user:{
+            name: 'James Marques',
+            email: 'jamzmarks@gmail.com',
+            avatar_url: 'http://github.com/jamzmarks.png'
+        }
+    }
+}

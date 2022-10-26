@@ -80,6 +80,7 @@ export const Input = styled.input({
     height: 35,
     textAlign: 'left',
     '&:focus': { boxShadow: `0 0 0 2px ${Theme.COLORS.LIGHTG}` },
+    alignSelf: 'center',
 })
 
 export const Text = styled.p({
