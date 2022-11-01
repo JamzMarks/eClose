@@ -69,7 +69,7 @@ export const TabList = styled(TabsPrimitive.List)({
 export const Input = styled.input({
     all: 'unset',
     width: "85%",
-    margin: 4   ,
+    margin: "4px 0",
     borderRadius: 2,
     padding: '0 10px',
     fontSize: 14,
@@ -81,6 +81,7 @@ export const Input = styled.input({
     textAlign: 'left',
     '&:focus': { boxShadow: `0 0 0 2px ${Theme.COLORS.LIGHTG}` },
     alignSelf: 'center',
+    boxSizing:"border-box"
 })
 
 export const Text = styled.p({
