@@ -7,14 +7,15 @@ import {
     Navigate
   } from "react-router-dom";
 import App from './App'
+import { Signin } from './pages/Sign/sign';
 
 export const AppRoutes = () =>{
 
     return(
         <Router>
                 <Routes>
-                    <Route path="/" element={"hello"}/>
-                    <Route path="/login" element={<App/>}></Route>
+                    <Route path="/" element={<App/>}/>
+                    <Route path="/login" element={<Signin/>}></Route>
                 </Routes>
         </Router>
     )

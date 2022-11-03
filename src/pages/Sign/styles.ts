@@ -2,6 +2,16 @@ import styled from 'styled-components'
 import { Theme } from '../../theme/theme';
 import * as TabsPrimitive from '@radix-ui/react-tabs';
 
+export const TabsContainer = styled(TabsPrimitive.Root)({
+    display: 'flex',
+    flexDirection: 'column',
+    minHeight: '100vh',
+})
+
+export const Wrapper = styled.div({
+    flex: 1,
+})
+
 export const Container = styled.div({
     display: "flex",
     flexDirection: 'column',

@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import { Theme } from '../../theme/theme';
 
-export const Container = styled.div({
+export const Container = styled.footer({
     // default
     boxSizing: 'border-box',
     backgroundColor: Theme.COLORS.BACK,
