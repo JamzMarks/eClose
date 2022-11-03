@@ -1,24 +1,22 @@
 import styled from 'styled-components'
-import { Theme } from '../theme/theme';
+import { Theme } from '../../theme/theme';
 import * as TabsPrimitive from '@radix-ui/react-tabs';
 
 export const Container = styled.div({
     display: "flex",
     flexDirection: 'column',
     alignItems: "center",
-    justifyContent: 'center',
+    justifyContent: 'space-around',
     backgroundColor:"white",
     border: `1px solid ${Theme.COLORS.LIGHTG}`,
-    width: 340,
     minHeight: 450,
-
+    width: 370,
 })
 
 export const Form = styled.form({
     display: "flex",
     flex: 1,
     flexDirection: "column",
-    padding: 16,
     backgroundColor: 'white',
     borderBottomLeftRadius: 6,
     borderBottomRightRadius: 6,
@@ -27,6 +25,7 @@ export const Form = styled.form({
 export const TabList = styled(TabsPrimitive.List)({
     flexShrink: 0,
     display: 'flex',
+    outline: "none"
     // borderBottom: `1px solid ${Theme.COLORS.MAIN}`,
   });
 
@@ -54,21 +53,22 @@ export const TabList = styled(TabsPrimitive.List)({
 
   export const Button = styled.button({
     backgroundColor:Theme.COLORS.BACK,
-	width: "90%",
-	height: 30,
-	padding: 8,
+	width: "100%",
+	height: 35,
+	padding: "8px 0",
 	border: "none",
     fontSize: 14,
 	borderRadius: 3,
-	margin: "10px auto",
+	margin: "10px 0",
     transition: "0.3s ease-in-out",
+
     cursor: "pointer",
     '&:hover': { backgroundColor: Theme.COLORS.MAIN },
 })
 
 export const Input = styled.input({
     all: 'unset',
-    width: "85%",
+    width: "100%",
     margin: "4px 0",
     borderRadius: 2,
     padding: '0 10px',

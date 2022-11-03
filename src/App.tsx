@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Signin } from './Sign/sign'
+import { Signin } from './pages/Sign/sign'
 
 import './App.css'
 
@@ -8,7 +8,7 @@ function App() {
 
   return (
     <div className="App">
-      <Signin></Signin>
+      <Signin></Signin> 
     </div>
   )
 }

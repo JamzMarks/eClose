@@ -5,12 +5,20 @@ export const Theme = {
       GREY: "#5f5f5f",
       MAING: "#444",
       LIGHTG: "#CCC",
-      BACK:"#444"
+      BACK:"#222",
 
     },
     FONT:{
       LG: 24,
       MD: 16,
+      MS: 14,
       SM: 12,
+    },
+    BORDER:{
+      INPUT: `1px solid #CCC`,
+      DECORATION: 'linear-gradient(to right, #f7af2b 60%, #9933cc) 1',
+    },
+    TRANSITION:{
+      MAIN: '0.3s ease'
     }
   };
