@@ -11,6 +11,7 @@ export function Footer() {
           <List><a>Contato</a></List>
           <List><a>Ajuda</a></List>
         </Nav>
+        <p>Lang</p>
         <Copy>
           Copyright © eClose. Todos direitos reservados.
         </Copy>

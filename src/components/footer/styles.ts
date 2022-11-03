@@ -6,7 +6,7 @@ export const Container = styled.div({
     boxSizing: 'border-box',
     backgroundColor: Theme.COLORS.BACK,
     width: '100%',
-    height: 180,
+    minheight: 220,
     color: Theme.COLORS.LIGHTG,
     
     // flex properties
