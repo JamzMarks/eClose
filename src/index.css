@@ -68,3 +68,6 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+::selection {
+  background: rgba(	255,165,0,0.5);
+}

@@ -65,7 +65,8 @@ export const TabList = styled(TabsPrimitive.List)({
       color:  Theme.COLORS.MAIN,
       boxShadow: 'inset 0 -1px 0 0 currentColor, 0 1px 0 0 currentColor',
     },
-    '&:focus': { position: 'relative', boxShadow: `0 0 0 2px black` },
+    '&:focus': { position: 'relative', outline: 'none' },
+    
   });
 
   export const Button = styled.button({
@@ -81,6 +82,7 @@ export const TabList = styled(TabsPrimitive.List)({
 
     cursor: "pointer",
     '&:hover': { backgroundColor: Theme.COLORS.MAIN },
+    '&:focus': {outline: 'none'}
 })
 
 export const Input = styled.input({
