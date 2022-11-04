@@ -6,6 +6,7 @@ export const TabsContainer = styled(TabsPrimitive.Root)({
     display: 'flex',
     flexDirection: 'column',
     minHeight: '100vh',
+    alignItems: 'center'
 })
 
 export const Wrapper = styled.div({
@@ -13,6 +14,11 @@ export const Wrapper = styled.div({
 })
 
 export const Container = styled.div({
+    maxWidth:370,
+    margin: '30% auto',
+})
+
+export const Content = styled.div({
     display: "flex",
     flexDirection: 'column',
     alignItems: "center",
@@ -21,6 +27,7 @@ export const Container = styled.div({
     border: `1px solid ${Theme.COLORS.LIGHTG}`,
     minHeight: 450,
     width: 370,
+    boxSizing: 'border-box',
 })
 
 export const Form = styled.form({
@@ -108,11 +115,15 @@ export const MinText = styled.p({
         color: "black"
     },
     
+})
+
+export const TextLink = styled.p({
+    fontSize: Theme.FONT.SM,
+    textAlign: 'right',
     a:{
         color: Theme.COLORS.MAIN,
         transition:"0.3s ease",
         '&:hover': {color: Theme.COLORS.GREY},
         textAlign: 'right',
     }
-    
 })

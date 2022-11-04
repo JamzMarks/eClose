@@ -1,4 +1,4 @@
-import {Text, Container, Input, Button, Form, TabList, TabTrigger, MinText, TabsContainer, Wrapper} from './styles'
+import {Text, Container, Input, Button, Form, TabList, TabTrigger, MinText, TabsContainer, Wrapper, Content, TextLink} from './styles'
 import * as Tabs from '@radix-ui/react-tabs';
 import axios from 'axios';
 import { FormEvent, useEffect, useState } from 'react';
@@ -34,46 +34,49 @@ export function Signin(){
     return(
       <TabsContainer>
         <Wrapper>
-          <TabList>
-                <TabTrigger value="login">Login</TabTrigger>
-                <TabTrigger value="register">Cadastro</TabTrigger>
-          </TabList>
           <Container>
-            
-              <Text>eClose</Text>
-              <Tabs.Content value="login">
-                
-                  <Form method="post">
-                    <Text>Entre e divirta-se com seus amigos</Text>
-                    
-                    <Input id='userName' name='userName' type="text" placeholder='Usuário'/>
-                    <Input id="password" name="password" type="password" placeholder='Senha'/>
-                    <Button type='submit'>Cadastrar</Button>
-                    <MinText>
-                      <a href="#">Esqueceu sua senha?</a>
-                    </MinText>
+            <TabList>
+                  <TabTrigger value="login">Login</TabTrigger>
+                  <TabTrigger value="register">Cadastro</TabTrigger>
+            </TabList>
+            <Content>
+              
+                <Text>eClose</Text>
+                <Tabs.Content value="login">
+                  
+                    <Form method="post">
+                      <Text>Entre e divirta-se com seus amigos</Text>
+                      
+                      <Input id='userName' name='userName' type="text" placeholder='Usuário'/>
+                      <Input id="password" name="password" type="password" placeholder='Senha'/>
+                      <Button type='submit'>Entrar</Button>
+                      <TextLink>
+                        <a href="#">Esqueceu sua senha?</a>
+                      </TextLink>
 
-                  </Form>
-              </Tabs.Content>
+                    </Form>
+                </Tabs.Content>
 
-              <Tabs.Content value="register">
-                  <Form onSubmit={register} method="post" >
-                    <Text>Cadastre-se e explore os eventos.</Text>
+                <Tabs.Content value="register">
+                    <Form onSubmit={register} method="post" >
+                      <Text>Cadastre-se e explore os eventos.</Text>
 
-                    <Input id="name" name="name" type="text" placeholder='Nome'/>
-                    <Input id="email" name="email" type="text" placeholder='E-mail'/>
-                    <Input id='userName' name='userName' type="text" placeholder='Usuário'/>
-                    <Input id="password" name="password" type="password" placeholder='Senha'/>
+                      <Input id="name" name="name" type="text" placeholder='Nome'/>
+                      <Input id="email" name="email" type="text" placeholder='E-mail'/>
+                      <Input id='userName' name='userName' type="text" placeholder='Usuário'/>
+                      <Input id="password" name="password" type="password" placeholder='Senha'/>
 
 
-                    
-                    <Button type='submit'>Cadastrar</Button>
-                    <MinText>
-                      Ao se cadastrar, você concorda com nossos <br></br><strong>Termos</strong>, <strong>Política de Dados</strong> e <strong>Política de Cookies.</strong>
-                    </MinText>
-                  </Form>
-              </Tabs.Content>
+                      
+                      <Button type='submit'>Cadastrar</Button>
+                      <MinText>
+                        Ao se cadastrar, você concorda com nossos <br></br><strong>Termos</strong>, <strong>Política de Dados</strong> e <strong>Política de Cookies.</strong>
+                      </MinText>
+                    </Form>
+                </Tabs.Content>
+            </Content>
           </Container>
+          
         </Wrapper>
         
         <Footer></Footer>  
