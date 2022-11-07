@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Signin } from './pages/Sign/sign'
+import {Navigation} from './components/app/navigation/navigation'
 
 import './App.css'
 
@@ -8,7 +8,7 @@ function App() {
 
   return (
     <div className="App">
-        <h1>Texto</h1>
+        <Navigation/>
     </div>
   )
 }

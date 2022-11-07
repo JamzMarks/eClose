@@ -1,5 +1,5 @@
 import {Container, Nav, List, Copy} from './styles'
-import {LangSelect} from '../languages/lang'
+import {LangSelect} from './languages/lang'
 
 export function Footer() {
 

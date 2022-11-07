@@ -6,7 +6,7 @@ import {
     SelectItem,
 } from './styles'
 import * as Select from '@radix-ui/react-select'
-import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
+import { CheckIcon, ChevronDownIcon } from '@radix-ui/react-icons';
 
 export function LangSelect() {
 
