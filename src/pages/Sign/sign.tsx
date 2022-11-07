@@ -2,7 +2,7 @@ import {Text, Container, Input, Button, Form, TabList, TabTrigger, MinText, Tabs
 import * as Tabs from '@radix-ui/react-tabs';
 import axios from 'axios';
 import { FormEvent, useEffect, useState } from 'react';
-import { Footer } from '../../components/footer/footer';
+import { Footer } from '../../components/sign/footer/footer';
 
 
 export function Signin(){
@@ -49,7 +49,7 @@ export function Signin(){
                       
                       <Input id='userName' name='userName' type="text" placeholder='Usuário'/>
                       <Input id="password" name="password" type="password" placeholder='Senha'/>
-                      <Button type='submit'>Entrar</Button>
+                      <Button type='submit'>Login</Button>
                       <TextLink>
                         <a href="#">Esqueceu sua senha?</a>
                       </TextLink>

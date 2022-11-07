@@ -77,7 +77,7 @@ export const TabList = styled(TabsPrimitive.List)({
 	border: "none",
     fontSize: 14,
 	borderRadius: 3,
-	margin: "10px 0",
+	margin: "15px 0",
     transition: "0.3s ease-in-out",
 
     cursor: "pointer",

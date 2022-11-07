@@ -1,4 +1,5 @@
 import {Container, Nav, List, Copy} from './styles'
+import {LangSelect} from '../languages/lang'
 
 export function Footer() {
 
@@ -11,7 +12,7 @@ export function Footer() {
           <List><a>Contato</a></List>
           <List><a>Ajuda</a></List>
         </Nav>
-        <p>Lang</p>
+        <LangSelect/>
         <Copy>
           Copyright © eClose. Todos direitos reservados.
         </Copy>
