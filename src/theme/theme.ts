@@ -9,6 +9,7 @@ export const Theme = {
 
     },
     FONT:{
+      ICONS: 26,
       LG: 24,
       MD: 16,
       MS: 14,

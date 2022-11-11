@@ -11,7 +11,7 @@ import { CheckIcon, ChevronDownIcon } from '@radix-ui/react-icons';
 export function LangSelect() {
 
   return (
-    <SelectRoot>
+    <SelectRoot defaultValue='Portuguese'>
         <SelectTrigger aria-label="Language">
             <Select.Value placeholder="Select a language..."/>
             <SelectIcon>
