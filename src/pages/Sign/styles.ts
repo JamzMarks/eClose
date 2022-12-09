@@ -85,22 +85,51 @@ export const TabList = styled(TabsPrimitive.List)({
     '&:focus': {outline: 'none'}
 })
 
+// export const Input = styled.input({
+//     all: 'unset',
+//     width: "100%",
+//     margin: "4px 0",
+//     borderRadius: 2,
+//     padding: '0 10px',
+//     fontSize: 14,
+//     lineHeight: 1,
+//     backgroundColor:"#faf8f8",
+//     color: Theme.COLORS.GREY,
+//     boxShadow: `0 0 0 1px ${Theme.COLORS.LIGHTG}`,
+//     height: 35,
+//     textAlign: 'left',
+//     '&:focus': { boxShadow: `0 0 0 2px ${Theme.COLORS.LIGHTG}` },
+//     alignSelf: 'center',
+//     boxSizing:"border-box"
+// })
 export const Input = styled.input({
     all: 'unset',
     width: "100%",
     margin: "4px 0",
     borderRadius: 2,
-    padding: '0 10px',
+    padding: '0 10 0 0px',
     fontSize: 14,
     lineHeight: 1,
-    backgroundColor:"#faf8f8",
+    // backgroundColor:"#faf8f8",
     color: Theme.COLORS.GREY,
-    boxShadow: `0 0 0 1px ${Theme.COLORS.LIGHTG}`,
+    // boxShadow: `0 0 0 1px ${Theme.COLORS.LIGHTG}`,
+    borderBottom: `1px solid ${Theme.COLORS.LIGHTG}`,
     height: 35,
     textAlign: 'left',
-    '&:focus': { boxShadow: `0 0 0 2px ${Theme.COLORS.LIGHTG}` },
+    // '&:focus': { boxShadow: `0 0 0 2px ${Theme.COLORS.LIGHTG}` },
     alignSelf: 'center',
-    boxSizing:"border-box"
+    boxSizing:"border-box",
+    '&:last-child':{
+        margin: 0
+    }
+})
+
+export const Label = styled.label({
+    color: Theme.COLORS.GREY,
+    textAlign: "left",
+    fontSize: Theme.FONT.SM,
+    margin: 0,
+    padding: 0,
 })
 
 export const Text = styled.p({

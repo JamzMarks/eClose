@@ -1,4 +1,4 @@
-import {Text, Container, Input, Button, Form, TabList, TabTrigger, MinText, TabsContainer, Wrapper, Content, TextLink} from './styles'
+import {Text, Container, Input,Label, Button, Form, TabList, TabTrigger, MinText, TabsContainer, Wrapper, Content, TextLink} from './styles'
 import * as Tabs from '@radix-ui/react-tabs';
 import axios from 'axios';
 import { FormEvent, useEffect, useState } from 'react';
@@ -46,9 +46,15 @@ export function Signin(){
                   
                     <Form method="post">
                       <Text>Entre e divirta-se com seus amigos</Text>
+                      <div>
+                        <Label htmlFor="userName">Usuário</Label>
+                        <Input id='userName' name='userName' type="text"/>
+                      </div>
+                      <div>
+                        <Label htmlFor="userName">Senha</Label>
+                        <Input id="password" name="password" type="password" />
+                      </div>
                       
-                      <Input id='userName' name='userName' type="text" placeholder='Usuário'/>
-                      <Input id="password" name="password" type="password" placeholder='Senha'/>
                       <Button type='submit'>Login</Button>
                       <TextLink>
                         <a href="#">Esqueceu sua senha?</a>
@@ -74,6 +80,7 @@ export function Signin(){
                       </MinText>
                     </Form>
                 </Tabs.Content>
+                <Input id='userName' name='userName' type="text" placeholder='Usuário'/>
             </Content>
           </Container>
           
