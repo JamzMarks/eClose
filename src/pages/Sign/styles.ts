@@ -105,7 +105,6 @@ export const TabList = styled(TabsPrimitive.List)({
 export const Input = styled.input({
     all: 'unset',
     width: "100%",
-    margin: "4px 0",
     borderRadius: 2,
     padding: '0 10 0 0px',
     fontSize: 14,
@@ -114,22 +113,32 @@ export const Input = styled.input({
     color: Theme.COLORS.GREY,
     // boxShadow: `0 0 0 1px ${Theme.COLORS.LIGHTG}`,
     borderBottom: `1px solid ${Theme.COLORS.LIGHTG}`,
-    height: 35,
+    height: 25,
     textAlign: 'left',
     // '&:focus': { boxShadow: `0 0 0 2px ${Theme.COLORS.LIGHTG}` },
     alignSelf: 'center',
     boxSizing:"border-box",
-    '&:last-child':{
-        margin: 0
+    ':-webkit-autofill':{
+        backgroundColor: 'none',
     }
+    
 })
 
 export const Label = styled.label({
-    color: Theme.COLORS.GREY,
-    textAlign: "left",
+    color: Theme.COLORS.TEXTGRAY,
     fontSize: Theme.FONT.SM,
     margin: 0,
     padding: 0,
+})
+
+export const InputContent = styled.div({
+    textAlign: "left",
+    margin: "10px 0",
+    display: 'flex',
+    flexDirection: 'column',
+    ':last-child':{
+        margin: "10px 0 0 0",
+    },
 })
 
 export const Text = styled.p({

@@ -6,6 +6,7 @@ export const Theme = {
       MAING: "#444",
       LIGHTG: "#CCC",
       BACK:"#222",
+      TEXTGRAY: "#999999",
 
     },
     FONT:{

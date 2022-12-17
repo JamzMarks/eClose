@@ -1,4 +1,4 @@
-import {Text, Container, Input,Label, Button, Form, TabList, TabTrigger, MinText, TabsContainer, Wrapper, Content, TextLink} from './styles'
+import {Text, Container, Input,Label, Button, Form, TabList, TabTrigger, MinText, TabsContainer, Wrapper, Content, TextLink, InputContent} from './styles'
 import * as Tabs from '@radix-ui/react-tabs';
 import axios from 'axios';
 import { FormEvent, useEffect, useState } from 'react';
@@ -29,7 +29,21 @@ export function Signin(){
       console.log(err)
       
     }
-}
+  }
+  async function login(event: FormEvent){
+    event.preventDefault()
+
+    const formData = new FormData(event.target as HTMLFormElement)
+    const data = Object.fromEntries(formData)
+
+    try{
+      await axios.post(`http://localhost:3333/users`,{
+      
+      })
+    }catch(err){
+
+    }
+  }
 
     return(
       <TabsContainer>
@@ -46,14 +60,14 @@ export function Signin(){
                   
                     <Form method="post">
                       <Text>Entre e divirta-se com seus amigos</Text>
-                      <div>
+                      <InputContent>
                         <Label htmlFor="userName">Usuário</Label>
                         <Input id='userName' name='userName' type="text"/>
-                      </div>
-                      <div>
+                      </InputContent>
+                      <InputContent>
                         <Label htmlFor="userName">Senha</Label>
                         <Input id="password" name="password" type="password" />
-                      </div>
+                      </InputContent>
                       
                       <Button type='submit'>Login</Button>
                       <TextLink>
@@ -66,21 +80,31 @@ export function Signin(){
                 <Tabs.Content value="register">
                     <Form onSubmit={register} method="post" >
                       <Text>Cadastre-se e explore os eventos.</Text>
-
-                      <Input id="name" name="name" type="text" placeholder='Nome'/>
-                      <Input id="email" name="email" type="text" placeholder='E-mail'/>
-                      <Input id='userName' name='userName' type="text" placeholder='Usuário'/>
-                      <Input id="password" name="password" type="password" placeholder='Senha'/>
-
-
                       
+                      <InputContent>
+                        <Label htmlFor="name">Nome</Label>
+                        <Input id="name" name="name" type="text" />
+                      </InputContent>
+                      <InputContent>
+                        <Label htmlFor="email">Email</Label>
+                        <Input id="email" name="email" type="text" />
+                      </InputContent>
+                      <InputContent>
+                        <Label htmlFor="userName">Usuário</Label>
+                        <Input id='userName' name='userName' type="text" />  
+                      </InputContent>
+                      <InputContent>
+                        <Label htmlFor="password">Senha</Label>
+                        <Input id="password" name="password" type="password" />
+                      </InputContent>                  
+
                       <Button type='submit'>Cadastrar</Button>
                       <MinText>
                         Ao se cadastrar, você concorda com nossos <br></br><strong>Termos</strong>, <strong>Política de Dados</strong> e <strong>Política de Cookies.</strong>
                       </MinText>
                     </Form>
                 </Tabs.Content>
-                <Input id='userName' name='userName' type="text" placeholder='Usuário'/>
+      
             </Content>
           </Container>
           
