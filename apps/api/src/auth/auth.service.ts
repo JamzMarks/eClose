@@ -2,7 +2,7 @@
 
 import { Injectable, BadRequestException } from "@nestjs/common";
 import { randomUUID } from "crypto";
-import { IAuthService } from "./interfaces/iauth.service";
+import { IAuthService } from "./interfaces/auth.interface";
 import { SignInDto } from "./dto/signin.dto";
 import { SignUpDto } from "./dto/signup.dto";
 
