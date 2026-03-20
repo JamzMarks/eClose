@@ -1,5 +1,6 @@
-import { NotificationType } from '../entities/notification.entity';
+import { CommunicationChannel } from '../types/communication-channel.type';
 import { IsEnum, IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator';
+import { NotificationType } from '../types/notification.type';
 
 export class SendNotificationDto {
 
@@ -11,6 +12,10 @@ export class SendNotificationDto {
   @IsEnum(NotificationType)
   type: NotificationType;
 
+  @IsOptional()
+  @IsEnum(CommunicationChannel)
+  channel?: CommunicationChannel; 
+
   @IsNotEmpty()
   @IsString()
   title: string;
@@ -21,5 +26,5 @@ export class SendNotificationDto {
 
   @IsOptional()
   @IsObject()
-  data?: Record<string, any>;
+  data?: Record<string, any>; 
 }
