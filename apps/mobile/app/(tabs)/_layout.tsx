@@ -1,14 +1,15 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-
 import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { AppIcon } from '@/components/ui/icon/icon.types';
 import { Icon } from '@/components/ui/icon/icon';
+import { useTranslation } from 'react-i18next';
+
 
 export default function TabLayout() {
+  const { t } = useTranslation('tabs');
   const colorScheme = useColorScheme();
 
   return (
@@ -16,10 +17,14 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
-        tabBarButton: HapticTab,
         tabBarShowLabel: false,
-
+        tabBarStyle: {
+          backgroundColor: Colors[colorScheme ?? 'light'].background,
+          borderTopWidth: 0,
+          elevation: 0,
+        },
       }}>
+
       <Tabs.Screen
         name="index"
         options={{
@@ -31,33 +36,67 @@ export default function TabLayout() {
               filled={focused}
             />
           ),
+          tabBarAccessibilityLabel: t('home'),
+        }}
+      />
+
+      <Tabs.Screen
+        name="test"
+        options={{
+          tabBarIcon: ({ color, focused }) => (
+            <Icon
+              name={AppIcon.Like}
+              size="lg"
+              color={color}
+              filled={focused}
+            />
+          ),
+          tabBarAccessibilityLabel: 'Explore',
         }}
       />
 
       <Tabs.Screen
         name="explore"
         options={{
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="paperplane.fill" color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <Icon
+              name={AppIcon.Explore}
+              size="lg"
+              color={color}
+              filled={focused}
+            />
           ),
+          tabBarAccessibilityLabel: 'Explore',
         }}
       />
 
       <Tabs.Screen
         name="create"
         options={{
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="plus.app.fill" color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <Icon
+              name={AppIcon.Create}
+              size="lg"
+              color={color}
+              filled={focused}
+            />
           ),
+          tabBarAccessibilityLabel: 'Create',
         }}
       />
 
       <Tabs.Screen
         name="profile"
         options={{
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="person.crop.circle" color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <Icon
+              name={AppIcon.Profile}
+              size="lg"
+              color={color}
+              filled={focused}
+            />
           ),
+          tabBarAccessibilityLabel: 'Profile',
         }}
       />
     </Tabs>

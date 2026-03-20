@@ -6,10 +6,8 @@ import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Link } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 
-export default function HomeScreen() {
-  const { t } = useTranslation('tabs');
+export default function TestScreen() {
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
@@ -20,8 +18,7 @@ export default function HomeScreen() {
         />
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome to A!</ThemedText>
-        <ThemedText type="title">{t('home')} aaaaaaaaaa</ThemedText>
+        <ThemedText type="title">Welcome to D!</ThemedText>
         <HelloWave />
       </ThemedView>
       <ThemedView style={styles.stepContainer}>

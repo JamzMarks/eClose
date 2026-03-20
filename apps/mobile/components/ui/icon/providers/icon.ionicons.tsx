@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
-import { IconProps, IconSizes, AppIcon } from './icon.types';
-import { IconProvider } from './providers/icon.provider';
+import { IconSizes, AppIcon } from '../icon.types';
+import { IconProvider } from './icon.provider';
 
 function map(name: AppIcon, filled?: boolean) {
   switch (name) {
