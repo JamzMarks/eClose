@@ -25,6 +25,23 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
+## Estrutura por domínio
+
+A API está organizada por **domínios** em `src/`:
+
+- **`auth/`** – autenticação (sign-in, sign-up, refresh, me, logout)
+- **`user/`** – usuários (CRUD)
+
+Cada domínio contém:
+
+- `*.module.ts` – módulo Nest (controllers, providers, exports)
+- `*.controller.ts` – rotas HTTP
+- `*.service.ts` – lógica de negócio
+- `dto/` – DTOs de entrada/saída
+- `interfaces/` e `tokens/` – quando houver injeção por interface (ex.: auth)
+
+Novos domínios: crie uma pasta em `src/<dominio>/`, implemente o módulo e registre em `app.module.ts` em `imports: [..., NovoDominioModule]`.
+
 ## Project setup
 
 ```bash
