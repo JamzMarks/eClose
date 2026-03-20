@@ -2,7 +2,7 @@ import { Inject, Controller, Body, Post, Get, Req } from "@nestjs/common";
 import { SignInDto } from "./dto/signin.dto";
 import { SignUpDto } from "./dto/signup.dto";
 import { AUTH_SERVICE } from "./tokens/auth.tokens";
-import { IAuthService } from "./interfaces/iauth.service";
+import { IAuthService } from "./interfaces/auth.interface";
 
 @Controller("auth")
 export class AuthController {
