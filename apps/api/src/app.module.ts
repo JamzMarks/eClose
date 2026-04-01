@@ -5,6 +5,8 @@ import { ApplicationCoreModule } from "./infrastructure/application-core.module"
 import { ALL_TYPEORM_ENTITIES } from "./infrastructure/persistence/typeorm-entities.registry";
 import { SnakeNamingStrategy } from "./infrastructure/persistence/snake-naming.strategy";
 import { Initial1730200000000 } from "./infrastructure/persistence/migrations/1730200000000-Initial";
+import { FeaturesPhases2To61740100000000 } from "./infrastructure/persistence/migrations/1740100000000-FeaturesPhases2To6";
+import { BookingRequesterOrganizerArtist1740200000000 } from "./infrastructure/persistence/migrations/1740200000000-BookingRequesterOrganizerArtist";
 import { PrivateJwtAuthGuard } from "./infrastructure/http/guards/private-jwt-auth.guard";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
@@ -35,7 +37,11 @@ import { BookingModule } from "./booking/booking.module";
           type: "postgres" as const,
           url,
           entities: ALL_TYPEORM_ENTITIES,
-          migrations: [Initial1730200000000],
+          migrations: [
+            Initial1730200000000,
+            FeaturesPhases2To61740100000000,
+            BookingRequesterOrganizerArtist1740200000000,
+          ],
           migrationsRun: process.env.TYPEORM_RUN_MIGRATIONS === "true",
           namingStrategy: new SnakeNamingStrategy(),
           synchronize: process.env.TYPEORM_SYNC === "true",

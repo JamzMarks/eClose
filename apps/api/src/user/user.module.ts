@@ -1,13 +1,21 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { UserOrmEntity } from "@/user/infrastructure/persistence/user.orm-entity";
+import { ArtistModule } from "@/artist/artist.module";
+import { VenueModule } from "@/venue/venue.module";
 import { NotificationModule } from "@/notification/notification.module";
+import { SelfUserHttpGuard } from "@/infrastructure/http/guards/self-user.http.guard";
 import { UserController } from "./user.controller";
 import { UserService } from "./user.service";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserOrmEntity]), NotificationModule],
+  imports: [
+    TypeOrmModule.forFeature([UserOrmEntity]),
+    NotificationModule,
+    ArtistModule,
+    VenueModule,
+  ],
   controllers: [UserController],
-  providers: [UserService],
+  providers: [UserService, SelfUserHttpGuard],
 })
 export class UserModule {}

@@ -10,6 +10,7 @@ import {
   IMarketplaceService,
   MarketplaceArtistCard,
   MarketplaceVenueCard,
+  Paginated,
 } from "./interfaces/marketplace.service.interface";
 
 @Injectable()
@@ -24,7 +25,11 @@ export class MarketplaceService implements IMarketplaceService {
     q?: string;
     taxonomyTermIds?: string[];
     acceptingBookingsOnly?: boolean;
-  }): Promise<MarketplaceArtistCard[]> {
+    page?: number;
+    limit?: number;
+    sortBy?: "name" | "slug";
+    order?: "ASC" | "DESC";
+  }): Promise<Paginated<MarketplaceArtistCard>> {
     const q = filters.q?.trim().toLowerCase();
     const termSet = filters.taxonomyTermIds?.length
       ? new Set(filters.taxonomyTermIds)
@@ -54,15 +59,32 @@ export class MarketplaceService implements IMarketplaceService {
       );
     }
 
-    const out: MarketplaceArtistCard[] = [];
-    for (const artist of list) {
-      const primary = await this.media.getPrimary(MediaParentType.ARTIST, artist.id);
-      out.push({
+    const sortBy = filters.sortBy ?? "name";
+    const order = filters.order ?? "ASC";
+    const mul = order === "DESC" ? -1 : 1;
+    list = [...list].sort((a, b) => {
+      const av = sortBy === "slug" ? a.slug : a.name.toLowerCase();
+      const bv = sortBy === "slug" ? b.slug : b.name.toLowerCase();
+      return av.localeCompare(bv) * mul;
+    });
+
+    const page = Math.max(1, filters.page ?? 1);
+    const limit = Math.min(100, Math.max(1, filters.limit ?? 20));
+    const total = list.length;
+    const slice = list.slice((page - 1) * limit, page * limit);
+
+    const primaryByArtistId = await this.media.getPrimaryMany(
+      MediaParentType.ARTIST,
+      slice.map((a) => a.id),
+    );
+    const items: MarketplaceArtistCard[] = slice.map((artist) => {
+      const primary = primaryByArtistId.get(artist.id) ?? null;
+      return {
         artist,
         primaryMediaUrl: primary?.sourceUrl ?? null,
-      });
-    }
-    return out;
+      };
+    });
+    return { items, total, page, limit };
   }
 
   async listVenuesForArtists(filters: {
@@ -70,7 +92,11 @@ export class MarketplaceService implements IMarketplaceService {
     region?: string;
     taxonomyTermIds?: string[];
     openToInquiriesOnly?: boolean;
-  }): Promise<MarketplaceVenueCard[]> {
+    page?: number;
+    limit?: number;
+    sortBy?: "name" | "city";
+    order?: "ASC" | "DESC";
+  }): Promise<Paginated<MarketplaceVenueCard>> {
     const city = filters.city?.trim().toLowerCase();
     const region = filters.region?.trim().toLowerCase();
     const termSet = filters.taxonomyTermIds?.length
@@ -95,14 +121,33 @@ export class MarketplaceService implements IMarketplaceService {
       );
     }
 
-    const out: MarketplaceVenueCard[] = [];
-    for (const venue of list) {
-      const primary = await this.media.getPrimary(MediaParentType.VENUE, venue.id);
-      out.push({
+    const sortBy = filters.sortBy ?? "name";
+    const order = filters.order ?? "ASC";
+    const mul = order === "DESC" ? -1 : 1;
+    list = [...list].sort((a, b) => {
+      const av =
+        sortBy === "city" ? a.address.city.toLowerCase() : a.name.toLowerCase();
+      const bv =
+        sortBy === "city" ? b.address.city.toLowerCase() : b.name.toLowerCase();
+      return av.localeCompare(bv) * mul;
+    });
+
+    const page = Math.max(1, filters.page ?? 1);
+    const limit = Math.min(100, Math.max(1, filters.limit ?? 20));
+    const total = list.length;
+    const slice = list.slice((page - 1) * limit, page * limit);
+
+    const primaryByVenueId = await this.media.getPrimaryMany(
+      MediaParentType.VENUE,
+      slice.map((v) => v.id),
+    );
+    const items: MarketplaceVenueCard[] = slice.map((venue) => {
+      const primary = primaryByVenueId.get(venue.id) ?? null;
+      return {
         venue,
         primaryMediaUrl: primary?.sourceUrl ?? null,
-      });
-    }
-    return out;
+      };
+    });
+    return { items, total, page, limit };
   }
 }

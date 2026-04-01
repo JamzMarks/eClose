@@ -2,8 +2,9 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { EventOrmEntity } from "@/event/infrastructure/persistence/event.orm-entity";
+import { VenueOrmEntity } from "@/venue/infrastructure/persistence/venue.orm-entity";
 import { Event } from "../entity/event.entity";
-import { IEventRepository } from "../interfaces/event.repository.interface";
+import { IEventRepository, ListPublishedEventsParams } from "../interfaces/event.repository.interface";
 import { EventAdhocAddress } from "../types/event-adhoc-address.type";
 import { EventLocationMode } from "../types/event-location-mode.type";
 import { EventStatus } from "../types/event-status.type";
@@ -58,6 +59,59 @@ export class TypeormEventRepository implements IEventRepository {
       .andWhere("e.startsAt < :to AND e.endsAt > :from", { from, to })
       .getMany();
     return rows.map((r) => this.toDomain(r));
+  }
+
+  async listPublishedFiltered(
+    params: ListPublishedEventsParams,
+  ): Promise<{ items: Event[]; total: number }> {
+    let qb = this.repo
+      .createQueryBuilder("e")
+      .where("e.status = :pub", { pub: EventStatus.PUBLISHED });
+
+    if (params.q?.trim()) {
+      qb = qb.andWhere("LOWER(e.title) LIKE :q", {
+        q: `%${params.q.trim().toLowerCase()}%`,
+      });
+    }
+    if (params.venueId) {
+      qb = qb.andWhere("e.venueId = :vid", { vid: params.venueId });
+    }
+    if (params.from && params.to) {
+      qb = qb.andWhere("e.startsAt < :to AND e.endsAt > :from", {
+        from: params.from,
+        to: params.to,
+      });
+    } else if (params.from) {
+      qb = qb.andWhere("e.endsAt > :from", { from: params.from });
+    } else if (params.to) {
+      qb = qb.andWhere("e.startsAt < :to", { to: params.to });
+    }
+    if (params.taxonomyTermIds?.length) {
+      qb = qb.andWhere("e.taxonomyTermIds::jsonb ?| ARRAY[:...tids]::text[]", {
+        tids: params.taxonomyTermIds,
+      });
+    }
+    if (params.city?.trim()) {
+      qb = qb.innerJoin(VenueOrmEntity, "v", "v.id = e.venueId").andWhere(
+        "LOWER((v.address)::jsonb ->> 'city') LIKE :city",
+        { city: `%${params.city.trim().toLowerCase()}%` },
+      );
+    }
+
+    const total = await qb.clone().getCount();
+    const sortCol =
+      params.sortBy === "title"
+        ? "e.title"
+        : params.sortBy === "createdAt"
+          ? "e.createdAt"
+          : "e.startsAt";
+    const rows = await qb
+      .orderBy(sortCol, params.order)
+      .skip(params.offset)
+      .take(params.limit)
+      .getMany();
+
+    return { items: rows.map((r) => this.toDomain(r)), total };
   }
 
   private toRow(ev: Event): EventOrmEntity {

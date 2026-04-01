@@ -133,6 +133,19 @@ export class MediaService implements IMediaService {
     return this.repo.findPrimary(parentType, parentId);
   }
 
+  async getPrimaryMany(
+    parentType: MediaParentType,
+    parentIds: string[],
+  ): Promise<Map<string, MediaAsset | null>> {
+    const uniq = [...new Set(parentIds)];
+    const found = await this.repo.findPrimariesForParents(parentType, uniq);
+    const out = new Map<string, MediaAsset | null>();
+    for (const id of uniq) {
+      out.set(id, found.get(id) ?? null);
+    }
+    return out;
+  }
+
   async setPrimary(assetId: string): Promise<MediaAsset> {
     const asset = await this.repo.findById(assetId);
     if (!asset) throw new NotFoundException("Mídia não encontrada");

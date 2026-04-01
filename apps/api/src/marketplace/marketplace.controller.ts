@@ -15,6 +15,10 @@ export class MarketplaceController {
     @Query("q") q?: string,
     @Query("taxonomyTermIds") taxonomyTermIdsRaw?: string,
     @Query("acceptingBookingsOnly") acceptingBookingsOnly?: string,
+    @Query("page") page?: string,
+    @Query("limit") limit?: string,
+    @Query("sortBy") sortBy?: "name" | "slug",
+    @Query("order") order?: "ASC" | "DESC",
   ) {
     const taxonomyTermIds = taxonomyTermIdsRaw
       ? taxonomyTermIdsRaw.split(",").map((s) => s.trim()).filter(Boolean)
@@ -23,6 +27,10 @@ export class MarketplaceController {
       q,
       taxonomyTermIds,
       acceptingBookingsOnly: acceptingBookingsOnly === "true",
+      page: page ? Number(page) : undefined,
+      limit: limit ? Number(limit) : undefined,
+      sortBy: sortBy === "slug" ? "slug" : "name",
+      order: order === "DESC" ? "DESC" : "ASC",
     });
   }
 
@@ -33,6 +41,10 @@ export class MarketplaceController {
     @Query("region") region?: string,
     @Query("taxonomyTermIds") taxonomyTermIdsRaw?: string,
     @Query("openToInquiriesOnly") openToInquiriesOnly?: string,
+    @Query("page") page?: string,
+    @Query("limit") limit?: string,
+    @Query("sortBy") sortBy?: "name" | "city",
+    @Query("order") order?: "ASC" | "DESC",
   ) {
     const taxonomyTermIds = taxonomyTermIdsRaw
       ? taxonomyTermIdsRaw.split(",").map((s) => s.trim()).filter(Boolean)
@@ -42,6 +54,10 @@ export class MarketplaceController {
       region,
       taxonomyTermIds,
       openToInquiriesOnly: openToInquiriesOnly === "true",
+      page: page ? Number(page) : undefined,
+      limit: limit ? Number(limit) : undefined,
+      sortBy: sortBy === "city" ? "city" : "name",
+      order: order === "DESC" ? "DESC" : "ASC",
     });
   }
 }

@@ -20,7 +20,7 @@ import { IEventMediaPort } from "./interfaces/event-media.port.interface";
 import { EVENT_MEDIA_PORT } from "./tokens/event-media.tokens";
 import { CreateEventDto } from "./dto/create-event.dto";
 import { EventAdhocAddress } from "./types/event-adhoc-address.type";
-import { IEventRepository } from "./interfaces/event.repository.interface";
+import { IEventRepository, ListPublishedEventsParams } from "./interfaces/event.repository.interface";
 import { IEventService } from "./interfaces/event.service.interface";
 import { EVENT_REPOSITORY } from "./tokens/event.tokens";
 import { EventLocationMode } from "./types/event-location-mode.type";
@@ -140,6 +140,46 @@ export class EventService implements IEventService {
 
   async getById(id: string): Promise<Event | null> {
     return this.events.findById(id);
+  }
+
+  async getPublicById(id: string): Promise<Event | null> {
+    const e = await this.events.findById(id);
+    if (!e || e.status !== EventStatus.PUBLISHED) return null;
+    return e;
+  }
+
+  async listPublishedPublic(
+    params: Omit<ListPublishedEventsParams, "limit" | "offset" | "sortBy" | "order"> & {
+      page?: number;
+      limit?: number;
+      sortBy?: ListPublishedEventsParams["sortBy"];
+      order?: ListPublishedEventsParams["order"];
+    },
+  ): Promise<{ items: Event[]; total: number; page: number; limit: number }> {
+    if (params.from && Number.isNaN(params.from.getTime())) {
+      throw new BadRequestException("Parâmetro from inválido");
+    }
+    if (params.to && Number.isNaN(params.to.getTime())) {
+      throw new BadRequestException("Parâmetro to inválido");
+    }
+    const page = Math.max(1, params.page ?? 1);
+    const limit = Math.min(100, Math.max(1, params.limit ?? 20));
+    const offset = (page - 1) * limit;
+    const sortBy = params.sortBy ?? "startsAt";
+    const order = params.order ?? "ASC";
+    const { items, total } = await this.events.listPublishedFiltered({
+      from: params.from,
+      to: params.to,
+      taxonomyTermIds: params.taxonomyTermIds,
+      venueId: params.venueId,
+      city: params.city,
+      q: params.q,
+      limit,
+      offset,
+      sortBy,
+      order,
+    });
+    return { items, total, page, limit };
   }
 
   async linkPrimaryMedia(eventId: string, mediaAssetId: string): Promise<Event> {

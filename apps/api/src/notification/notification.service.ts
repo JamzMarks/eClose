@@ -1,8 +1,12 @@
 import { Inject, Injectable, Logger } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
 import { randomUUID } from "crypto";
+import { Repository } from "typeorm";
+import { UserOrmEntity } from "@/user/infrastructure/persistence/user.orm-entity";
 import { NotificationEntity } from "./entity/notification.entity";
 import { SendNotificationDto } from "./dto/send-notification.dto";
 import { CommunicationChannel } from "./types/communication-channel.type";
+import { DomainEventName } from "./types/domain-event-names";
 import { NotificationType } from "./types/notification.type";
 import { DomainEvent } from "./types/domain-event.type";
 import {
@@ -28,6 +32,8 @@ import {
   USER_NOTIFICATION_TARGETS,
 } from "./tokens/notification.tokens";
 
+type ChannelPrefs = { email: boolean; push: boolean; sms: boolean };
+
 @Injectable()
 export class NotificationService implements INotificationService {
   private readonly log = new Logger(NotificationService.name);
@@ -43,10 +49,27 @@ export class NotificationService implements INotificationService {
     private readonly pushChannel: IPushChannel,
     @Inject(SMS_CHANNEL)
     private readonly smsChannel: ISmsChannel,
+    @InjectRepository(UserOrmEntity)
+    private readonly users: Repository<UserOrmEntity>,
   ) {}
 
-  async shouldNotify(_userId: string, _type: NotificationType): Promise<boolean> {
-    // MVP: consentimento fino e preferências por canal virão do perfil / LGPD
+  private async loadPrefs(userId: string): Promise<ChannelPrefs> {
+    const row = await this.users.findOne({ where: { id: userId } });
+    const p = row?.notificationPreferences;
+    if (!p) return { email: true, push: true, sms: true };
+    return {
+      email: p.email !== false,
+      push: p.push !== false,
+      sms: p.sms !== false,
+    };
+  }
+
+  async shouldNotify(userId: string, type: NotificationType): Promise<boolean> {
+    const prefs = await this.loadPrefs(userId);
+    if (!prefs.email && !prefs.push && !prefs.sms) return false;
+    if (type === NotificationType.VERIFICATION) {
+      return prefs.email || prefs.sms;
+    }
     return true;
   }
 
@@ -54,7 +77,14 @@ export class NotificationService implements INotificationService {
     if (!(await this.shouldNotify(dto.userId, dto.type))) return;
 
     const t = await this.targets.resolve(dto.userId);
-    const channel = this.resolveChannel(dto, t);
+    const prefs = await this.loadPrefs(dto.userId);
+    const preferred = this.resolveChannel(dto, t);
+    const channel = this.pickAllowedChannel(preferred, prefs, t, dto);
+    if (!channel) {
+      this.log.warn(`Sem canal disponível ou consentimento (userId=${dto.userId})`);
+      return;
+    }
+
     const email = dto.toEmail ?? t.email ?? undefined;
     const phone = dto.toPhone ?? t.phone ?? undefined;
     const pushTokens = [...(dto.pushTokens ?? []), ...t.pushTokens];
@@ -119,7 +149,72 @@ export class NotificationService implements INotificationService {
   }
 
   async handleEvent(event: DomainEvent): Promise<void> {
-    this.log.debug(`Evento de domínio (fila futura): ${event.name} ${event.aggregateId}`);
+    const notifyUserId = event.payload?.notifyUserId as string | undefined;
+    if (!notifyUserId) {
+      this.log.debug(`Sem destinatário para evento ${event.name}`);
+      return;
+    }
+
+    switch (event.name) {
+      case DomainEventName.BOOKING_INQUIRY_CREATED:
+        await this.sendNotification({
+          userId: notifyUserId,
+          type: NotificationType.BOOKING_INQUIRY,
+          title: "Novo pedido de booking",
+          body: "Recebeu um novo pedido de booking na eClose.",
+        });
+        break;
+      case DomainEventName.BOOKING_DATES_PROPOSED:
+        await this.sendNotification({
+          userId: notifyUserId,
+          type: NotificationType.BOOKING_NEGOTIATION,
+          title: "Novas datas propostas",
+          body: "A contraparte propôs novas datas para o booking.",
+        });
+        break;
+      case DomainEventName.BOOKING_DATES_CONFIRMED:
+        await this.sendNotification({
+          userId: notifyUserId,
+          type: NotificationType.BOOKING_DATES_CONFIRMED,
+          title: "Datas confirmadas pelo solicitante",
+          body: "O solicitante confirmou datas no calendário. Pode aceitar o booking.",
+        });
+        break;
+      case DomainEventName.BOOKING_CONFIRMED:
+        await this.sendNotification({
+          userId: notifyUserId,
+          type: NotificationType.BOOKING_CONFIRMED,
+          title: "Booking confirmado",
+          body: "A contraparte confirmou o booking.",
+        });
+        break;
+      case DomainEventName.BOOKING_DECLINED:
+        await this.sendNotification({
+          userId: notifyUserId,
+          type: NotificationType.BOOKING_DECLINED,
+          title: "Booking recusado",
+          body: "A contraparte recusou este pedido de booking.",
+        });
+        break;
+      case DomainEventName.BOOKING_CANCELLED:
+        await this.sendNotification({
+          userId: notifyUserId,
+          type: NotificationType.BOOKING_CANCELLED,
+          title: "Booking cancelado",
+          body: "O solicitante cancelou o pedido de booking.",
+        });
+        break;
+      case DomainEventName.EVENT_PUBLISHED:
+        await this.sendNotification({
+          userId: notifyUserId,
+          type: NotificationType.EVENT_PUBLISHED,
+          title: "Evento publicado",
+          body: "Um evento que segue foi publicado na eClose.",
+        });
+        break;
+      default:
+        this.log.debug(`Evento de domínio sem handler: ${event.name}`);
+    }
   }
 
   async sendPush(userId: string, payload: PushPayload): Promise<void> {
@@ -158,6 +253,37 @@ export class NotificationService implements INotificationService {
 
   async persistNotification(record: NotificationRecord): Promise<void> {
     await this.repository.save(record);
+  }
+
+  private pickAllowedChannel(
+    preferred: CommunicationChannel,
+    prefs: ChannelPrefs,
+    t: UserNotificationTargets,
+    dto: SendNotificationDto,
+  ): CommunicationChannel | null {
+    const order: CommunicationChannel[] = [
+      preferred,
+      CommunicationChannel.EMAIL,
+      CommunicationChannel.PUSH_NOTIFICATION,
+      CommunicationChannel.SMS,
+    ];
+    const seen = new Set<CommunicationChannel>();
+    const candidates = order.filter((c) => {
+      if (seen.has(c)) return false;
+      seen.add(c);
+      return true;
+    });
+
+    const email = dto.toEmail ?? t.email;
+    const phone = dto.toPhone ?? t.phone;
+    const push = [...(dto.pushTokens ?? []), ...t.pushTokens];
+
+    for (const ch of candidates) {
+      if (ch === CommunicationChannel.EMAIL && prefs.email && email) return ch;
+      if (ch === CommunicationChannel.SMS && prefs.sms && phone) return ch;
+      if (ch === CommunicationChannel.PUSH_NOTIFICATION && prefs.push && push.length > 0) return ch;
+    }
+    return null;
   }
 
   private resolveChannel(

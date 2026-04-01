@@ -12,6 +12,16 @@ export type PublishWindowInput = {
   endsAt: Date;
 };
 
+export type SuggestSlotsQuery = {
+  fromIso: string;
+  toIso: string;
+  durationMinutes?: number;
+  stepMinutes?: number;
+  venueId?: string | null;
+  /** Ref. futura para mapear conta Google/Outlook via ExternalCalendarPort */
+  externalCalendarOwnerRef?: string | null;
+};
+
 /**
  * Visão unificada de agenda para artistas e venues (conflitos, recomendações, UX de criação).
  * Evolui com bloqueios internos do artista, regras de venue e integração externa (Google Calendar).
@@ -22,6 +32,10 @@ export interface ICalendarService {
   hasArtistConflict(artistId: string, startsAt: Date, endsAt: Date): Promise<boolean>;
   hasVenueConflict(venueId: string, startsAt: Date, endsAt: Date): Promise<boolean>;
   validateNoConflictForPublish(input: PublishWindowInput): Promise<void>;
+  suggestFreeSlots(
+    artistId: string,
+    query: SuggestSlotsQuery,
+  ): Promise<Array<{ startsAt: string; endsAt: string }>>;
   addArtistUnavailability(
     artistId: string,
     startsAt: Date,

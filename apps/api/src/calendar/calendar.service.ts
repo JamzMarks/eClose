@@ -4,6 +4,10 @@ import { randomUUID } from "crypto";
 import { Repository } from "typeorm";
 import { ArtistUnavailabilityOrmEntity } from "@/calendar/infrastructure/persistence/artist-unavailability.orm-entity";
 import { VenueUnavailabilityOrmEntity } from "@/calendar/infrastructure/persistence/venue-unavailability.orm-entity";
+import {
+  EXTERNAL_CALENDAR_PORT,
+  ExternalCalendarPort,
+} from "@/calendar/application/ports/external-calendar.port";
 import { Event } from "@/event/entity/event.entity";
 import { IEventRepository } from "@/event/interfaces/event.repository.interface";
 import { EVENT_REPOSITORY } from "@/event/tokens/event.tokens";
@@ -12,7 +16,10 @@ import {
   CalendarRangeQuery,
   ICalendarService,
   PublishWindowInput,
+  SuggestSlotsQuery,
 } from "./interfaces/calendar.service.interface";
+
+const MAX_SUGGESTED_SLOTS = 48;
 
 @Injectable()
 export class CalendarService implements ICalendarService {
@@ -23,6 +30,8 @@ export class CalendarService implements ICalendarService {
     private readonly artistUnavail: Repository<ArtistUnavailabilityOrmEntity>,
     @InjectRepository(VenueUnavailabilityOrmEntity)
     private readonly venueUnavail: Repository<VenueUnavailabilityOrmEntity>,
+    @Inject(EXTERNAL_CALENDAR_PORT)
+    private readonly externalCalendar: ExternalCalendarPort,
   ) {}
 
   private parseRange(range: CalendarRangeQuery): { from: Date; to: Date } {
@@ -98,6 +107,76 @@ export class CalendarService implements ICalendarService {
         throw new BadRequestException("Venue marcado como indisponível neste intervalo");
       }
     }
+  }
+
+  async suggestFreeSlots(
+    artistId: string,
+    query: SuggestSlotsQuery,
+  ): Promise<Array<{ startsAt: string; endsAt: string }>> {
+    const { from, to } = this.parseRange({ fromIso: query.fromIso, toIso: query.toIso });
+    const durationMs = (query.durationMinutes ?? 60) * 60_000;
+    const stepMs = (query.stepMinutes ?? 30) * 60_000;
+    if (durationMs < 15 * 60_000) throw new BadRequestException("Duração mínima 15 minutos");
+    if (stepMs < 5 * 60_000) throw new BadRequestException("Passo mínimo 5 minutos");
+
+    const externalBusy =
+      query.externalCalendarOwnerRef?.trim() && this.externalCalendar
+        ? await this.externalCalendar.listBusyWindows({
+            ownerExternalRef: query.externalCalendarOwnerRef.trim(),
+            from,
+            to,
+          })
+        : [];
+
+    const out: Array<{ startsAt: string; endsAt: string }> = [];
+    for (let t = from.getTime(); t + durationMs <= to.getTime(); t += stepMs) {
+      const startsAt = new Date(t);
+      const endsAt = new Date(t + durationMs);
+      if (
+        await this.isIntervalFreeForSuggestion(artistId, query.venueId ?? null, startsAt, endsAt, externalBusy)
+      ) {
+        out.push({ startsAt: startsAt.toISOString(), endsAt: endsAt.toISOString() });
+        if (out.length >= MAX_SUGGESTED_SLOTS) break;
+      }
+    }
+    return out;
+  }
+
+  private overlapsExternal(
+    startsAt: Date,
+    endsAt: Date,
+    busy: Array<{ start: Date; end: Date }>,
+  ): boolean {
+    return busy.some((b) => b.start < endsAt && b.end > startsAt);
+  }
+
+  private async isIntervalFreeForSuggestion(
+    artistId: string,
+    venueId: string | null,
+    startsAt: Date,
+    endsAt: Date,
+    externalBusy: Array<{ start: Date; end: Date }>,
+  ): Promise<boolean> {
+    if (await this.hasArtistConflict(artistId, startsAt, endsAt)) return false;
+    if (venueId && (await this.hasVenueConflict(venueId, startsAt, endsAt))) return false;
+    if (this.overlapsExternal(startsAt, endsAt, externalBusy)) return false;
+
+    const artistBlocks = await this.artistUnavail
+      .createQueryBuilder("u")
+      .where("u.artistId = :id", { id: artistId })
+      .andWhere("u.startsAt < :to AND u.endsAt > :from", { from: startsAt, to: endsAt })
+      .getCount();
+    if (artistBlocks > 0) return false;
+
+    if (venueId) {
+      const venueBlocks = await this.venueUnavail
+        .createQueryBuilder("u")
+        .where("u.venueId = :id", { id: venueId })
+        .andWhere("u.startsAt < :to AND u.endsAt > :from", { from: startsAt, to: endsAt })
+        .getCount();
+      if (venueBlocks > 0) return false;
+    }
+    return true;
   }
 
   async addArtistUnavailability(

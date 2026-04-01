@@ -13,6 +13,10 @@ export interface IMediaService {
   requestSignedUploadIntent(dto: RequestUploadIntentDto): Promise<SignedUploadIntentResult>;
   listByParent(parentType: MediaParentType, parentId: string): Promise<MediaAsset[]>;
   getPrimary(parentType: MediaParentType, parentId: string): Promise<MediaAsset | null>;
+  getPrimaryMany(
+    parentType: MediaParentType,
+    parentIds: string[],
+  ): Promise<Map<string, MediaAsset | null>>;
   /** Define este asset como principal do parent; desmarca os demais */
   setPrimary(assetId: string): Promise<MediaAsset>;
   assertBelongsTo(assetId: string, parentType: MediaParentType, parentId: string): Promise<void>;

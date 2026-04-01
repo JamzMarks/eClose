@@ -29,6 +29,13 @@ export class BookingInquiryOrmEntity {
   @Column({ type: "text", nullable: true })
   notes!: string | null;
 
+  @Column({ name: "linked_event_id", type: "uuid", nullable: true })
+  linkedEventId!: string | null;
+
+  /** Artista do solicitante (pedidos a venue): usado para calendário e criação de evento */
+  @Column({ name: "requester_organizer_artist_id", type: "uuid", nullable: true })
+  requesterOrganizerArtistId!: string | null;
+
   @CreateDateColumn({ name: "created_at", type: "timestamptz" })
   createdAt!: Date;
 

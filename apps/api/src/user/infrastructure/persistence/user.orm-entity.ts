@@ -53,6 +53,12 @@ export class UserOrmEntity {
   @Column({ name: "marketing_opt_in", type: "boolean", default: false })
   marketingOptIn!: boolean;
 
+  @Column({ name: "notification_preferences", type: "jsonb" })
+  notificationPreferences!: { email: boolean; push: boolean; sms: boolean };
+
+  @Column({ name: "push_tokens", type: "jsonb" })
+  pushTokens!: string[];
+
   @Column({ name: "is_active", type: "boolean", default: true })
   isActive!: boolean;
 

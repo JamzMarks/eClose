@@ -6,4 +6,9 @@ export interface IMediaRepository {
   findById(id: string): Promise<MediaAsset | null>;
   listByParent(parentType: MediaParentType, parentId: string): Promise<MediaAsset[]>;
   findPrimary(parentType: MediaParentType, parentId: string): Promise<MediaAsset | null>;
+  /** Uma linha por parent com mídia primária; parents sem primário ficam de fora do mapa */
+  findPrimariesForParents(
+    parentType: MediaParentType,
+    parentIds: string[],
+  ): Promise<Map<string, MediaAsset>>;
 }

@@ -1,5 +1,7 @@
-import { Body, Controller, Get, Inject, Param, Post, Query } from "@nestjs/common";
+import { Body, Controller, Get, Inject, Param, Post, Query, UseGuards } from "@nestjs/common";
 import { PrivateRoute } from "@/infrastructure/http/metadata/private-route.metadata";
+import { CalendarArtistOwnerHttpGuard } from "@/infrastructure/http/guards/calendar-artist-owner.http.guard";
+import { CalendarVenueOwnerHttpGuard } from "@/infrastructure/http/guards/calendar-venue-owner.http.guard";
 import { AddUnavailabilityDto } from "./dto/add-unavailability.dto";
 import { ICalendarService } from "./interfaces/calendar.service.interface";
 import { CALENDAR_SERVICE } from "./tokens/calendar.tokens";
@@ -20,6 +22,26 @@ export class CalendarController {
     return this.calendar.getArtistPublicSchedule(artistId, { fromIso: from, toIso: to });
   }
 
+  @Get("artists/:artistId/suggest-slots")
+  suggestSlots(
+    @Param("artistId") artistId: string,
+    @Query("from") from: string,
+    @Query("to") to: string,
+    @Query("durationMinutes") durationMinutes?: string,
+    @Query("stepMinutes") stepMinutes?: string,
+    @Query("venueId") venueId?: string,
+    @Query("externalCalendarOwnerRef") externalCalendarOwnerRef?: string,
+  ) {
+    return this.calendar.suggestFreeSlots(artistId, {
+      fromIso: from,
+      toIso: to,
+      durationMinutes: durationMinutes ? Number(durationMinutes) : undefined,
+      stepMinutes: stepMinutes ? Number(stepMinutes) : undefined,
+      venueId: venueId ?? null,
+      externalCalendarOwnerRef: externalCalendarOwnerRef ?? null,
+    });
+  }
+
   @Get("venues/:venueId/schedule")
   venueSchedule(
     @Param("venueId") venueId: string,
@@ -31,6 +53,7 @@ export class CalendarController {
 
   @Post("artists/:artistId/unavailabilities")
   @PrivateRoute()
+  @UseGuards(CalendarArtistOwnerHttpGuard)
   addArtistUnavailability(@Param("artistId") artistId: string, @Body() dto: AddUnavailabilityDto) {
     return this.calendar.addArtistUnavailability(
       artistId,
@@ -42,6 +65,7 @@ export class CalendarController {
 
   @Post("venues/:venueId/unavailabilities")
   @PrivateRoute()
+  @UseGuards(CalendarVenueOwnerHttpGuard)
   addVenueUnavailability(@Param("venueId") venueId: string, @Body() dto: AddUnavailabilityDto) {
     return this.calendar.addVenueUnavailability(
       venueId,

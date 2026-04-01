@@ -1,6 +1,22 @@
-import { Body, Controller, Get, Param, Post } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  Patch,
+  Post,
+  Put,
+  UseGuards,
+} from "@nestjs/common";
+import { CurrentUser } from "@/infrastructure/http/decorators/current-user.decorator";
+import { PrivateRoute } from "@/infrastructure/http/metadata/private-route.metadata";
+import { SelfUserHttpGuard } from "@/infrastructure/http/guards/self-user.http.guard";
+import type { JwtValidatedUser } from "@/auth/strategies/jwt.strategy";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { QuickSignupDto } from "./dto/quick-signup.dto";
+import { UpdateNotificationPreferencesDto } from "./dto/update-notification-preferences.dto";
+import { UpdatePushTokensDto } from "./dto/update-push-tokens.dto";
 import { UserService } from "./user.service";
 
 @Controller("users")
@@ -18,13 +34,51 @@ export class UserController {
     return this.usersService.create(dto);
   }
 
-  @Get()
-  findAll() {
-    return this.usersService.findAll();
+  @Get("me/linked-entities")
+  @PrivateRoute()
+  myLinkedEntities(@CurrentUser() user: JwtValidatedUser) {
+    return this.usersService.listLinkedEntities(user.id);
+  }
+
+  @Get("me/notification-preferences")
+  @PrivateRoute()
+  getMyNotificationPreferences(@CurrentUser() user: JwtValidatedUser) {
+    return this.usersService.getNotificationPreferences(user.id);
+  }
+
+  @Patch("me/notification-preferences")
+  @PrivateRoute()
+  patchMyNotificationPreferences(
+    @CurrentUser() user: JwtValidatedUser,
+    @Body() dto: UpdateNotificationPreferencesDto,
+  ) {
+    return this.usersService.updateNotificationPreferences(user.id, dto);
+  }
+
+  @Get("me/push-tokens")
+  @PrivateRoute()
+  getMyPushTokens(@CurrentUser() user: JwtValidatedUser) {
+    return this.usersService.getPushTokens(user.id);
+  }
+
+  @Patch("me/push-tokens")
+  @PrivateRoute()
+  patchMyPushTokens(@CurrentUser() user: JwtValidatedUser, @Body() dto: UpdatePushTokensDto) {
+    return this.usersService.updatePushTokens(user.id, dto);
+  }
+
+  @Put("me/push-tokens")
+  @PrivateRoute()
+  putMyPushTokens(@CurrentUser() user: JwtValidatedUser, @Body() dto: UpdatePushTokensDto) {
+    return this.usersService.updatePushTokens(user.id, dto);
   }
 
   @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.usersService.findById(id);
+  @PrivateRoute()
+  @UseGuards(SelfUserHttpGuard)
+  async findOne(@Param("id") id: string) {
+    const u = await this.usersService.findById(id);
+    if (!u) throw new NotFoundException("Utilizador não encontrado");
+    return u;
   }
 }

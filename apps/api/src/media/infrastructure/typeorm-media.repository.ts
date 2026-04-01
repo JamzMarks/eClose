@@ -36,6 +36,24 @@ export class TypeormMediaRepository implements IMediaRepository {
     return row ? this.toDomain(row) : null;
   }
 
+  async findPrimariesForParents(
+    parentType: MediaParentType,
+    parentIds: string[],
+  ): Promise<Map<string, MediaAsset>> {
+    const out = new Map<string, MediaAsset>();
+    if (parentIds.length === 0) return out;
+    const rows = await this.repo
+      .createQueryBuilder("m")
+      .where("m.parentType = :pt", { pt: parentType })
+      .andWhere("m.parentId IN (:...ids)", { ids: parentIds })
+      .andWhere("m.isPrimary = true")
+      .getMany();
+    for (const row of rows) {
+      out.set(row.parentId, this.toDomain(row));
+    }
+    return out;
+  }
+
   private toRow(a: MediaAsset): MediaAssetOrmEntity {
     const row = new MediaAssetOrmEntity();
     row.id = a.id;
