@@ -5,7 +5,7 @@ import { OutboxEventOrmEntity } from "@/media/infrastructure/persistence/outbox-
 import { MediaAsyncPipelineService } from "./infrastructure/media-async-pipeline.service";
 import { TypeormMediaRepository } from "./infrastructure/typeorm-media.repository";
 import { MediaController } from "./media.controller";
-import { MediaService } from "./media.service";
+import { MediaService } from "./application/media.service";
 import { MEDIA_REPOSITORY, MEDIA_SERVICE } from "./tokens/media.tokens";
 
 @Module({

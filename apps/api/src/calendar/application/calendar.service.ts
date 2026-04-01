@@ -17,7 +17,7 @@ import {
   ICalendarService,
   PublishWindowInput,
   SuggestSlotsQuery,
-} from "./interfaces/calendar.service.interface";
+} from "@/calendar/interfaces/calendar.service.interface";
 
 const MAX_SUGGESTED_SLOTS = 48;
 

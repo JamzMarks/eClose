@@ -1,9 +1,9 @@
 import { BadRequestException, Inject, Injectable } from "@nestjs/common";
-import { ITaxonomyService } from "./interfaces/taxonomy.service.interface";
-import { ITaxonomyRepository } from "./interfaces/taxonomy.repository.interface";
-import { TAXONOMY_REPOSITORY } from "./tokens/taxonomy.tokens";
-import { TaxonomyKind } from "./types/taxonomy-kind.type";
-import { TaxonomyTerm } from "./entity/taxonomy-term.entity";
+import { ITaxonomyService } from "@/taxonomy/interfaces/taxonomy.service.interface";
+import { ITaxonomyRepository } from "@/taxonomy/interfaces/taxonomy.repository.interface";
+import { TAXONOMY_REPOSITORY } from "@/taxonomy/tokens/taxonomy.tokens";
+import { TaxonomyKind } from "@/taxonomy/types/taxonomy-kind.type";
+import { TaxonomyTerm } from "@/taxonomy/entity/taxonomy-term.entity";
 
 @Injectable()
 export class TaxonomyService implements ITaxonomyService {

@@ -2,7 +2,7 @@ import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { UserOrmEntity } from "@/user/infrastructure/persistence/user.orm-entity";
 import { NotificationOrmEntity } from "@/notification/infrastructure/persistence/notification.orm-entity";
-import { NotificationService } from "./notification.service";
+import { NotificationService } from "./application/notification.service";
 import {
   EMAIL_CHANNEL,
   NOTIFICATION_REPOSITORY,

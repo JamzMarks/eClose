@@ -2,7 +2,7 @@ import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { TaxonomyTermOrmEntity } from "@/taxonomy/infrastructure/persistence/taxonomy-term.orm-entity";
 import { TaxonomyController } from "./taxonomy.controller";
-import { TaxonomyService } from "./taxonomy.service";
+import { TaxonomyService } from "./application/taxonomy.service";
 import { TypeormTaxonomyRepository } from "./infrastructure/typeorm-taxonomy.repository";
 import { TAXONOMY_REPOSITORY, TAXONOMY_SERVICE } from "./tokens/taxonomy.tokens";
 

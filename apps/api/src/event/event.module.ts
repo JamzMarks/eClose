@@ -7,7 +7,7 @@ import { CalendarModule } from "@/calendar/calendar.module";
 import { EventOrganizerBodyHttpGuard } from "@/infrastructure/http/guards/event-organizer-body.http.guard";
 import { EventResourceOrganizerHttpGuard } from "@/infrastructure/http/guards/event-resource-organizer.http.guard";
 import { EventController } from "./event.controller";
-import { EventService } from "./event.service";
+import { EventService } from "./application/event.service";
 import { EventPersistenceModule } from "./event-persistence.module";
 import { EventAccessPolicyImpl } from "./infrastructure/event-access.policy.impl";
 import { HttpEventMediaAdapter } from "./infrastructure/http-event-media.adapter";

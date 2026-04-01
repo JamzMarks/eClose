@@ -12,7 +12,8 @@ import { BookingInquiryRequesterHttpGuard } from "@/infrastructure/http/guards/b
 import { BOOKING_ACCESS_POLICY } from "@/booking/application/ports/booking-access.policy.port";
 import { BookingAccessPolicyImpl } from "@/booking/infrastructure/booking-access.policy.impl";
 import { BookingController } from "./booking.controller";
-import { BookingService } from "./booking.service";
+import { BookingService } from "./application/booking.service";
+import { BOOKING_SERVICE } from "./tokens/booking.tokens";
 
 @Module({
   imports: [
@@ -26,10 +27,11 @@ import { BookingService } from "./booking.service";
   ],
   controllers: [BookingController],
   providers: [
-    BookingService,
+    { provide: BOOKING_SERVICE, useClass: BookingService },
     { provide: BOOKING_ACCESS_POLICY, useClass: BookingAccessPolicyImpl },
     BookingInquiryRequesterHttpGuard,
     BookingInquiryCounterpartHttpGuard,
   ],
+  exports: [BOOKING_SERVICE],
 })
 export class BookingModule {}

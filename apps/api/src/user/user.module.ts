@@ -6,7 +6,8 @@ import { VenueModule } from "@/venue/venue.module";
 import { NotificationModule } from "@/notification/notification.module";
 import { SelfUserHttpGuard } from "@/infrastructure/http/guards/self-user.http.guard";
 import { UserController } from "./user.controller";
-import { UserService } from "./user.service";
+import { UserService } from "./application/user.service";
+import { USER_SERVICE } from "./tokens/user.tokens";
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { UserService } from "./user.service";
     VenueModule,
   ],
   controllers: [UserController],
-  providers: [UserService, SelfUserHttpGuard],
+  providers: [{ provide: USER_SERVICE, useClass: UserService }, SelfUserHttpGuard],
+  exports: [USER_SERVICE],
 })
 export class UserModule {}

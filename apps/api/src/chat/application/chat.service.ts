@@ -6,20 +6,20 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { ID_GENERATOR, IdGenerator } from "@/shared/contracts/id-generator";
-import { Conversation } from "./entity/conversation.entity";
-import { Message } from "./entity/message.entity";
-import { IChatConversationRepository } from "./interfaces/chat-conversation.repository.interface";
-import { IChatMessageRepository } from "./interfaces/chat-message.repository.interface";
-import { IChatService } from "./interfaces/chat.service.interface";
+import { Conversation } from "@/chat/entity/conversation.entity";
+import { Message } from "@/chat/entity/message.entity";
+import { IChatConversationRepository } from "@/chat/interfaces/chat-conversation.repository.interface";
+import { IChatMessageRepository } from "@/chat/interfaces/chat-message.repository.interface";
+import { IChatService } from "@/chat/interfaces/chat.service.interface";
 import {
   CHAT_CONVERSATION_REPOSITORY,
   CHAT_MESSAGE_REPOSITORY,
-} from "./tokens/chat.tokens";
+} from "@/chat/tokens/chat.tokens";
 import {
   ChatParticipantRef,
   participantRefKey,
-} from "./types/chat-participant-ref.type";
-import { ConversationKind } from "./types/conversation-kind.type";
+} from "@/chat/types/chat-participant-ref.type";
+import { ConversationKind } from "@/chat/types/conversation-kind.type";
 
 @Injectable()
 export class ChatService implements IChatService {

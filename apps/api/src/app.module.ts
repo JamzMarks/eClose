@@ -7,6 +7,7 @@ import { SnakeNamingStrategy } from "./infrastructure/persistence/snake-naming.s
 import { Initial1730200000000 } from "./infrastructure/persistence/migrations/1730200000000-Initial";
 import { FeaturesPhases2To61740100000000 } from "./infrastructure/persistence/migrations/1740100000000-FeaturesPhases2To6";
 import { BookingRequesterOrganizerArtist1740200000000 } from "./infrastructure/persistence/migrations/1740200000000-BookingRequesterOrganizerArtist";
+import { SocialFriendshipAndPosts1740300000000 } from "./infrastructure/persistence/migrations/1740300000000-SocialFriendshipAndPosts";
 import { PrivateJwtAuthGuard } from "./infrastructure/http/guards/private-jwt-auth.guard";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
@@ -21,6 +22,8 @@ import { MediaModule } from "./media/media.module";
 import { ArtistModule } from "./artist/artist.module";
 import { MarketplaceModule } from "./marketplace/marketplace.module";
 import { BookingModule } from "./booking/booking.module";
+import { FriendshipModule } from "./friendship/friendship.module";
+import { PostModule } from "./post/post.module";
 
 @Module({
   imports: [
@@ -41,6 +44,7 @@ import { BookingModule } from "./booking/booking.module";
             Initial1730200000000,
             FeaturesPhases2To61740100000000,
             BookingRequesterOrganizerArtist1740200000000,
+            SocialFriendshipAndPosts1740300000000,
           ],
           migrationsRun: process.env.TYPEORM_RUN_MIGRATIONS === "true",
           namingStrategy: new SnakeNamingStrategy(),
@@ -60,6 +64,8 @@ import { BookingModule } from "./booking/booking.module";
     CalendarModule,
     MarketplaceModule,
     BookingModule,
+    FriendshipModule,
+    PostModule,
   ],
   controllers: [AppController],
   providers: [

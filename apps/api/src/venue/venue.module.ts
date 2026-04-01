@@ -10,7 +10,7 @@ import { LocalVenueMediaAdapter } from "./infrastructure/local-venue-media.adapt
 import { TypeormVenueRepository } from "./infrastructure/typeorm-venue.repository";
 import { VenueAccessPolicyImpl } from "./infrastructure/venue-access.policy.impl";
 import { VenueController } from "./venue.controller";
-import { VenueService } from "./venue.service";
+import { VenueService } from "./application/venue.service";
 import { VENUE_ACCESS_POLICY } from "./application/ports/venue-access.policy.port";
 import { VENUE_MEDIA_PORT } from "./tokens/venue-media.tokens";
 import { VENUE_REPOSITORY, VENUE_SERVICE } from "./tokens/venue.tokens";

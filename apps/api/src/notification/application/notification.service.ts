@@ -3,34 +3,34 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { randomUUID } from "crypto";
 import { Repository } from "typeorm";
 import { UserOrmEntity } from "@/user/infrastructure/persistence/user.orm-entity";
-import { NotificationEntity } from "./entity/notification.entity";
-import { SendNotificationDto } from "./dto/send-notification.dto";
-import { CommunicationChannel } from "./types/communication-channel.type";
-import { DomainEventName } from "./types/domain-event-names";
-import { NotificationType } from "./types/notification.type";
-import { DomainEvent } from "./types/domain-event.type";
+import { NotificationEntity } from "@/notification/entity/notification.entity";
+import { SendNotificationDto } from "@/notification/dto/send-notification.dto";
+import { CommunicationChannel } from "@/notification/types/communication-channel.type";
+import { DomainEventName } from "@/notification/types/domain-event-names";
+import { NotificationType } from "@/notification/types/notification.type";
+import { DomainEvent } from "@/notification/types/domain-event.type";
 import {
   EmailPayload,
   PushPayload,
   SmsPayload,
-} from "./types/notification-payloads.type";
-import { INotificationService } from "./interfaces/notification.interface";
-import { NotificationRecord } from "./interfaces/notification-record.type";
+} from "@/notification/types/notification-payloads.type";
+import { INotificationService } from "@/notification/interfaces/notification.interface";
+import { NotificationRecord } from "@/notification/interfaces/notification-record.type";
 import {
   IUserNotificationTargets,
   UserNotificationTargets,
-} from "./interfaces/user-notification-targets.interface";
-import { INotificationRepository } from "./interfaces/notification.repository.interface";
-import { IEmailChannel } from "./interfaces/email-channel.interface";
-import { IPushChannel } from "./interfaces/push-channel.interface";
-import { ISmsChannel } from "./interfaces/sms-channel.interface";
+} from "@/notification/interfaces/user-notification-targets.interface";
+import { INotificationRepository } from "@/notification/interfaces/notification.repository.interface";
+import { IEmailChannel } from "@/notification/interfaces/email-channel.interface";
+import { IPushChannel } from "@/notification/interfaces/push-channel.interface";
+import { ISmsChannel } from "@/notification/interfaces/sms-channel.interface";
 import {
   EMAIL_CHANNEL,
   NOTIFICATION_REPOSITORY,
   PUSH_CHANNEL,
   SMS_CHANNEL,
   USER_NOTIFICATION_TARGETS,
-} from "./tokens/notification.tokens";
+} from "@/notification/tokens/notification.tokens";
 
 type ChannelPrefs = { email: boolean; push: boolean; sms: boolean };
 

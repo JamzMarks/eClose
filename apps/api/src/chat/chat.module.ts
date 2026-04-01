@@ -3,7 +3,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConversationOrmEntity } from "@/chat/infrastructure/persistence/conversation.orm-entity";
 import { MessageOrmEntity } from "@/chat/infrastructure/persistence/message.orm-entity";
 import { ChatController } from "./chat.controller";
-import { ChatService } from "./chat.service";
+import { ChatService } from "./application/chat.service";
 import { TypeormChatConversationRepository } from "./infrastructure/typeorm-chat-conversation.repository";
 import { TypeormChatMessageRepository } from "./infrastructure/typeorm-chat-message.repository";
 import {

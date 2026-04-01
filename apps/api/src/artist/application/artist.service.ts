@@ -8,13 +8,13 @@ import { ID_GENERATOR, IdGenerator } from "@/shared/contracts/id-generator";
 import { ITaxonomyService } from "@/taxonomy/interfaces/taxonomy.service.interface";
 import { TAXONOMY_SERVICE } from "@/taxonomy/tokens/taxonomy.tokens";
 import { TaxonomyKind } from "@/taxonomy/types/taxonomy-kind.type";
-import { Artist } from "./entity/artist.entity";
-import { IArtistMediaPort } from "./interfaces/artist-media.port.interface";
-import { ARTIST_MEDIA_PORT } from "./tokens/artist-media.tokens";
-import { CreateArtistDto } from "./dto/create-artist.dto";
-import { IArtistRepository } from "./interfaces/artist.repository.interface";
-import { IArtistService } from "./interfaces/artist.service.interface";
-import { ARTIST_REPOSITORY } from "./tokens/artist.tokens";
+import { Artist } from "@/artist/entity/artist.entity";
+import { IArtistMediaPort } from "@/artist/interfaces/artist-media.port.interface";
+import { ARTIST_MEDIA_PORT } from "@/artist/tokens/artist-media.tokens";
+import { CreateArtistDto } from "@/artist/dto/create-artist.dto";
+import { IArtistRepository } from "@/artist/interfaces/artist.repository.interface";
+import { IArtistService } from "@/artist/interfaces/artist.service.interface";
+import { ARTIST_REPOSITORY } from "@/artist/tokens/artist.tokens";
 
 @Injectable()
 export class ArtistService implements IArtistService {

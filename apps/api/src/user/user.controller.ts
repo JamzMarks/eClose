@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Inject,
   NotFoundException,
   Param,
   Patch,
@@ -17,11 +18,12 @@ import { CreateUserDto } from "./dto/create-user.dto";
 import { QuickSignupDto } from "./dto/quick-signup.dto";
 import { UpdateNotificationPreferencesDto } from "./dto/update-notification-preferences.dto";
 import { UpdatePushTokensDto } from "./dto/update-push-tokens.dto";
-import { UserService } from "./user.service";
+import { IUserService } from "./interfaces/user.service.interface";
+import { USER_SERVICE } from "./tokens/user.tokens";
 
 @Controller("users")
 export class UserController {
-  constructor(private readonly usersService: UserService) {}
+  constructor(@Inject(USER_SERVICE) private readonly usersService: IUserService) {}
 
   /** Cadastro rápido na própria app (confirmação in-app, sem redirecionar para outro produto) */
   @Post("quick-signup")

@@ -6,7 +6,7 @@ import { ArtistOrmEntity } from "@/artist/infrastructure/persistence/artist.orm-
 import { ArtistCreateBodyOwnerHttpGuard } from "@/infrastructure/http/guards/artist-create-body-owner.http.guard";
 import { ArtistResourceOwnerHttpGuard } from "@/infrastructure/http/guards/artist-resource-owner.http.guard";
 import { ArtistController } from "./artist.controller";
-import { ArtistService } from "./artist.service";
+import { ArtistService } from "./application/artist.service";
 import { ArtistAccessPolicyImpl } from "./infrastructure/artist-access.policy.impl";
 import { HttpArtistMediaAdapter } from "./infrastructure/http-artist-media.adapter";
 import { LocalArtistMediaAdapter } from "./infrastructure/local-artist-media.adapter";

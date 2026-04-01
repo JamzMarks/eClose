@@ -27,15 +27,16 @@ import { DomainEventName } from "@/notification/types/domain-event-names";
 import { ID_GENERATOR, IdGenerator } from "@/shared/contracts/id-generator";
 import { IVenueRepository } from "@/venue/interfaces/venue.repository.interface";
 import { VENUE_REPOSITORY } from "@/venue/tokens/venue.tokens";
-import { BookingInquiryStatus } from "./types/booking-inquiry-status.type";
-import { ConfirmBookingDatesDto } from "./dto/confirm-booking-dates.dto";
-import { CreateBookingInquiryDto } from "./dto/create-booking-inquiry.dto";
-import { CreateEventFromBookingDto } from "./dto/create-event-from-booking.dto";
-import { DeclineBookingDto } from "./dto/decline-booking.dto";
-import { ProposeBookingDatesDto } from "./dto/propose-booking-dates.dto";
+import { BookingInquiryStatus } from "@/booking/types/booking-inquiry-status.type";
+import { ConfirmBookingDatesDto } from "@/booking/dto/confirm-booking-dates.dto";
+import { CreateBookingInquiryDto } from "@/booking/dto/create-booking-inquiry.dto";
+import { CreateEventFromBookingDto } from "@/booking/dto/create-event-from-booking.dto";
+import { DeclineBookingDto } from "@/booking/dto/decline-booking.dto";
+import { ProposeBookingDatesDto } from "@/booking/dto/propose-booking-dates.dto";
+import { IBookingService } from "@/booking/interfaces/booking.service.interface";
 
 @Injectable()
-export class BookingService {
+export class BookingService implements IBookingService {
   constructor(
     @Inject(ID_GENERATOR) private readonly ids: IdGenerator,
     @InjectRepository(BookingInquiryOrmEntity)

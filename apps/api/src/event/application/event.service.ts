@@ -15,16 +15,16 @@ import { ICalendarService } from "@/calendar/interfaces/calendar.service.interfa
 import { CALENDAR_SERVICE } from "@/calendar/tokens/calendar.tokens";
 import { IArtistRepository } from "@/artist/interfaces/artist.repository.interface";
 import { ARTIST_REPOSITORY } from "@/artist/tokens/artist.tokens";
-import { Event } from "./entity/event.entity";
-import { IEventMediaPort } from "./interfaces/event-media.port.interface";
-import { EVENT_MEDIA_PORT } from "./tokens/event-media.tokens";
-import { CreateEventDto } from "./dto/create-event.dto";
-import { EventAdhocAddress } from "./types/event-adhoc-address.type";
-import { IEventRepository, ListPublishedEventsParams } from "./interfaces/event.repository.interface";
-import { IEventService } from "./interfaces/event.service.interface";
-import { EVENT_REPOSITORY } from "./tokens/event.tokens";
-import { EventLocationMode } from "./types/event-location-mode.type";
-import { EventStatus } from "./types/event-status.type";
+import { Event } from "@/event/entity/event.entity";
+import { IEventMediaPort } from "@/event/interfaces/event-media.port.interface";
+import { EVENT_MEDIA_PORT } from "@/event/tokens/event-media.tokens";
+import { CreateEventDto } from "@/event/dto/create-event.dto";
+import { EventAdhocAddress } from "@/event/types/event-adhoc-address.type";
+import { IEventRepository, ListPublishedEventsParams } from "@/event/interfaces/event.repository.interface";
+import { IEventService } from "@/event/interfaces/event.service.interface";
+import { EVENT_REPOSITORY } from "@/event/tokens/event.tokens";
+import { EventLocationMode } from "@/event/types/event-location-mode.type";
+import { EventStatus } from "@/event/types/event-status.type";
 
 @Injectable()
 export class EventService implements IEventService {

@@ -6,7 +6,7 @@ import { OAuthAccountOrmEntity } from "@/auth/infrastructure/persistence/oauth-a
 import { RefreshTokenOrmEntity } from "@/auth/infrastructure/persistence/refresh-token.orm-entity";
 import { UserOrmEntity } from "@/user/infrastructure/persistence/user.orm-entity";
 import { AuthController } from "./auth.controller";
-import { AuthService } from "./auth.service";
+import { AuthService } from "./application/auth.service";
 import { AUTH_SERVICE, OAUTH_PROVIDER_GATEWAY } from "./tokens/auth.tokens";
 import { JwtStrategy } from "./strategies/jwt.strategy";
 import { HttpOAuthProviderGateway } from "./infrastructure/http-oauth-provider.gateway";

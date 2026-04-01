@@ -1,0 +1,1 @@
+export const FRIENDSHIP_SERVICE = Symbol("FRIENDSHIP_SERVICE");

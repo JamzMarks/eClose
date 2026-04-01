@@ -10,7 +10,7 @@ import { CalendarVenueOwnerHttpGuard } from "@/infrastructure/http/guards/calend
 import { EXTERNAL_CALENDAR_PORT } from "@/calendar/application/ports/external-calendar.port";
 import { NoopExternalCalendarAdapter } from "@/calendar/infrastructure/noop-external-calendar.adapter";
 import { CalendarController } from "./calendar.controller";
-import { CalendarService } from "./calendar.service";
+import { CalendarService } from "./application/calendar.service";
 import { CALENDAR_SERVICE } from "./tokens/calendar.tokens";
 
 @Module({

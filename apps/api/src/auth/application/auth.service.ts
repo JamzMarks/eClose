@@ -15,19 +15,19 @@ import { Repository } from "typeorm";
 import { OAuthAccountOrmEntity } from "@/auth/infrastructure/persistence/oauth-account.orm-entity";
 import { RefreshTokenOrmEntity } from "@/auth/infrastructure/persistence/refresh-token.orm-entity";
 import { UserOrmEntity } from "@/user/infrastructure/persistence/user.orm-entity";
-import { JWT_ACCESS_EXPIRES } from "./auth.constants";
-import { MfaSetupDto } from "./dto/mfa-setup.dto";
-import { OAuthCallbackDto } from "./dto/oauth-callback.dto";
-import { OAuthStartDto } from "./dto/oauth-start.dto";
-import { SignInDto } from "./dto/signin.dto";
-import { SignUpDto } from "./dto/signup.dto";
-import { UserProfileDto } from "./dto/user-profile.dto";
-import { IAuthService, AuthResponse } from "./interfaces/auth.interface";
+import { JWT_ACCESS_EXPIRES } from "@/auth/auth.constants";
+import { MfaSetupDto } from "@/auth/dto/mfa-setup.dto";
+import { OAuthCallbackDto } from "@/auth/dto/oauth-callback.dto";
+import { OAuthStartDto } from "@/auth/dto/oauth-start.dto";
+import { SignInDto } from "@/auth/dto/signin.dto";
+import { SignUpDto } from "@/auth/dto/signup.dto";
+import { UserProfileDto } from "@/auth/dto/user-profile.dto";
+import { IAuthService, AuthResponse } from "@/auth/interfaces/auth.interface";
 import {
   IOAuthProviderGateway,
   OAuthAuthorizeResult,
-} from "./interfaces/oauth-provider-gateway.interface";
-import { OAUTH_PROVIDER_GATEWAY } from "./tokens/auth.tokens";
+} from "@/auth/interfaces/oauth-provider-gateway.interface";
+import { OAUTH_PROVIDER_GATEWAY } from "@/auth/tokens/auth.tokens";
 
 @Injectable()
 export class AuthService implements IAuthService {

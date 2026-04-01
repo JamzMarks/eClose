@@ -1,10 +1,11 @@
-import { Body, Controller, Param, Patch, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Inject, Param, Patch, Post, UseGuards } from "@nestjs/common";
 import { CurrentUser } from "@/infrastructure/http/decorators/current-user.decorator";
 import { PrivateRoute } from "@/infrastructure/http/metadata/private-route.metadata";
 import { BookingInquiryCounterpartHttpGuard } from "@/infrastructure/http/guards/booking-inquiry-counterpart.http.guard";
 import { BookingInquiryRequesterHttpGuard } from "@/infrastructure/http/guards/booking-inquiry-requester.http.guard";
 import type { JwtValidatedUser } from "@/auth/strategies/jwt.strategy";
-import { BookingService } from "./booking.service";
+import { IBookingService } from "./interfaces/booking.service.interface";
+import { BOOKING_SERVICE } from "./tokens/booking.tokens";
 import { ConfirmBookingDatesDto } from "./dto/confirm-booking-dates.dto";
 import { CreateBookingInquiryDto } from "./dto/create-booking-inquiry.dto";
 import { CreateEventFromBookingDto } from "./dto/create-event-from-booking.dto";
@@ -14,7 +15,7 @@ import { ProposeBookingDatesDto } from "./dto/propose-booking-dates.dto";
 @Controller("booking")
 @PrivateRoute()
 export class BookingController {
-  constructor(private readonly booking: BookingService) {}
+  constructor(@Inject(BOOKING_SERVICE) private readonly booking: IBookingService) {}
 
   @Post("inquiries")
   createInquiry(@CurrentUser() user: JwtValidatedUser, @Body() dto: CreateBookingInquiryDto) {

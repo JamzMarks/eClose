@@ -18,15 +18,16 @@ import { INotificationService } from "@/notification/interfaces/notification.int
 import { NOTIFICATION_SERVICE } from "@/notification/tokens/notification.tokens";
 import { NotificationType } from "@/notification/types/notification.type";
 import { ID_GENERATOR, IdGenerator } from "@/shared/contracts/id-generator";
-import { SocialUser } from "./entity/social-user.entity";
-import { CreateUserDto } from "./dto/create-user.dto";
-import { QuickSignupDto } from "./dto/quick-signup.dto";
-import { UpdateNotificationPreferencesDto } from "./dto/update-notification-preferences.dto";
-import { UpdatePushTokensDto } from "./dto/update-push-tokens.dto";
-import { applySocialUserToRow, socialUserFromRow } from "./infrastructure/user.orm-mapper";
+import { SocialUser } from "@/user/entity/social-user.entity";
+import { CreateUserDto } from "@/user/dto/create-user.dto";
+import { QuickSignupDto } from "@/user/dto/quick-signup.dto";
+import { UpdateNotificationPreferencesDto } from "@/user/dto/update-notification-preferences.dto";
+import { UpdatePushTokensDto } from "@/user/dto/update-push-tokens.dto";
+import { applySocialUserToRow, socialUserFromRow } from "@/user/infrastructure/user.orm-mapper";
+import { IUserService } from "@/user/interfaces/user.service.interface";
 
 @Injectable()
-export class UserService {
+export class UserService implements IUserService {
   constructor(
     @InjectRepository(UserOrmEntity)
     private readonly users: Repository<UserOrmEntity>,

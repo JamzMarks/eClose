@@ -11,7 +11,7 @@ import {
   MarketplaceArtistCard,
   MarketplaceVenueCard,
   Paginated,
-} from "./interfaces/marketplace.service.interface";
+} from "@/marketplace/interfaces/marketplace.service.interface";
 
 @Injectable()
 export class MarketplaceService implements IMarketplaceService {

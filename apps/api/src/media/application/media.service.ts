@@ -10,20 +10,20 @@ import { randomUUID } from "crypto";
 import { Repository } from "typeorm";
 import { OutboxEventOrmEntity } from "@/media/infrastructure/persistence/outbox-event.orm-entity";
 import { ID_GENERATOR, IdGenerator } from "@/shared/contracts/id-generator";
-import { MediaAsset } from "./entity/media-asset.entity";
-import { RegisterMediaAssetDto } from "./dto/register-media-asset.dto";
-import { RequestUploadIntentDto } from "./dto/request-upload-intent.dto";
-import { IMediaRepository } from "./interfaces/media.repository.interface";
-import { IMediaService } from "./interfaces/media.service.interface";
+import { MediaAsset } from "@/media/entity/media-asset.entity";
+import { RegisterMediaAssetDto } from "@/media/dto/register-media-asset.dto";
+import { RequestUploadIntentDto } from "@/media/dto/request-upload-intent.dto";
+import { IMediaRepository } from "@/media/interfaces/media.repository.interface";
+import { IMediaService } from "@/media/interfaces/media.service.interface";
 import {
   getAllowedImageMimes,
   MEDIA_PROCESSING_PENDING,
   MEDIA_PROCESSING_READY,
-} from "./media.constants";
-import { MEDIA_REPOSITORY } from "./tokens/media.tokens";
-import { MediaKind } from "./types/media-kind.type";
-import { MediaParentType } from "./types/media-parent-type.type";
-import { SignedUploadIntentResult } from "./types/signed-upload-intent.type";
+} from "@/media/media.constants";
+import { MEDIA_REPOSITORY } from "@/media/tokens/media.tokens";
+import { MediaKind } from "@/media/types/media-kind.type";
+import { MediaParentType } from "@/media/types/media-parent-type.type";
+import { SignedUploadIntentResult } from "@/media/types/signed-upload-intent.type";
 
 @Injectable()
 export class MediaService implements IMediaService {
