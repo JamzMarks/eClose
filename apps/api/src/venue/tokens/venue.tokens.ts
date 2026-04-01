@@ -1,0 +1,2 @@
+export const VENUE_REPOSITORY = "VENUE_REPOSITORY";
+export const VENUE_SERVICE = "VENUE_SERVICE";

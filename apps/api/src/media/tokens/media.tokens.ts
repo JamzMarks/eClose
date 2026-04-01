@@ -1,0 +1,2 @@
+export const MEDIA_REPOSITORY = "MEDIA_REPOSITORY";
+export const MEDIA_SERVICE = "MEDIA_SERVICE";

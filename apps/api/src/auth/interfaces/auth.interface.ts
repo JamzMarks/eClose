@@ -1,11 +1,16 @@
 import { MfaSetupDto } from "../dto/mfa-setup.dto";
 import { SignInDto } from "../dto/signin.dto";
 import { SignUpDto } from "../dto/signup.dto";
-import { UserProfileDto } from "./dto/user-profile.dto";
+import { UserProfileDto } from "../dto/user-profile.dto";
+import { OAuthCallbackDto } from "../dto/oauth-callback.dto";
+import { OAuthStartDto } from "../dto/oauth-start.dto";
+import { OAuthAuthorizeResult } from "./oauth-provider-gateway.interface";
 
 export interface AuthResponse {
   accessToken: string;
   refreshToken?: string;
+  tokenType?: "Bearer";
+  expiresIn?: number;
 }
 
 export interface IAuthService {
@@ -15,6 +20,10 @@ export interface IAuthService {
   refreshToken(refreshToken: string): Promise<AuthResponse>;
   logout(userId: string): Promise<void>;
   me(userId: string): Promise<UserProfileDto>;
+
+  // OAuth2 / OpenID (delegação ao gateway; infra de providers fica fora do domínio)
+  startOAuthLogin(dto: OAuthStartDto): Promise<OAuthAuthorizeResult>;
+  completeOAuthLogin(dto: OAuthCallbackDto): Promise<AuthResponse>;
 
   // sessão
   revokeToken(token: string): Promise<void>;

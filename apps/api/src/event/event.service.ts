@@ -1,0 +1,171 @@
+import {
+  BadRequestException,
+  ConflictException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
+import { ID_GENERATOR, IdGenerator } from "@/shared/contracts/id-generator";
+import { ITaxonomyService } from "@/taxonomy/interfaces/taxonomy.service.interface";
+import { TAXONOMY_SERVICE } from "@/taxonomy/tokens/taxonomy.tokens";
+import { TaxonomyKind } from "@/taxonomy/types/taxonomy-kind.type";
+import { IVenueRepository } from "@/venue/interfaces/venue.repository.interface";
+import { VENUE_REPOSITORY } from "@/venue/tokens/venue.tokens";
+import { ICalendarService } from "@/calendar/interfaces/calendar.service.interface";
+import { CALENDAR_SERVICE } from "@/calendar/tokens/calendar.tokens";
+import { IArtistRepository } from "@/artist/interfaces/artist.repository.interface";
+import { ARTIST_REPOSITORY } from "@/artist/tokens/artist.tokens";
+import { Event } from "./entity/event.entity";
+import { IEventMediaPort } from "./interfaces/event-media.port.interface";
+import { EVENT_MEDIA_PORT } from "./tokens/event-media.tokens";
+import { CreateEventDto } from "./dto/create-event.dto";
+import { EventAdhocAddress } from "./types/event-adhoc-address.type";
+import { IEventRepository } from "./interfaces/event.repository.interface";
+import { IEventService } from "./interfaces/event.service.interface";
+import { EVENT_REPOSITORY } from "./tokens/event.tokens";
+import { EventLocationMode } from "./types/event-location-mode.type";
+import { EventStatus } from "./types/event-status.type";
+
+@Injectable()
+export class EventService implements IEventService {
+  constructor(
+    @Inject(ID_GENERATOR) private readonly ids: IdGenerator,
+    @Inject(EVENT_REPOSITORY) private readonly events: IEventRepository,
+    @Inject(VENUE_REPOSITORY) private readonly venues: IVenueRepository,
+    @Inject(TAXONOMY_SERVICE) private readonly taxonomy: ITaxonomyService,
+    @Inject(EVENT_MEDIA_PORT) private readonly eventMedia: IEventMediaPort,
+    @Inject(CALENDAR_SERVICE) private readonly calendar: ICalendarService,
+    @Inject(ARTIST_REPOSITORY) private readonly artists: IArtistRepository,
+  ) {}
+
+  async create(dto: CreateEventDto): Promise<Event> {
+    const slugTaken = await this.events.findBySlug(dto.slug);
+    if (slugTaken) throw new ConflictException("Slug de evento já em uso");
+
+    if (dto.locationMode === EventLocationMode.ONLINE && dto.venueId) {
+      throw new BadRequestException("Evento online não deve incluir venueId");
+    }
+
+    if (dto.locationMode === EventLocationMode.ONLINE && !dto.onlineUrl?.trim()) {
+      throw new BadRequestException("Evento online exige onlineUrl");
+    }
+    if (dto.locationMode === EventLocationMode.HYBRID && !dto.onlineUrl?.trim()) {
+      throw new BadRequestException("Evento híbrido exige onlineUrl");
+    }
+
+    const status = dto.status ?? EventStatus.DRAFT;
+    if (
+      status === EventStatus.PUBLISHED &&
+      dto.locationMode === EventLocationMode.PHYSICAL &&
+      !dto.venueId
+    ) {
+      const hasInformal =
+        dto.locationLabel?.trim() ||
+        dto.locationNotes?.trim() ||
+        dto.description?.trim() ||
+        dto.adhocAddress?.line1?.trim() ||
+        dto.adhocAddress?.city?.trim();
+      if (!hasInformal) {
+        throw new BadRequestException(
+          "Evento presencial publicado sem venue precisa de local informal: locationLabel, locationNotes, descrição ou adhocAddress",
+        );
+      }
+    }
+
+    if (
+      (dto.locationMode === EventLocationMode.PHYSICAL ||
+        dto.locationMode === EventLocationMode.HYBRID) &&
+      dto.venueId
+    ) {
+      const venue = await this.venues.findById(dto.venueId);
+      if (!venue) throw new NotFoundException("Venue não encontrado");
+      if (!venue.isActive) throw new BadRequestException("Venue inativo");
+    }
+
+    const termIds = dto.taxonomyTermIds ?? [];
+    await this.taxonomy.assertTermsValid(termIds, [
+      TaxonomyKind.EVENT_TYPE,
+      TaxonomyKind.INTEREST,
+      TaxonomyKind.GENRE,
+    ]);
+
+    const organizer = await this.artists.findById(dto.organizerArtistId);
+    if (!organizer) throw new NotFoundException("Artista organizador não encontrado");
+    if (!organizer.isActive) throw new BadRequestException("Artista organizador inativo");
+
+    const startsAt = new Date(dto.startsAt);
+    const endsAt = new Date(dto.endsAt);
+    if (Number.isNaN(startsAt.getTime()) || Number.isNaN(endsAt.getTime())) {
+      throw new BadRequestException("Datas inválidas");
+    }
+
+    if (status === EventStatus.PUBLISHED) {
+      await this.calendar.validateNoConflictForPublish({
+        organizerArtistId: dto.organizerArtistId,
+        venueId: dto.venueId ?? null,
+        startsAt,
+        endsAt,
+      });
+    }
+
+    let event: Event;
+    try {
+      event = Event.create({
+        id: this.ids.generate(),
+        title: dto.title,
+        slug: dto.slug,
+        description: dto.description ?? null,
+        locationMode: dto.locationMode,
+        venueId: dto.venueId ?? null,
+        onlineUrl: dto.onlineUrl ?? null,
+        locationLabel: dto.locationLabel ?? null,
+        locationNotes: dto.locationNotes ?? null,
+        adhocAddress: EventService.mapAdhocAddress(dto),
+        startsAt,
+        endsAt,
+        timezone: dto.timezone,
+        organizerArtistId: dto.organizerArtistId,
+        taxonomyTermIds: termIds,
+        primaryMediaAssetId: null,
+        status: dto.status,
+      });
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Dados do evento inválidos";
+      throw new BadRequestException(msg);
+    }
+
+    await this.events.save(event);
+    return event;
+  }
+
+  async getById(id: string): Promise<Event | null> {
+    return this.events.findById(id);
+  }
+
+  async linkPrimaryMedia(eventId: string, mediaAssetId: string): Promise<Event> {
+    const event = await this.events.findById(eventId);
+    if (!event) throw new NotFoundException("Evento não encontrado");
+
+    await this.eventMedia.assertAndSetPrimary(eventId, mediaAssetId);
+
+    event.setPrimaryMediaAssetId(mediaAssetId);
+    await this.events.save(event);
+    return event;
+  }
+
+  private static mapAdhocAddress(dto: CreateEventDto): EventAdhocAddress | null {
+    const a = dto.adhocAddress;
+    if (!a) return null;
+    return {
+      line1: a.line1 ?? null,
+      line2: a.line2 ?? null,
+      city: a.city ?? null,
+      region: a.region ?? null,
+      countryCode: a.countryCode ?? null,
+      postalCode: a.postalCode ?? null,
+      geoLat: a.geoLat ?? null,
+      geoLng: a.geoLng ?? null,
+      externalPlaceRef: a.externalPlaceRef ?? null,
+    };
+  }
+}

@@ -1,9 +1,16 @@
-import { CommunicationChannel } from '../types/communication-channel.type';
-import { IsEnum, IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator';
-import { NotificationType } from '../types/notification.type';
+import { CommunicationChannel } from "../types/communication-channel.type";
+import {
+  IsArray,
+  IsEmail,
+  IsEnum,
+  IsNotEmpty,
+  IsObject,
+  IsOptional,
+  IsString,
+} from "class-validator";
+import { NotificationType } from "../types/notification.type";
 
 export class SendNotificationDto {
-
   @IsNotEmpty()
   @IsString()
   userId: string;
@@ -14,7 +21,7 @@ export class SendNotificationDto {
 
   @IsOptional()
   @IsEnum(CommunicationChannel)
-  channel?: CommunicationChannel; 
+  channel?: CommunicationChannel;
 
   @IsNotEmpty()
   @IsString()
@@ -26,5 +33,31 @@ export class SendNotificationDto {
 
   @IsOptional()
   @IsObject()
-  data?: Record<string, any>; 
+  data?: Record<string, unknown>;
+
+  /** Quando o resolver de usuário ainda não tem dados (MVP) ou envio pontual */
+  @IsOptional()
+  @IsEmail()
+  toEmail?: string;
+
+  @IsOptional()
+  @IsString()
+  toPhone?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  pushTokens?: string[];
+
+  @IsOptional()
+  @IsString()
+  templateId?: string;
+
+  @IsOptional()
+  @IsString()
+  templateVersion?: string;
+
+  @IsOptional()
+  @IsString()
+  htmlBody?: string;
 }

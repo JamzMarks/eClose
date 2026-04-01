@@ -1,4 +1,4 @@
-import { IdGenerator } from "@/shared/domain/interfaces/id-generator.interface";
+import { IdGenerator } from "@/shared/contracts/id-generator";
 
 export class UuidGenerator implements IdGenerator {
     generate(): string {

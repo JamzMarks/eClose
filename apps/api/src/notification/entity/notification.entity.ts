@@ -2,32 +2,52 @@ import { CommunicationChannel } from "../types/communication-channel.type";
 import { NotificationStatus } from "../types/notification-status.type";
 import { NotificationType } from "../types/notification.type";
 
-export class NotificationEntity {
+export type NewNotificationProps = {
+  id: string;
+  userId: string;
+  type: NotificationType;
+  channel: CommunicationChannel;
+  templateId?: string;
+  templateVersion?: string;
+  phoneNumber?: string;
+  title: string;
+  body: string;
+  data?: Record<string, unknown>;
+};
 
+type NotificationState = NewNotificationProps & {
+  status: NotificationStatus;
+  createdAt: Date;
+  sentAt?: Date;
+  deliveredAt?: Date;
+  externalId?: string;
+};
+
+export class NotificationEntity {
     id: string;
     userId: string;
     type: NotificationType;
     channel: CommunicationChannel;
-  
+
     templateId?: string;
     templateVersion?: string;
     phoneNumber?: string;
-  
+
     title: string;
     body: string;
-    data?: Record<string, any>;
-  
+    data?: Record<string, unknown>;
+
     status: NotificationStatus;
     createdAt: Date;
     sentAt?: Date;
     deliveredAt?: Date;
     externalId?: string;
-  
-    private constructor(props: NotificationEntity) {
+
+    private constructor(props: NotificationState) {
       Object.assign(this, props);
     }
-  
-    static create(props: Omit<NotificationEntity, 'status' | 'createdAt'>): NotificationEntity {
+
+    static create(props: NewNotificationProps): NotificationEntity {
   
       // regras gerais
       if (!props.userId) throw new Error('userId is required');
@@ -37,13 +57,8 @@ export class NotificationEntity {
       if (!props.body) throw new Error('body is required');
   
       // regras por canal
-      if (props.channel === 'email') {
-        if (!props.templateId) throw new Error('Email requires templateId');
-        if (!props.templateVersion) throw new Error('Email requires templateVersion');
-      }
-  
-      if (props.channel === 'sms') {
-        if (!props.phoneNumber) throw new Error('SMS requires phoneNumber');
+      if (props.channel === CommunicationChannel.SMS) {
+        if (!props.phoneNumber) throw new Error("SMS requer phoneNumber");
       }
   
   
