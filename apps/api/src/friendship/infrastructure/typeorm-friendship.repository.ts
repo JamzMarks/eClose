@@ -68,4 +68,30 @@ export class TypeormFriendshipRepository implements IFriendshipRepository {
   async remove(id: string): Promise<void> {
     await this.repo.delete({ id });
   }
+
+  async areFriends(aUserId: string, bUserId: string): Promise<boolean> {
+    const row = await this.findAcceptedBetween(aUserId, bUserId);
+    return !!row;
+  }
+
+  async removePendingBetween(aUserId: string, bUserId: string): Promise<void> {
+    await this.repo
+      .createQueryBuilder()
+      .delete()
+      .where("requester_id = :a AND addressee_id = :b AND status = :st", {
+        a: aUserId,
+        b: bUserId,
+        st: FriendRequestStatus.PENDING,
+      })
+      .execute();
+    await this.repo
+      .createQueryBuilder()
+      .delete()
+      .where("requester_id = :a AND addressee_id = :b AND status = :st", {
+        a: bUserId,
+        b: aUserId,
+        st: FriendRequestStatus.PENDING,
+      })
+      .execute();
+  }
 }

@@ -12,4 +12,6 @@ export interface IFriendshipRepository {
   listPendingIncoming(userId: string): Promise<FriendRequestOrmEntity[]>;
   listPendingOutgoing(userId: string): Promise<FriendRequestOrmEntity[]>;
   remove(id: string): Promise<void>;
+  areFriends(aUserId: string, bUserId: string): Promise<boolean>;
+  removePendingBetween(aUserId: string, bUserId: string): Promise<void>;
 }

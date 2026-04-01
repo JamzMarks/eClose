@@ -212,6 +212,22 @@ export class NotificationService implements INotificationService {
           body: "Um evento que segue foi publicado na eClose.",
         });
         break;
+      case DomainEventName.FRIEND_REQUEST_RECEIVED:
+        await this.sendNotification({
+          userId: notifyUserId,
+          type: NotificationType.FRIEND_REQUEST,
+          title: "Novo pedido de amizade",
+          body: "Recebeu um pedido de amizade na eClose.",
+        });
+        break;
+      case DomainEventName.FRIEND_REQUEST_ACCEPTED:
+        await this.sendNotification({
+          userId: notifyUserId,
+          type: NotificationType.FRIEND_ACCEPTED,
+          title: "Pedido de amizade aceite",
+          body: "O seu pedido de amizade foi aceite.",
+        });
+        break;
       default:
         this.log.debug(`Evento de domínio sem handler: ${event.name}`);
     }

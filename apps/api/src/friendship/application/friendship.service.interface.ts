@@ -9,4 +9,8 @@ export interface IFriendshipService {
   listPendingIncoming(userId: string): Promise<FriendRequestOrmEntity[]>;
   listPendingOutgoing(userId: string): Promise<FriendRequestOrmEntity[]>;
   unfriend(userId: string, friendUserId: string): Promise<void>;
+  areFriends(aUserId: string, bUserId: string): Promise<boolean>;
+  blockUser(blockerUserId: string, blockedUserId: string): Promise<void>;
+  unblockUser(blockerUserId: string, blockedUserId: string): Promise<void>;
+  listBlockedUserIds(userId: string): Promise<string[]>;
 }

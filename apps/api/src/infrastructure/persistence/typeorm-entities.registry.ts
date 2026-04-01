@@ -14,6 +14,7 @@ import { TaxonomyTermOrmEntity } from "@/taxonomy/infrastructure/persistence/tax
 import { UserOrmEntity } from "@/user/infrastructure/persistence/user.orm-entity";
 import { VenueOrmEntity } from "@/venue/infrastructure/persistence/venue.orm-entity";
 import { FriendRequestOrmEntity } from "@/friendship/infrastructure/persistence/friend-request.orm-entity";
+import { UserBlockOrmEntity } from "@/friendship/infrastructure/persistence/user-block.orm-entity";
 import { PostOrmEntity } from "@/post/infrastructure/persistence/post.orm-entity";
 
 /** Registro da composição: cada entidade vive no bounded context correspondente. */
@@ -34,5 +35,6 @@ export const ALL_TYPEORM_ENTITIES = [
   BookingInquiryOrmEntity,
   OutboxEventOrmEntity,
   FriendRequestOrmEntity,
+  UserBlockOrmEntity,
   PostOrmEntity,
 ];

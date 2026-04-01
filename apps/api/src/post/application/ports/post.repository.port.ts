@@ -12,4 +12,10 @@ export interface IPostRepository {
     limit: number,
     offset: number,
   ): Promise<{ items: PostOrmEntity[]; total: number }>;
+  /** Feed agregado: GLOBAL + PROFILE de amigos + EVENT publicado de amigos-organizadores */
+  listFriendsFeed(
+    friendUserIds: string[],
+    limit: number,
+    offset: number,
+  ): Promise<{ items: PostOrmEntity[]; total: number }>;
 }

@@ -8,6 +8,7 @@ import { Initial1730200000000 } from "./infrastructure/persistence/migrations/17
 import { FeaturesPhases2To61740100000000 } from "./infrastructure/persistence/migrations/1740100000000-FeaturesPhases2To6";
 import { BookingRequesterOrganizerArtist1740200000000 } from "./infrastructure/persistence/migrations/1740200000000-BookingRequesterOrganizerArtist";
 import { SocialFriendshipAndPosts1740300000000 } from "./infrastructure/persistence/migrations/1740300000000-SocialFriendshipAndPosts";
+import { UserBlocks1740400000000 } from "./infrastructure/persistence/migrations/1740400000000-UserBlocks";
 import { PrivateJwtAuthGuard } from "./infrastructure/http/guards/private-jwt-auth.guard";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
@@ -45,6 +46,7 @@ import { PostModule } from "./post/post.module";
             FeaturesPhases2To61740100000000,
             BookingRequesterOrganizerArtist1740200000000,
             SocialFriendshipAndPosts1740300000000,
+            UserBlocks1740400000000,
           ],
           migrationsRun: process.env.TYPEORM_RUN_MIGRATIONS === "true",
           namingStrategy: new SnakeNamingStrategy(),

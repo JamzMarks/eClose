@@ -6,4 +6,6 @@ export const DomainEventName = {
   BOOKING_DECLINED: "booking.declined",
   BOOKING_CANCELLED: "booking.cancelled",
   EVENT_PUBLISHED: "event.published",
+  FRIEND_REQUEST_RECEIVED: "friendship.request_received",
+  FRIEND_REQUEST_ACCEPTED: "friendship.request_accepted",
 } as const;

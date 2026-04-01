@@ -20,6 +20,11 @@ import {
   participantRefKey,
 } from "@/chat/types/chat-participant-ref.type";
 import { ConversationKind } from "@/chat/types/conversation-kind.type";
+import { ChatEntityType } from "@/chat/types/chat-entity-type.type";
+import {
+  USER_BLOCK_REPOSITORY,
+  IUserBlockRepository,
+} from "@/friendship/application/ports/user-block.repository.port";
 
 @Injectable()
 export class ChatService implements IChatService {
@@ -29,7 +34,26 @@ export class ChatService implements IChatService {
     private readonly conversations: IChatConversationRepository,
     @Inject(CHAT_MESSAGE_REPOSITORY)
     private readonly messages: IChatMessageRepository,
+    @Inject(USER_BLOCK_REPOSITORY)
+    private readonly userBlocks: IUserBlockRepository,
   ) {}
+
+  private async assertDirectUserPairNotBlocked(a: ChatParticipantRef, b: ChatParticipantRef): Promise<void> {
+    if (a.entityType !== ChatEntityType.USER || b.entityType !== ChatEntityType.USER) {
+      return;
+    }
+    if (await this.userBlocks.existsBetween(a.entityId, b.entityId)) {
+      throw new ForbiddenException("Bloqueio impede esta conversa direta");
+    }
+  }
+
+  private async assertDirectConversationNotBlocked(conversation: Conversation): Promise<void> {
+    if (conversation.kind !== ConversationKind.DIRECT) return;
+    const users = conversation.participantRefs.filter((p) => p.entityType === ChatEntityType.USER);
+    if (users.length === 2) {
+      await this.assertDirectUserPairNotBlocked(users[0], users[1]);
+    }
+  }
 
   async getOrCreateDirectConversation(
     a: ChatParticipantRef,
@@ -39,7 +63,11 @@ export class ChatService implements IChatService {
       throw new BadRequestException("Conversa direta requer dois participantes distintos");
     }
     const existing = await this.conversations.findDirectByParticipants(a, b);
-    if (existing) return existing;
+    if (existing) {
+      await this.assertDirectConversationNotBlocked(existing);
+      return existing;
+    }
+    await this.assertDirectUserPairNotBlocked(a, b);
     const conversation = Conversation.createDirect({
       id: this.idGenerator.generate(),
       participantRefs: [a, b],
@@ -91,6 +119,7 @@ export class ChatService implements IChatService {
     if (!conversation.hasParticipant(author)) {
       throw new ForbiddenException("Autor não participa desta conversa");
     }
+    await this.assertDirectConversationNotBlocked(conversation);
     const message = Message.create({
       id: this.idGenerator.generate(),
       conversationId,
@@ -116,6 +145,7 @@ export class ChatService implements IChatService {
     if (!conversation.hasParticipant(actor)) {
       throw new ForbiddenException("Participante não pertence à conversa");
     }
+    await this.assertDirectConversationNotBlocked(conversation);
     const before = options?.before ? new Date(options.before) : undefined;
     if (options?.before && Number.isNaN(before!.getTime())) {
       throw new BadRequestException("Parâmetro before inválido (use ISO-8601)");

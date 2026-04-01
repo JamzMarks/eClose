@@ -11,9 +11,13 @@ import {
   CHAT_MESSAGE_REPOSITORY,
   CHAT_SERVICE,
 } from "./tokens/chat.tokens";
+import { FriendshipModule } from "@/friendship/friendship.module";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ConversationOrmEntity, MessageOrmEntity])],
+  imports: [
+    TypeOrmModule.forFeature([ConversationOrmEntity, MessageOrmEntity]),
+    FriendshipModule,
+  ],
   controllers: [ChatController],
   providers: [
     {

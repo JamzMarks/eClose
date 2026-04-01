@@ -5,6 +5,7 @@ import {
   Get,
   Inject,
   Param,
+  ParseUUIDPipe,
   Patch,
   Post,
 } from "@nestjs/common";
@@ -12,6 +13,7 @@ import { CurrentUser } from "@/infrastructure/http/decorators/current-user.decor
 import { PrivateRoute } from "@/infrastructure/http/metadata/private-route.metadata";
 import type { JwtValidatedUser } from "@/auth/strategies/jwt.strategy";
 import { SendFriendRequestDto } from "@/friendship/application/dto/send-friend-request.dto";
+import { BlockUserDto } from "@/friendship/application/dto/block-user.dto";
 import { IFriendshipService } from "@/friendship/application/friendship.service.interface";
 import { FRIENDSHIP_SERVICE } from "@/friendship/tokens/friendship.tokens";
 
@@ -37,6 +39,24 @@ export class FriendshipController {
     return this.friendships.listPendingOutgoing(user.id);
   }
 
+  @Post("blocks")
+  block(@CurrentUser() user: JwtValidatedUser, @Body() dto: BlockUserDto) {
+    return this.friendships.blockUser(user.id, dto.blockedUserId);
+  }
+
+  @Get("blocks")
+  listBlocks(@CurrentUser() user: JwtValidatedUser) {
+    return this.friendships.listBlockedUserIds(user.id);
+  }
+
+  @Delete("blocks/:blockedUserId")
+  unblock(
+    @CurrentUser() user: JwtValidatedUser,
+    @Param("blockedUserId", new ParseUUIDPipe()) blockedUserId: string,
+  ) {
+    return this.friendships.unblockUser(user.id, blockedUserId);
+  }
+
   @Patch("requests/:id/accept")
   accept(@CurrentUser() user: JwtValidatedUser, @Param("id") id: string) {
     return this.friendships.acceptRequest(user.id, id);
@@ -58,7 +78,10 @@ export class FriendshipController {
   }
 
   @Delete(":friendUserId")
-  unfriend(@CurrentUser() user: JwtValidatedUser, @Param("friendUserId") friendUserId: string) {
+  unfriend(
+    @CurrentUser() user: JwtValidatedUser,
+    @Param("friendUserId", new ParseUUIDPipe()) friendUserId: string,
+  ) {
     return this.friendships.unfriend(user.id, friendUserId);
   }
 }

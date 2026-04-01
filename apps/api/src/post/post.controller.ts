@@ -18,13 +18,26 @@ export class PostController {
     return this.posts.create(user.id, dto);
   }
 
-  /** Leitura por âncora: pode evoluir para público parcial por scope. */
+  @Get("feed/friends")
+  @PrivateRoute()
+  friendsFeed(
+    @CurrentUser() user: JwtValidatedUser,
+    @Query("page") page?: string,
+    @Query("limit") limit?: string,
+  ) {
+    return this.posts.listFriendsFeed(
+      user.id,
+      page ? parseInt(page, 10) : undefined,
+      limit ? parseInt(limit, 10) : undefined,
+    );
+  }
+
   @Get()
   @PrivateRoute()
-  list(@Query() query: ListPostsQueryDto) {
+  list(@CurrentUser() user: JwtValidatedUser, @Query() query: ListPostsQueryDto) {
     const scopeId =
       query.scopeType === PostScopeType.GLOBAL_FEED ? null : query.scopeId ?? null;
-    return this.posts.listByScope(query.scopeType, scopeId, query.page, query.limit);
+    return this.posts.listByScope(user.id, query.scopeType, scopeId, query.page, query.limit);
   }
 
   @Delete(":id")
