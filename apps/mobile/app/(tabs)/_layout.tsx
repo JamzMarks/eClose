@@ -1,18 +1,18 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { HapticTab } from '@/components/haptic-tab';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { AppIcon } from '@/components/ui/icon/icon.types';
 import { Icon } from '@/components/ui/icon/icon';
 import { useTranslation } from 'react-i18next';
-
+import { OnboardingSetupProvider } from '@/contexts/onboarding-setup-context';
 
 export default function TabLayout() {
   const { t } = useTranslation('tabs');
   const colorScheme = useColorScheme();
 
   return (
+    <OnboardingSetupProvider>
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
@@ -100,5 +100,6 @@ export default function TabLayout() {
         }}
       />
     </Tabs>
+    </OnboardingSetupProvider>
   );
 }

@@ -1,6 +1,12 @@
 {
-  "posts": "Posts",
-  "followers": "Seguidores",
-  "following": "Seguindo",
-  "editProfile": "Editar perfil"
+  "posts": "publicações",
+  "followers": "seguidores",
+  "following": "a seguir",
+  "editProfile": "Editar perfil",
+  "signOut": "Terminar sessão",
+  "cancel": "Cancelar",
+  "menuTitle": "Conta",
+  "nameFallback": "Conta eClose",
+  "bioPlaceholder": "Eventos · música · comunidade",
+  "emptyPosts": "Ainda não tens publicações. Quando partilhares algo, aparece aqui."
 }

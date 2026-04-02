@@ -1,0 +1,13 @@
+{
+  "title": "Continuar configuração",
+  "subtitle": "Escolhe como queres receber atualizações da eClose. Podes alterar isto mais tarde no perfil.",
+  "channelEmail": "Notificações por e-mail",
+  "channelPush": "Notificações push",
+  "channelSms": "SMS",
+  "save": "Guardar",
+  "skip": "Agora não",
+  "hint": "Os teus dados são tratados de acordo com a nossa política de privacidade.",
+  "loadError": "Não foi possível carregar as preferências.",
+  "saveError": "Não foi possível guardar.",
+  "openFromProfile": "Notificações e privacidade"
+}

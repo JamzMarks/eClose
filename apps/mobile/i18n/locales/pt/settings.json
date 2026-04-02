@@ -1,0 +1,20 @@
+{
+  "title": "Definições",
+  "openSettingsA11y": "Abrir definições",
+  "sectionAccount": "Conta",
+  "sectionGeneral": "Geral",
+  "sectionSession": "Sessão",
+  "emailLabel": "E-mail",
+  "notifications": "Notificações e privacidade",
+  "appearance": "Aparência",
+  "appearanceHint": "Em breve",
+  "language": "Idioma",
+  "languageHint": "Em breve",
+  "about": "Sobre o eClose",
+  "aboutHint": "Em breve",
+  "signOut": "Terminar sessão",
+  "signOutConfirmTitle": "Terminar sessão?",
+  "signOutConfirmMessage": "Vais precisar de voltar a iniciar sessão para aceder à conta.",
+  "signOutConfirmAction": "Sair",
+  "cancel": "Cancelar"
+}
