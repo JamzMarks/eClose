@@ -1,4 +1,4 @@
-import { Event } from "@/event/entity/event.entity";
+import { Event } from "@/event/domain/entity/event.entity";
 
 export type CalendarRangeQuery = {
   fromIso: string;

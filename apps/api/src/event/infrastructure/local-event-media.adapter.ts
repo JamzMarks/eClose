@@ -2,7 +2,7 @@ import { Inject, Injectable } from "@nestjs/common";
 import { IMediaService } from "@/media/interfaces/media.service.interface";
 import { MEDIA_SERVICE } from "@/media/tokens/media.tokens";
 import { MediaParentType } from "@/media/types/media-parent-type.type";
-import { IEventMediaPort } from "../interfaces/event-media.port.interface";
+import { IEventMediaPort } from "@/event/application/ports/event-media.port.interface";
 
 @Injectable()
 export class LocalEventMediaAdapter implements IEventMediaPort {

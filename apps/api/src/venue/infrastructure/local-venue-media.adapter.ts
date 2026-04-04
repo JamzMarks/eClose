@@ -2,7 +2,7 @@ import { Inject, Injectable } from "@nestjs/common";
 import { IMediaService } from "@/media/interfaces/media.service.interface";
 import { MEDIA_SERVICE } from "@/media/tokens/media.tokens";
 import { MediaParentType } from "@/media/types/media-parent-type.type";
-import { IVenueMediaPort } from "../interfaces/venue-media.port.interface";
+import { IVenueMediaPort } from "@/venue/application/ports/venue-media.port.interface";
 
 @Injectable()
 export class LocalVenueMediaAdapter implements IVenueMediaPort {

@@ -8,10 +8,10 @@ import {
   EXTERNAL_CALENDAR_PORT,
   ExternalCalendarPort,
 } from "@/calendar/application/ports/external-calendar.port";
-import { Event } from "@/event/entity/event.entity";
-import { IEventRepository } from "@/event/interfaces/event.repository.interface";
-import { EVENT_REPOSITORY } from "@/event/tokens/event.tokens";
-import { EventStatus } from "@/event/types/event-status.type";
+import { Event } from "@/event/domain/entity/event.entity";
+import { IEventRepository } from "@/event/application/ports/event.repository.interface";
+import { EVENT_REPOSITORY } from "@/event/application/tokens/event.tokens";
+import { EventStatus } from "@/event/domain/types/event-status.type";
 import {
   CalendarRangeQuery,
   ICalendarService,

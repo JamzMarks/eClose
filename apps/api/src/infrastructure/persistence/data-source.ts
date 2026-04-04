@@ -7,6 +7,9 @@ import { FeaturesPhases2To61740100000000 } from "./migrations/1740100000000-Feat
 import { BookingRequesterOrganizerArtist1740200000000 } from "./migrations/1740200000000-BookingRequesterOrganizerArtist";
 import { SocialFriendshipAndPosts1740300000000 } from "./migrations/1740300000000-SocialFriendshipAndPosts";
 import { UserBlocks1740400000000 } from "./migrations/1740400000000-UserBlocks";
+import { UserFirstLastNames1740500000000 } from "./migrations/1740500000000-UserFirstLastNames";
+import { ProfileNamesAcknowledgedAt1740600000000 } from "./migrations/1740600000000-ProfileNamesAcknowledgedAt";
+import { RenameDisplayNameToUsername1740700000000 } from "./migrations/1740700000000-RenameDisplayNameToUsername";
 import { SnakeNamingStrategy } from "./snake-naming.strategy";
 import { ALL_TYPEORM_ENTITIES } from "./typeorm-entities.registry";
 
@@ -22,6 +25,9 @@ export default new DataSource({
     BookingRequesterOrganizerArtist1740200000000,
     SocialFriendshipAndPosts1740300000000,
     UserBlocks1740400000000,
+    UserFirstLastNames1740500000000,
+    ProfileNamesAcknowledgedAt1740600000000,
+    RenameDisplayNameToUsername1740700000000,
   ],
   namingStrategy: new SnakeNamingStrategy(),
   logging: process.env.TYPEORM_LOGGING === "true",

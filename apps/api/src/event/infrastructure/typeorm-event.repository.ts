@@ -3,11 +3,14 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { EventOrmEntity } from "@/event/infrastructure/persistence/event.orm-entity";
 import { VenueOrmEntity } from "@/venue/infrastructure/persistence/venue.orm-entity";
-import { Event } from "../entity/event.entity";
-import { IEventRepository, ListPublishedEventsParams } from "../interfaces/event.repository.interface";
-import { EventAdhocAddress } from "../types/event-adhoc-address.type";
-import { EventLocationMode } from "../types/event-location-mode.type";
-import { EventStatus } from "../types/event-status.type";
+import { Event } from "@/event/domain/entity/event.entity";
+import {
+  IEventRepository,
+  ListPublishedEventsParams,
+} from "@/event/application/ports/event.repository.interface";
+import { EventAdhocAddress } from "@/event/domain/types/event-adhoc-address.type";
+import { EventLocationMode } from "@/event/domain/types/event-location-mode.type";
+import { EventStatus } from "@/event/domain/types/event-status.type";
 
 @Injectable()
 export class TypeormEventRepository implements IEventRepository {

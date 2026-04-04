@@ -1,5 +1,5 @@
 import { Artist } from "@/artist/entity/artist.entity";
-import { Venue } from "@/venue/entity/venue.entity";
+import { Venue } from "@/venue/domain/entity/venue.entity";
 
 export type MarketplaceArtistCard = {
   artist: Artist;

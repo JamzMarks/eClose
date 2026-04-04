@@ -1,5 +1,5 @@
 import { Injectable, ServiceUnavailableException } from "@nestjs/common";
-import { IEventMediaPort } from "../interfaces/event-media.port.interface";
+import { IEventMediaPort } from "@/event/application/ports/event-media.port.interface";
 
 @Injectable()
 export class HttpEventMediaAdapter implements IEventMediaPort {

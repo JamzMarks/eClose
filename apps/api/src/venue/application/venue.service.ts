@@ -8,13 +8,13 @@ import { ID_GENERATOR, IdGenerator } from "@/shared/contracts/id-generator";
 import { ITaxonomyService } from "@/taxonomy/interfaces/taxonomy.service.interface";
 import { TAXONOMY_SERVICE } from "@/taxonomy/tokens/taxonomy.tokens";
 import { TaxonomyKind } from "@/taxonomy/types/taxonomy-kind.type";
-import { Venue } from "@/venue/entity/venue.entity";
-import { IVenueMediaPort } from "@/venue/interfaces/venue-media.port.interface";
-import { VENUE_MEDIA_PORT } from "@/venue/tokens/venue-media.tokens";
-import { CreateVenueDto } from "@/venue/dto/create-venue.dto";
-import { IVenueRepository } from "@/venue/interfaces/venue.repository.interface";
-import { IVenueService } from "@/venue/interfaces/venue.service.interface";
-import { VENUE_REPOSITORY } from "@/venue/tokens/venue.tokens";
+import { Venue } from "@/venue/domain/entity/venue.entity";
+import { IVenueMediaPort } from "@/venue/application/ports/venue-media.port.interface";
+import { VENUE_MEDIA_PORT } from "@/venue/application/tokens/venue-media.tokens";
+import { CreateVenueDto } from "@/venue/interface/http/dto/create-venue.dto";
+import { IVenueRepository } from "@/venue/application/ports/venue.repository.interface";
+import { IVenueService } from "@/venue/application/ports/venue.service.interface";
+import { VENUE_REPOSITORY } from "@/venue/application/tokens/venue.tokens";
 
 @Injectable()
 export class VenueService implements IVenueService {

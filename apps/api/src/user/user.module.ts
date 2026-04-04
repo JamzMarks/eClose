@@ -5,9 +5,9 @@ import { ArtistModule } from "@/artist/artist.module";
 import { VenueModule } from "@/venue/venue.module";
 import { NotificationModule } from "@/notification/notification.module";
 import { SelfUserHttpGuard } from "@/infrastructure/http/guards/self-user.http.guard";
-import { UserController } from "./user.controller";
+import { UserController } from "./interface/http/user.controller";
 import { UserService } from "./application/user.service";
-import { USER_SERVICE } from "./tokens/user.tokens";
+import { USER_SERVICE } from "./application/tokens/user.tokens";
 
 @Module({
   imports: [

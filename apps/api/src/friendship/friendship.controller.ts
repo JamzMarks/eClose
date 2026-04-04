@@ -11,7 +11,7 @@ import {
 } from "@nestjs/common";
 import { CurrentUser } from "@/infrastructure/http/decorators/current-user.decorator";
 import { PrivateRoute } from "@/infrastructure/http/metadata/private-route.metadata";
-import type { JwtValidatedUser } from "@/auth/strategies/jwt.strategy";
+import type { JwtValidatedUser } from "@/auth/infrastructure/passport/jwt.strategy";
 import { SendFriendRequestDto } from "@/friendship/application/dto/send-friend-request.dto";
 import { BlockUserDto } from "@/friendship/application/dto/block-user.dto";
 import { IFriendshipService } from "@/friendship/application/friendship.service.interface";

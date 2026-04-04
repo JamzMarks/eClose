@@ -2,9 +2,9 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { VenueOrmEntity } from "@/venue/infrastructure/persistence/venue.orm-entity";
-import { Venue, VenueAddress } from "../entity/venue.entity";
-import { IVenueRepository } from "../interfaces/venue.repository.interface";
-import { VenueOpeningSlot } from "../types/venue-opening-slot.type";
+import { Venue, VenueAddress } from "@/venue/domain/entity/venue.entity";
+import { IVenueRepository } from "@/venue/application/ports/venue.repository.interface";
+import { VenueOpeningSlot } from "@/venue/domain/types/venue-opening-slot.type";
 
 @Injectable()
 export class TypeormVenueRepository implements IVenueRepository {

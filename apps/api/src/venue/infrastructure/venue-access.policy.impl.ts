@@ -1,9 +1,9 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { AccessDeniedError } from "@/domain/errors/access-denied.error";
 import { ResourceNotFoundError } from "@/domain/errors/resource-not-found.error";
-import { IVenueRepository } from "../interfaces/venue.repository.interface";
-import { VENUE_REPOSITORY } from "../tokens/venue.tokens";
-import { VenueAccessPolicyPort } from "../application/ports/venue-access.policy.port";
+import { IVenueRepository } from "@/venue/application/ports/venue.repository.interface";
+import { VENUE_REPOSITORY } from "@/venue/application/tokens/venue.tokens";
+import { VenueAccessPolicyPort } from "@/venue/application/ports/venue-access.policy.port";
 
 @Injectable()
 export class VenueAccessPolicyImpl implements VenueAccessPolicyPort {

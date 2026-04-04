@@ -3,7 +3,7 @@ import { CurrentUser } from "@/infrastructure/http/decorators/current-user.decor
 import { PrivateRoute } from "@/infrastructure/http/metadata/private-route.metadata";
 import { BookingInquiryCounterpartHttpGuard } from "@/infrastructure/http/guards/booking-inquiry-counterpart.http.guard";
 import { BookingInquiryRequesterHttpGuard } from "@/infrastructure/http/guards/booking-inquiry-requester.http.guard";
-import type { JwtValidatedUser } from "@/auth/strategies/jwt.strategy";
+import type { JwtValidatedUser } from "@/auth/infrastructure/passport/jwt.strategy";
 import { IBookingService } from "./interfaces/booking.service.interface";
 import { BOOKING_SERVICE } from "./tokens/booking.tokens";
 import { ConfirmBookingDatesDto } from "./dto/confirm-booking-dates.dto";

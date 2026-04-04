@@ -11,7 +11,7 @@ import { AccessDeniedError } from "@/domain/errors/access-denied.error";
 import { ResourceNotFoundError } from "@/domain/errors/resource-not-found.error";
 import type { EventAccessPolicyPort } from "@/event/application/ports/event-access.policy.port";
 import { EVENT_ACCESS_POLICY } from "@/event/application/ports/event-access.policy.port";
-import type { JwtValidatedUser } from "@/auth/strategies/jwt.strategy";
+import type { JwtValidatedUser } from "@/auth/infrastructure/passport/jwt.strategy";
 
 @Injectable()
 export class EventResourceOrganizerHttpGuard implements CanActivate {

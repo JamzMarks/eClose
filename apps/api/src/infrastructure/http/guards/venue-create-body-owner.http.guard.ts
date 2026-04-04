@@ -9,7 +9,7 @@ import {
 import { AccessDeniedError } from "@/domain/errors/access-denied.error";
 import type { VenueAccessPolicyPort } from "@/venue/application/ports/venue-access.policy.port";
 import { VENUE_ACCESS_POLICY } from "@/venue/application/ports/venue-access.policy.port";
-import type { JwtValidatedUser } from "@/auth/strategies/jwt.strategy";
+import type { JwtValidatedUser } from "@/auth/infrastructure/passport/jwt.strategy";
 
 @Injectable()
 export class VenueCreateBodyOwnerHttpGuard implements CanActivate {

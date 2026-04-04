@@ -9,7 +9,7 @@ import {
 import { AccessDeniedError } from "@/domain/errors/access-denied.error";
 import type { ArtistAccessPolicyPort } from "@/artist/application/ports/artist-access.policy.port";
 import { ARTIST_ACCESS_POLICY } from "@/artist/application/ports/artist-access.policy.port";
-import type { JwtValidatedUser } from "@/auth/strategies/jwt.strategy";
+import type { JwtValidatedUser } from "@/auth/infrastructure/passport/jwt.strategy";
 
 @Injectable()
 export class ArtistCreateBodyOwnerHttpGuard implements CanActivate {

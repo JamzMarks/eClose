@@ -1,8 +1,8 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { IArtistRepository } from "@/artist/interfaces/artist.repository.interface";
 import { ARTIST_REPOSITORY } from "@/artist/tokens/artist.tokens";
-import { IVenueRepository } from "@/venue/interfaces/venue.repository.interface";
-import { VENUE_REPOSITORY } from "@/venue/tokens/venue.tokens";
+import { IVenueRepository } from "@/venue/application/ports/venue.repository.interface";
+import { VENUE_REPOSITORY } from "@/venue/application/tokens/venue.tokens";
 import { IMediaService } from "@/media/interfaces/media.service.interface";
 import { MEDIA_SERVICE } from "@/media/tokens/media.tokens";
 import { MediaParentType } from "@/media/types/media-parent-type.type";

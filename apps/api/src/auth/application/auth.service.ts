@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  ForbiddenException,
   HttpException,
   HttpStatus,
   Inject,
@@ -11,30 +12,39 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { JwtService } from "@nestjs/jwt";
 import { randomUUID } from "crypto";
 import * as bcrypt from "bcrypt";
+import { ID_GENERATOR, IdGenerator } from "@/shared/contracts/id-generator";
 import { Repository } from "typeorm";
 import { OAuthAccountOrmEntity } from "@/auth/infrastructure/persistence/oauth-account.orm-entity";
 import { RefreshTokenOrmEntity } from "@/auth/infrastructure/persistence/refresh-token.orm-entity";
+import { IUserService } from "@/user/application/ports/user.service.interface";
+import { USER_SERVICE } from "@/user/application/tokens/user.tokens";
 import { UserOrmEntity } from "@/user/infrastructure/persistence/user.orm-entity";
-import { JWT_ACCESS_EXPIRES } from "@/auth/auth.constants";
-import { MfaSetupDto } from "@/auth/dto/mfa-setup.dto";
-import { OAuthCallbackDto } from "@/auth/dto/oauth-callback.dto";
-import { OAuthStartDto } from "@/auth/dto/oauth-start.dto";
-import { SignInDto } from "@/auth/dto/signin.dto";
-import { SignUpDto } from "@/auth/dto/signup.dto";
-import { UserProfileDto } from "@/auth/dto/user-profile.dto";
-import { IAuthService, AuthResponse } from "@/auth/interfaces/auth.interface";
+import { JWT_ACCESS_EXPIRES } from "@/auth/application/auth.constants";
+import { MfaSetupDto } from "@/auth/interface/http/dto/mfa-setup.dto";
+import { OAuthCallbackDto } from "@/auth/interface/http/dto/oauth-callback.dto";
+import { OAuthStartDto } from "@/auth/interface/http/dto/oauth-start.dto";
+import { SignInDto } from "@/auth/interface/http/dto/signin.dto";
+import { SignUpDto } from "@/auth/interface/http/dto/signup.dto";
+import { namesFromOAuthIdentity } from "@/auth/application/utils/names-from-oauth-identity";
+import { OnboardingStepDto } from "@/auth/interface/http/dto/onboarding-step.dto";
+import { UserProfileDto, type AuthProfileCompletion } from "@/auth/interface/http/dto/user-profile.dto";
+import { IAuthService, AuthResponse, type OnboardingStepResult } from "@/auth/application/ports/auth.interface";
 import {
   IOAuthProviderGateway,
   OAuthAuthorizeResult,
-} from "@/auth/interfaces/oauth-provider-gateway.interface";
-import { OAUTH_PROVIDER_GATEWAY } from "@/auth/tokens/auth.tokens";
+} from "@/auth/application/ports/oauth-provider-gateway.interface";
+import { OAUTH_PROVIDER_GATEWAY } from "@/auth/application/tokens/auth.tokens";
 
 @Injectable()
 export class AuthService implements IAuthService {
   constructor(
     private readonly jwt: JwtService,
+    @Inject(ID_GENERATOR)
+    private readonly ids: IdGenerator,
     @Inject(OAUTH_PROVIDER_GATEWAY)
     private readonly oauthGateway: IOAuthProviderGateway,
+    @Inject(USER_SERVICE)
+    private readonly userService: IUserService,
     @InjectRepository(UserOrmEntity)
     private readonly users: Repository<UserOrmEntity>,
     @InjectRepository(RefreshTokenOrmEntity)
@@ -47,13 +57,13 @@ export class AuthService implements IAuthService {
     const key = dto.email.toLowerCase();
     const existing = await this.users.findOne({ where: { email: key } });
     if (existing) throw new ConflictException("E-mail já cadastrado");
-    const id = randomUUID();
+    const id = this.ids.generate();
     const passwordHash = await bcrypt.hash(dto.password, 10);
     const row = new UserOrmEntity();
     row.id = id;
     row.email = key;
     row.passwordHash = passwordHash;
-    row.displayName = dto.email.split("@")[0] || "user";
+    row.username = dto.username;
     row.phone = null;
     row.handle = null;
     row.birthDate = null;
@@ -94,9 +104,64 @@ export class AuthService implements IAuthService {
   }
 
   async me(userId: string): Promise<UserProfileDto> {
-    const user = await this.users.findOne({ where: { id: userId } });
-    if (!user) throw new NotFoundException("Usuário não encontrado");
-    return { id: user.id, email: user.email ?? "" };
+    const s = await this.userService.getSessionProfile(userId);
+    const needsEmailVerification = !s.emailVerifiedAt;
+    const hasBothNames = Boolean(s.firstName?.trim() && s.lastName?.trim());
+    const namesAcknowledged = Boolean(s.profileNamesAcknowledgedAt);
+    const namesComplete = hasBothNames && namesAcknowledged;
+    const needsProfileNames = !namesComplete;
+    const needsEventInterests =
+      namesComplete && (s.eventInterests?.length ?? 0) === 0;
+    let profileCompletion: AuthProfileCompletion;
+    if (namesComplete) profileCompletion = "full";
+    else if (s.emailVerifiedAt) profileCompletion = "verified";
+    else profileCompletion = "minimal";
+    return {
+      id: s.id,
+      email: s.email,
+      username: s.username,
+      firstName: s.firstName,
+      lastName: s.lastName,
+      profileNamesAcknowledgedAt: s.profileNamesAcknowledgedAt?.toISOString() ?? null,
+      emailVerifiedAt: s.emailVerifiedAt?.toISOString() ?? null,
+      needsEmailVerification,
+      needsProfileNames,
+      needsEventInterests,
+      profileCompletion,
+    };
+  }
+
+  async submitOnboardingStep(userId: string, dto: OnboardingStepDto): Promise<OnboardingStepResult> {
+    switch (dto.step) {
+      case "names": {
+        const s = await this.userService.getSessionProfile(userId);
+        if (!s.emailVerifiedAt) {
+          throw new ForbiddenException(
+            "Confirme o seu e-mail antes de definir o nome oficial do perfil.",
+          );
+        }
+        await this.userService.completeProfileNames(userId, {
+          firstName: dto.firstName!,
+          lastName: dto.lastName!,
+        });
+        return { step: "names" };
+      }
+      case "notification_preferences": {
+        const preferences = await this.userService.updateNotificationPreferences(userId, {
+          email: dto.email,
+          push: dto.push,
+          sms: dto.sms,
+        });
+        return { step: "notification_preferences", preferences };
+      }
+      case "event_interests": {
+        const eventInterests = await this.userService.updateEventInterests(
+          userId,
+          dto.eventInterests ?? [],
+        );
+        return { step: "event_interests", eventInterests };
+      }
+    }
   }
 
   async startOAuthLogin(dto: OAuthStartDto): Promise<OAuthAuthorizeResult> {
@@ -125,12 +190,24 @@ export class AuthService implements IAuthService {
       if (email) {
         user = await this.users.findOne({ where: { email } });
       }
+      const parsed = namesFromOAuthIdentity(identity);
       if (!user) {
         user = new UserOrmEntity();
-        user.id = randomUUID();
+        user.id = this.ids.generate();
         user.email = identity.email ?? null;
         user.passwordHash = null;
-        user.displayName = identity.name?.trim() || identity.email?.split("@")[0] || "user";
+        const fromParsedDisplay =
+          parsed.firstName && parsed.lastName
+            ? `${parsed.firstName} ${parsed.lastName}`.trim()
+            : undefined;
+        user.username =
+          fromParsedDisplay ||
+          identity.name?.trim() ||
+          identity.email?.split("@")[0] ||
+          "user";
+        user.firstName = parsed.firstName;
+        user.lastName = parsed.lastName;
+        user.profileNamesAcknowledgedAt = null;
         user.phone = null;
         user.handle = null;
         user.birthDate = null;
@@ -149,10 +226,21 @@ export class AuthService implements IAuthService {
           user.email = `${identity.providerAccountId}@${identity.provider}.oauth.local`;
         }
         await this.users.save(user);
+      } else {
+        const emptyNames = !user.firstName?.trim() && !user.lastName?.trim();
+        if (emptyNames && (parsed.firstName || parsed.lastName)) {
+          user.firstName = parsed.firstName;
+          user.lastName = parsed.lastName;
+          user.profileNamesAcknowledgedAt = null;
+          if (parsed.firstName && parsed.lastName) {
+            user.username = `${parsed.firstName} ${parsed.lastName}`.trim();
+          }
+          await this.users.save(user);
+        }
       }
       userId = user.id;
       const link = new OAuthAccountOrmEntity();
-      link.id = randomUUID();
+      link.id = this.ids.generate();
       link.provider = identity.provider;
       link.providerAccountId = identity.providerAccountId;
       link.userId = userId;
@@ -215,7 +303,7 @@ export class AuthService implements IAuthService {
     });
     const token = randomUUID();
     const row = new RefreshTokenOrmEntity();
-    row.id = randomUUID();
+    row.id = this.ids.generate();
     row.token = token;
     row.userId = userId;
     await this.refreshTokens.save(row);

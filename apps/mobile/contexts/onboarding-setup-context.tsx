@@ -10,6 +10,7 @@ import {
 } from "react";
 
 import { ContinueSetupSheet } from "@/components/onboarding/continue-setup-sheet";
+import { ProfileNamesSetupSheet } from "@/components/onboarding/profile-names-setup-sheet";
 import { useAuth } from "@/contexts/auth-context";
 import {
   loadPrefsOnboardingState,
@@ -28,16 +29,32 @@ const OnboardingSetupContext =
   createContext<OnboardingSetupContextValue | null>(null);
 
 export function OnboardingSetupProvider({ children }: { children: ReactNode }) {
-  const { user, isSignedIn } = useAuth();
+  const { user, isSignedIn, refreshUser } = useAuth();
   const [openReason, setOpenReason] = useState<OpenReason>(null);
+  const [namesSheetOpen, setNamesSheetOpen] = useState(false);
   const lastCheckedUserId = useRef<string | null>(null);
+  /** Utilizador escolheu "Agora não" no sheet de nomes; não reabrir até mudar de conta ou concluir. */
+  const namesDeferredRef = useRef(false);
 
   useEffect(() => {
     if (!isSignedIn || !user?.id) {
       lastCheckedUserId.current = null;
+      namesDeferredRef.current = false;
+      setOpenReason(null);
+      setNamesSheetOpen(false);
+      return;
+    }
+
+    if (user.needsProfileNames) {
+      if (!namesDeferredRef.current) {
+        setNamesSheetOpen(true);
+      }
       setOpenReason(null);
       return;
     }
+
+    namesDeferredRef.current = false;
+    setNamesSheetOpen(false);
 
     if (lastCheckedUserId.current === user.id) {
       return;
@@ -56,7 +73,7 @@ export function OnboardingSetupProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [isSignedIn, user?.id]);
+  }, [isSignedIn, user?.id, user?.needsProfileNames]);
 
   const openNotificationPreferencesSetup = useCallback(() => {
     setOpenReason("manual");
@@ -77,8 +94,21 @@ export function OnboardingSetupProvider({ children }: { children: ReactNode }) {
     [user?.id],
   );
 
-  const visible = openReason !== null;
+  const notifVisible = openReason !== null && !user?.needsProfileNames;
   const mode = openReason === "manual" ? "manual" : "onboarding";
+
+  const handleNamesDismiss = useCallback(
+    async (reason: "saved" | "later") => {
+      if (reason === "saved") {
+        setNamesSheetOpen(false);
+        await refreshUser();
+      } else {
+        namesDeferredRef.current = true;
+        setNamesSheetOpen(false);
+      }
+    },
+    [refreshUser],
+  );
 
   const value = useMemo(
     () => ({ openNotificationPreferencesSetup }),
@@ -88,9 +118,16 @@ export function OnboardingSetupProvider({ children }: { children: ReactNode }) {
   return (
     <OnboardingSetupContext.Provider value={value}>
       {children}
+      {user?.id && namesSheetOpen ? (
+        <ProfileNamesSetupSheet
+          visible={namesSheetOpen}
+          user={user}
+          onDismiss={handleNamesDismiss}
+        />
+      ) : null}
       {user?.id ? (
         <ContinueSetupSheet
-          visible={visible}
+          visible={notifVisible}
           mode={mode}
           onDismiss={handleDismiss}
         />

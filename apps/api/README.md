@@ -27,20 +27,15 @@
 
 ## Estrutura por domínio
 
-A API está organizada por **domínios** em `src/`:
+A API está organizada por **domínios** em `src/`. Os módulos **auth**, **user**, **venue** e **event** seguem camadas `application/`, `domain/`, `infrastructure/`, `interface/http/` (ver `docs/ddd-modules-and-security.md`).
 
-- **`auth/`** – autenticação (sign-in, sign-up, refresh, me, logout)
-- **`user/`** – usuários (CRUD)
+- **`auth/`** – sessão (sign-in, sign-up, refresh, me, logout, OAuth, onboarding); `auth.module.ts` na raiz do módulo.
+- **`user/`** – perfil, quick-signup, preferências; `user.module.ts` na raiz.
+- **`venue/`** e **`event/`** – ciclo de vida de espaços e eventos; tokens em `application/tokens/`, ports em `application/ports/`.
 
-Cada domínio contém:
+Identificadores novos (PKs de agregados, etc.) usam **UUID v7** via `ID_GENERATOR` em `@/shared/contracts/id-generator` (`ApplicationCoreModule`).
 
-- `*.module.ts` – módulo Nest (controllers, providers, exports)
-- `*.controller.ts` – rotas HTTP
-- `*.service.ts` – lógica de negócio
-- `dto/` – DTOs de entrada/saída
-- `interfaces/` e `tokens/` – quando houver injeção por interface (ex.: auth)
-
-Novos domínios: crie uma pasta em `src/<dominio>/`, implemente o módulo e registre em `app.module.ts` em `imports: [..., NovoDominioModule]`.
+Novos domínios: crie `src/<dominio>/` com o padrão acima quando fizer sentido, registe em `app.module.ts` em `imports: [..., NovoDominioModule]`.
 
 ## Project setup
 

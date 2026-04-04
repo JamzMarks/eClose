@@ -11,9 +11,9 @@ import {
   MinLength,
   ValidateNested,
 } from "class-validator";
-import { EventAdhocAddressDto } from "@/event/dto/event-adhoc-address.dto";
-import { EventLocationMode } from "@/event/types/event-location-mode.type";
-import { EventStatus } from "@/event/types/event-status.type";
+import { EventAdhocAddressDto } from "@/event/interface/http/dto/event-adhoc-address.dto";
+import { EventLocationMode } from "@/event/domain/types/event-location-mode.type";
+import { EventStatus } from "@/event/domain/types/event-status.type";
 
 /** Cria evento a partir de booking confirmado; datas vêm da inquiry se omitidas. */
 export class CreateEventFromBookingDto {

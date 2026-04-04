@@ -4,7 +4,7 @@ import { Brackets, Repository } from "typeorm";
 import { PostOrmEntity } from "@/post/infrastructure/persistence/post.orm-entity";
 import { IPostRepository } from "@/post/application/ports/post.repository.port";
 import { PostScopeType } from "@/post/domain/post-scope.type";
-import { EventStatus } from "@/event/types/event-status.type";
+import { EventStatus } from "@/event/domain/types/event-status.type";
 
 @Injectable()
 export class TypeormPostRepository implements IPostRepository {

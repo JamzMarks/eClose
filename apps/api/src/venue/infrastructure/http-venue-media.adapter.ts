@@ -1,5 +1,5 @@
 import { Injectable, ServiceUnavailableException } from "@nestjs/common";
-import { IVenueMediaPort } from "../interfaces/venue-media.port.interface";
+import { IVenueMediaPort } from "@/venue/application/ports/venue-media.port.interface";
 
 /**
  * Adapter remoto para microserviço de mídia (contrato alinhado ao endpoint interno esperado).

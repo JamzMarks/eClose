@@ -9,7 +9,7 @@ import {
 } from "@nestjs/common";
 import { AccessDeniedError } from "@/domain/errors/access-denied.error";
 import { ResourceNotFoundError } from "@/domain/errors/resource-not-found.error";
-import type { JwtValidatedUser } from "@/auth/strategies/jwt.strategy";
+import type { JwtValidatedUser } from "@/auth/infrastructure/passport/jwt.strategy";
 import type { ArtistAccessPolicyPort } from "@/artist/application/ports/artist-access.policy.port";
 import { ARTIST_ACCESS_POLICY } from "@/artist/application/ports/artist-access.policy.port";
 

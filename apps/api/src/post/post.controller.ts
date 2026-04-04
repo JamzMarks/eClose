@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Inject, Param, Post, Query } from "@nestjs/common";
 import { CurrentUser } from "@/infrastructure/http/decorators/current-user.decorator";
 import { PrivateRoute } from "@/infrastructure/http/metadata/private-route.metadata";
-import type { JwtValidatedUser } from "@/auth/strategies/jwt.strategy";
+import type { JwtValidatedUser } from "@/auth/infrastructure/passport/jwt.strategy";
 import { CreatePostDto } from "@/post/application/dto/create-post.dto";
 import { ListPostsQueryDto } from "@/post/application/dto/list-posts.query";
 import { IPostService } from "@/post/application/post.service.interface";

@@ -9,22 +9,22 @@ import { ID_GENERATOR, IdGenerator } from "@/shared/contracts/id-generator";
 import { ITaxonomyService } from "@/taxonomy/interfaces/taxonomy.service.interface";
 import { TAXONOMY_SERVICE } from "@/taxonomy/tokens/taxonomy.tokens";
 import { TaxonomyKind } from "@/taxonomy/types/taxonomy-kind.type";
-import { IVenueRepository } from "@/venue/interfaces/venue.repository.interface";
-import { VENUE_REPOSITORY } from "@/venue/tokens/venue.tokens";
+import { IVenueRepository } from "@/venue/application/ports/venue.repository.interface";
+import { VENUE_REPOSITORY } from "@/venue/application/tokens/venue.tokens";
 import { ICalendarService } from "@/calendar/interfaces/calendar.service.interface";
 import { CALENDAR_SERVICE } from "@/calendar/tokens/calendar.tokens";
 import { IArtistRepository } from "@/artist/interfaces/artist.repository.interface";
 import { ARTIST_REPOSITORY } from "@/artist/tokens/artist.tokens";
-import { Event } from "@/event/entity/event.entity";
-import { IEventMediaPort } from "@/event/interfaces/event-media.port.interface";
-import { EVENT_MEDIA_PORT } from "@/event/tokens/event-media.tokens";
-import { CreateEventDto } from "@/event/dto/create-event.dto";
-import { EventAdhocAddress } from "@/event/types/event-adhoc-address.type";
-import { IEventRepository, ListPublishedEventsParams } from "@/event/interfaces/event.repository.interface";
-import { IEventService } from "@/event/interfaces/event.service.interface";
-import { EVENT_REPOSITORY } from "@/event/tokens/event.tokens";
-import { EventLocationMode } from "@/event/types/event-location-mode.type";
-import { EventStatus } from "@/event/types/event-status.type";
+import { Event } from "@/event/domain/entity/event.entity";
+import { IEventMediaPort } from "@/event/application/ports/event-media.port.interface";
+import { EVENT_MEDIA_PORT } from "@/event/application/tokens/event-media.tokens";
+import { CreateEventDto } from "@/event/interface/http/dto/create-event.dto";
+import { EventAdhocAddress } from "@/event/domain/types/event-adhoc-address.type";
+import { IEventRepository, ListPublishedEventsParams } from "@/event/application/ports/event.repository.interface";
+import { IEventService } from "@/event/application/ports/event.service.interface";
+import { EVENT_REPOSITORY } from "@/event/application/tokens/event.tokens";
+import { EventLocationMode } from "@/event/domain/types/event-location-mode.type";
+import { EventStatus } from "@/event/domain/types/event-status.type";
 
 @Injectable()
 export class EventService implements IEventService {

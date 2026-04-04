@@ -4,7 +4,7 @@ import { CreateBookingInquiryDto } from "@/booking/dto/create-booking-inquiry.dt
 import { CreateEventFromBookingDto } from "@/booking/dto/create-event-from-booking.dto";
 import { DeclineBookingDto } from "@/booking/dto/decline-booking.dto";
 import { ProposeBookingDatesDto } from "@/booking/dto/propose-booking-dates.dto";
-import { Event } from "@/event/entity/event.entity";
+import { Event } from "@/event/domain/entity/event.entity";
 
 export interface IBookingService {
   createInquiry(

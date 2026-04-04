@@ -2,6 +2,8 @@ import { getApiClient } from "@/infrastructure/api/api-client";
 import type { IAuthService } from "@/infrastructure/api/auth/auth.service.interface";
 import type {
   AuthTokensResponse,
+  OnboardingStepRequest,
+  OnboardingStepResponse,
   SignInRequest,
   SignUpRequest,
   UserProfileResponse,
@@ -20,6 +22,10 @@ export class AuthService implements IAuthService {
 
   me(): Promise<UserProfileResponse> {
     return this.client.get<UserProfileResponse>("/auth/me");
+  }
+
+  submitOnboardingStep(body: OnboardingStepRequest): Promise<OnboardingStepResponse> {
+    return this.client.patch<OnboardingStepResponse>("/auth/me/onboarding", body);
   }
 
   refresh(refreshToken: string): Promise<AuthTokensResponse> {

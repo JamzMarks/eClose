@@ -31,10 +31,11 @@ export function ProfileTabScreen() {
   const { user } = useAuth();
 
   const handle = useMemo(() => handleFromEmail(user?.email), [user?.email]);
-  const displayName = useMemo(
-    () => displayNameFromEmail(user?.email, t("nameFallback")),
-    [user?.email, t],
-  );
+  const profileUsername = useMemo(() => {
+    const u = user?.username?.trim();
+    if (u) return u;
+    return displayNameFromEmail(user?.email, t("nameFallback"));
+  }, [user?.username, user?.email, t]);
 
   const editBg = scheme === "dark" ? c.surfaceElevated : "#EFEFEF";
 
@@ -70,7 +71,7 @@ export function ProfileTabScreen() {
           }}
         />
 
-        <Text style={[styles.displayName, { color: c.text }]}>{displayName}</Text>
+        <Text style={[styles.displayName, { color: c.text }]}>{profileUsername}</Text>
         <Text style={[styles.bio, { color: c.text }]}>{t("bioPlaceholder")}</Text>
 
         <ProfileEditProfileButton

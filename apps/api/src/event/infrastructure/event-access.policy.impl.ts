@@ -3,9 +3,9 @@ import { AccessDeniedError } from "@/domain/errors/access-denied.error";
 import { ResourceNotFoundError } from "@/domain/errors/resource-not-found.error";
 import { IArtistRepository } from "@/artist/interfaces/artist.repository.interface";
 import { ARTIST_REPOSITORY } from "@/artist/tokens/artist.tokens";
-import { IEventRepository } from "../interfaces/event.repository.interface";
-import { EVENT_REPOSITORY } from "../tokens/event.tokens";
-import { EventAccessPolicyPort } from "../application/ports/event-access.policy.port";
+import { IEventRepository } from "@/event/application/ports/event.repository.interface";
+import { EVENT_REPOSITORY } from "@/event/application/tokens/event.tokens";
+import { EventAccessPolicyPort } from "@/event/application/ports/event-access.policy.port";
 
 @Injectable()
 export class EventAccessPolicyImpl implements EventAccessPolicyPort {

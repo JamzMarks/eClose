@@ -12,19 +12,19 @@ import { Repository } from "typeorm";
 import { IArtistRepository } from "@/artist/interfaces/artist.repository.interface";
 import { ARTIST_REPOSITORY } from "@/artist/tokens/artist.tokens";
 import { UserOrmEntity } from "@/user/infrastructure/persistence/user.orm-entity";
-import { IVenueRepository } from "@/venue/interfaces/venue.repository.interface";
-import { VENUE_REPOSITORY } from "@/venue/tokens/venue.tokens";
+import { IVenueRepository } from "@/venue/application/ports/venue.repository.interface";
+import { VENUE_REPOSITORY } from "@/venue/application/tokens/venue.tokens";
 import { INotificationService } from "@/notification/interfaces/notification.interface";
 import { NOTIFICATION_SERVICE } from "@/notification/tokens/notification.tokens";
 import { NotificationType } from "@/notification/types/notification.type";
 import { ID_GENERATOR, IdGenerator } from "@/shared/contracts/id-generator";
-import { SocialUser } from "@/user/entity/social-user.entity";
-import { CreateUserDto } from "@/user/dto/create-user.dto";
-import { QuickSignupDto } from "@/user/dto/quick-signup.dto";
-import { UpdateNotificationPreferencesDto } from "@/user/dto/update-notification-preferences.dto";
-import { UpdatePushTokensDto } from "@/user/dto/update-push-tokens.dto";
-import { applySocialUserToRow, socialUserFromRow } from "@/user/infrastructure/user.orm-mapper";
-import { IUserService } from "@/user/interfaces/user.service.interface";
+import { SocialUser } from "@/user/domain/entity/social-user.entity";
+import { CompleteProfileNamesDto } from "@/user/interface/http/dto/complete-profile-names.dto";
+import { QuickSignupDto } from "@/user/interface/http/dto/quick-signup.dto";
+import { UpdateNotificationPreferencesDto } from "@/user/interface/http/dto/update-notification-preferences.dto";
+import { UpdatePushTokensDto } from "@/user/interface/http/dto/update-push-tokens.dto";
+import { applySocialUserToRow, socialUserFromRow } from "@/user/infrastructure/persistence/user.orm-mapper";
+import { IUserService } from "@/user/application/ports/user.service.interface";
 
 @Injectable()
 export class UserService implements IUserService {
@@ -64,7 +64,7 @@ export class UserService implements IUserService {
     const passwordHash = await bcrypt.hash(dto.password, 10);
     const user = SocialUser.registerQuick({
       id: this.ids.generate(),
-      displayName: dto.displayName,
+      username: dto.username,
       email,
       phone,
       passwordHash,
@@ -72,12 +72,17 @@ export class UserService implements IUserService {
       countryCode: dto.countryCode ?? null,
       locale: dto.locale ?? null,
       marketingOptIn: dto.marketingOptIn ?? false,
+      firstName: dto.firstName ?? null,
+      lastName: dto.lastName ?? null,
     });
 
     const row = new UserOrmEntity();
     applySocialUserToRow(user, row);
     row.notificationPreferences = { email: true, push: true, sms: true };
     row.pushTokens = [];
+    if (user.firstName?.trim() && user.lastName?.trim()) {
+      row.profileNamesAcknowledgedAt = new Date();
+    }
     await this.users.save(row);
 
     if (this.notifications && user.email) {
@@ -85,7 +90,7 @@ export class UserService implements IUserService {
         userId: user.id,
         type: NotificationType.WELCOME,
         title: "Bem-vindo ao eClose",
-        body: `Olá, ${user.displayName}. Confirme seu e-mail na próxima tela para liberar todos os recursos.`,
+        body: `Olá, ${user.username}. Confirme seu e-mail na próxima tela para liberar todos os recursos.`,
         toEmail: user.email,
         channel: undefined,
       });
@@ -94,37 +99,62 @@ export class UserService implements IUserService {
     return user;
   }
 
-  /** Cadastro “completo” legado: mapeia para o mesmo agregado SocialUser */
-  async create(dto: CreateUserDto): Promise<SocialUser> {
-    const displayName = `${dto.firstName} ${dto.lastName}`.trim();
-    return this.quickSignup({
-      displayName: displayName || dto.userName,
-      email: dto.email,
-      phone: dto.phone,
-      birthDate: dto.birthDate,
-      countryCode: dto.countryCode,
-      locale: dto.locale,
-      password: dto.password,
-      termsAccepted: true,
-      privacyAccepted: true,
-      marketingOptIn: dto.marketingOptIn ?? false,
-    });
-  }
-
   async findById(id: string): Promise<SocialUser | undefined> {
     const row = await this.users.findOne({ where: { id } });
-    if (!row?.birthDate || !row.termsAcceptedAt || !row.privacyAcceptedAt) return undefined;
+    if (!row) return undefined;
     return socialUserFromRow(row);
   }
 
   async findAll(): Promise<SocialUser[]> {
-    const rows = await this.users
-      .createQueryBuilder("u")
-      .where("u.birthDate IS NOT NULL")
-      .andWhere("u.termsAcceptedAt IS NOT NULL")
-      .andWhere("u.privacyAcceptedAt IS NOT NULL")
-      .getMany();
+    const rows = await this.users.find();
     return rows.map((r) => socialUserFromRow(r));
+  }
+
+  async getSessionProfile(userId: string) {
+    const row = await this.users.findOne({ where: { id: userId } });
+    if (!row) throw new NotFoundException("Utilizador não encontrado");
+    return {
+      id: row.id,
+      email: row.email ?? "",
+      username: row.username,
+      firstName: row.firstName ?? null,
+      lastName: row.lastName ?? null,
+      emailVerifiedAt: row.emailVerifiedAt,
+      eventInterests: Array.isArray(row.eventInterests) ? [...row.eventInterests] : [],
+      profileNamesAcknowledgedAt: row.profileNamesAcknowledgedAt,
+    };
+  }
+
+  /** Persiste nome próprio + apelido; políticas como e-mail verificado ficam na camada HTTP. */
+  async completeProfileNames(userId: string, dto: CompleteProfileNamesDto): Promise<void> {
+    const row = await this.users.findOne({ where: { id: userId } });
+    if (!row) throw new NotFoundException("Utilizador não encontrado");
+    const firstName = dto.firstName.trim();
+    const lastName = dto.lastName.trim();
+    if (!firstName || !lastName) {
+      throw new BadRequestException("Nome e apelido são obrigatórios");
+    }
+    row.firstName = firstName;
+    row.lastName = lastName;
+    row.username = `${firstName} ${lastName}`.trim();
+    row.profileNamesAcknowledgedAt = new Date();
+    await this.users.save(row);
+  }
+
+  async updateEventInterests(userId: string, interests: string[]): Promise<string[]> {
+    const row = await this.users.findOne({ where: { id: userId } });
+    if (!row) throw new NotFoundException("Utilizador não encontrado");
+    const normalized = [
+      ...new Set(
+        interests
+          .map((t) => t.trim())
+          .filter((t) => t.length > 0)
+          .slice(0, 100),
+      ),
+    ];
+    row.eventInterests = normalized;
+    await this.users.save(row);
+    return normalized;
   }
 
   async getNotificationPreferences(userId: string) {
