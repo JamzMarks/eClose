@@ -10,8 +10,8 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { PrivateRoute } from "@/infrastructure/http/metadata/private-route.metadata";
-import { VenueCreateBodyOwnerHttpGuard } from "@/infrastructure/http/guards/venue-create-body-owner.http.guard";
-import { VenueResourceOwnerHttpGuard } from "@/infrastructure/http/guards/venue-resource-owner.http.guard";
+import { VenueCreateBodyOwnerHttpGuard } from "@/authorization/interface/http/guards/venue-create-body-owner.http.guard";
+import { VenueResourceOwnerHttpGuard } from "@/authorization/interface/http/guards/venue-resource-owner.http.guard";
 import { CreateVenueDto } from "./dto/create-venue.dto";
 import { LinkPrimaryMediaDto } from "./dto/link-primary-media.dto";
 import { IVenueService } from "@/venue/application/ports/venue.service.interface";
@@ -33,12 +33,12 @@ export class VenueController {
 
   @Get()
   list() {
-    return this.venues.listActive();
+    return this.venues.listPublicMarketplace();
   }
 
   @Get(":id")
   async getOne(@Param("id") id: string) {
-    const v = await this.venues.getById(id);
+    const v = await this.venues.getPublicById(id);
     if (!v) throw new NotFoundException("Venue não encontrado");
     return v;
   }

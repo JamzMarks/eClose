@@ -12,7 +12,7 @@ import {
 } from "@nestjs/common";
 import { CurrentUser } from "@/infrastructure/http/decorators/current-user.decorator";
 import { PrivateRoute } from "@/infrastructure/http/metadata/private-route.metadata";
-import { SelfUserHttpGuard } from "@/infrastructure/http/guards/self-user.http.guard";
+import { SelfUserHttpGuard } from "@/authorization/interface/http/guards/self-user.http.guard";
 import type { JwtValidatedUser } from "@/auth/infrastructure/passport/jwt.strategy";
 import { QuickSignupDto } from "./dto/quick-signup.dto";
 import { UpdateNotificationPreferencesDto } from "./dto/update-notification-preferences.dto";

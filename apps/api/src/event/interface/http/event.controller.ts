@@ -11,8 +11,8 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { PrivateRoute } from "@/infrastructure/http/metadata/private-route.metadata";
-import { EventOrganizerBodyHttpGuard } from "@/infrastructure/http/guards/event-organizer-body.http.guard";
-import { EventResourceOrganizerHttpGuard } from "@/infrastructure/http/guards/event-resource-organizer.http.guard";
+import { EventOrganizerBodyHttpGuard } from "@/authorization/interface/http/guards/event-organizer-body.http.guard";
+import { EventResourceOrganizerHttpGuard } from "@/authorization/interface/http/guards/event-resource-organizer.http.guard";
 import { CreateEventDto } from "./dto/create-event.dto";
 import { ListPublishedEventsQueryDto } from "./dto/list-published-events.query";
 import { LinkPrimaryMediaDto } from "./dto/link-primary-media.dto";

@@ -22,5 +22,16 @@
   "hint": "Os teus dados são tratados de acordo com a nossa política de privacidade.",
   "loadError": "Não foi possível carregar as preferências.",
   "saveError": "Não foi possível guardar.",
-  "openFromProfile": "Notificações e privacidade"
+  "openFromProfile": "Notificações e privacidade",
+  "emailVerifyTitle": "Confirma o teu e-mail",
+  "emailVerifyBody": "A conta {{email}} ainda não está verificada. Reenvia o pedido e cola o token (em desenvolvimento aparece nos logs do servidor) ou toca em «Já confirmei» depois de abrires o link de verificação.",
+  "emailVerifyResend": "Reenviar pedido",
+  "emailVerifyResendError": "Não foi possível reenviar o pedido.",
+  "emailVerifyTokenLabel": "Token de verificação (opcional)",
+  "emailVerifyTokenRequired": "Cola o token recebido.",
+  "emailVerifyConfirmToken": "Confirmar com token",
+  "emailVerifyConfirmError": "Token inválido ou expirado.",
+  "emailVerifyRefreshed": "Já confirmei (atualizar)",
+  "emailVerifyRefreshError": "Não foi possível atualizar o perfil.",
+  "emailVerifyLater": "Agora não"
 }

@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Inject, Param, Post, Query, UseGuards } from "@nestjs/common";
 import { PrivateRoute } from "@/infrastructure/http/metadata/private-route.metadata";
-import { CalendarArtistOwnerHttpGuard } from "@/infrastructure/http/guards/calendar-artist-owner.http.guard";
-import { CalendarVenueOwnerHttpGuard } from "@/infrastructure/http/guards/calendar-venue-owner.http.guard";
+import { CalendarArtistOwnerHttpGuard } from "@/authorization/interface/http/guards/calendar-artist-owner.http.guard";
+import { CalendarVenueOwnerHttpGuard } from "@/authorization/interface/http/guards/calendar-venue-owner.http.guard";
 import { AddUnavailabilityDto } from "./dto/add-unavailability.dto";
 import { ICalendarService } from "./interfaces/calendar.service.interface";
 import { CALENDAR_SERVICE } from "./tokens/calendar.tokens";

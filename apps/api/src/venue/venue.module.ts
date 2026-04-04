@@ -3,8 +3,6 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { TaxonomyModule } from "@/taxonomy/taxonomy.module";
 import { MediaModule } from "@/media/media.module";
 import { VenueOrmEntity } from "@/venue/infrastructure/persistence/venue.orm-entity";
-import { VenueCreateBodyOwnerHttpGuard } from "@/infrastructure/http/guards/venue-create-body-owner.http.guard";
-import { VenueResourceOwnerHttpGuard } from "@/infrastructure/http/guards/venue-resource-owner.http.guard";
 import { HttpVenueMediaAdapter } from "./infrastructure/http-venue-media.adapter";
 import { LocalVenueMediaAdapter } from "./infrastructure/local-venue-media.adapter";
 import { TypeormVenueRepository } from "./infrastructure/typeorm-venue.repository";
@@ -28,8 +26,6 @@ const venueMediaProvider = {
     { provide: VENUE_ACCESS_POLICY, useClass: VenueAccessPolicyImpl },
     venueMediaProvider,
     { provide: VENUE_SERVICE, useClass: VenueService },
-    VenueCreateBodyOwnerHttpGuard,
-    VenueResourceOwnerHttpGuard,
   ],
   exports: [VENUE_SERVICE, VENUE_REPOSITORY, VENUE_ACCESS_POLICY],
 })

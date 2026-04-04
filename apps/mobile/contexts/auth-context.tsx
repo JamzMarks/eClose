@@ -11,6 +11,7 @@ import {
 
 import { AuthService } from "@/infrastructure/api/auth/auth.service";
 import type { IAuthService } from "@/infrastructure/api/auth/auth.service.interface";
+import type { SignUpRequest } from "@/infrastructure/api/types/auth.types";
 import type { UserProfileResponse } from "@/infrastructure/api/types/auth.types";
 import {
   clearAuthAccessToken,
@@ -31,6 +32,7 @@ type AuthContextValue = {
   isSignedIn: boolean;
   user: UserProfileResponse | null;
   signIn: (email: string, password: string) => Promise<void>;
+  signUp: (data: SignUpRequest) => Promise<void>;
   signOut: () => Promise<void>;
   refreshUser: () => Promise<void>;
 };
@@ -97,6 +99,20 @@ export function AuthProvider({
     [authService],
   );
 
+  const signUp = useCallback(
+    async (data: SignUpRequest) => {
+      const tokens = await authService.signUp(data);
+      await persistTokens({
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken ?? null,
+      });
+      setAuthAccessToken(tokens.accessToken);
+      const profile = await authService.me();
+      setUser(profile);
+    },
+    [authService],
+  );
+
   const signOut = useCallback(async () => {
     try {
       await authService.logout();
@@ -120,10 +136,11 @@ export function AuthProvider({
       isSignedIn: !!user,
       user,
       signIn,
+      signUp,
       signOut,
       refreshUser,
     }),
-    [isReady, user, signIn, signOut, refreshUser],
+    [isReady, user, signIn, signUp, signOut, refreshUser],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -15,6 +15,7 @@ import { RefreshTokenDto } from "./dto/refresh-token.dto";
 import { OAuthStartDto } from "./dto/oauth-start.dto";
 import { OnboardingStepDto } from "./dto/onboarding-step.dto";
 import { OAuthCallbackDto } from "./dto/oauth-callback.dto";
+import { VerifyEmailDto } from "./dto/verify-email.dto";
 import { AUTH_SERVICE } from "@/auth/application/tokens/auth.tokens";
 import { IAuthService } from "@/auth/application/ports/auth.interface";
 import { PrivateRoute } from "@/infrastructure/http/metadata/private-route.metadata";
@@ -63,6 +64,19 @@ export class AuthController {
   @PrivateRoute()
   patchMeOnboarding(@Req() req: AuthedRequest, @Body() dto: OnboardingStepDto) {
     return this.authService.submitOnboardingStep(req.user.id, dto);
+  }
+
+  @Post("email-verification/send")
+  @PrivateRoute()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async sendEmailVerification(@Req() req: AuthedRequest) {
+    await this.authService.sendEmailVerification(req.user.id);
+  }
+
+  @Post("email-verification/confirm")
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async confirmEmail(@Body() dto: VerifyEmailDto) {
+    await this.authService.verifyEmail(dto.token);
   }
 
   @Post("oauth/start")

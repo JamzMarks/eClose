@@ -3,8 +3,6 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { TaxonomyModule } from "@/taxonomy/taxonomy.module";
 import { MediaModule } from "@/media/media.module";
 import { ArtistOrmEntity } from "@/artist/infrastructure/persistence/artist.orm-entity";
-import { ArtistCreateBodyOwnerHttpGuard } from "@/infrastructure/http/guards/artist-create-body-owner.http.guard";
-import { ArtistResourceOwnerHttpGuard } from "@/infrastructure/http/guards/artist-resource-owner.http.guard";
 import { ArtistController } from "./artist.controller";
 import { ArtistService } from "./application/artist.service";
 import { ArtistAccessPolicyImpl } from "./infrastructure/artist-access.policy.impl";
@@ -28,8 +26,6 @@ const artistMediaProvider = {
     { provide: ARTIST_ACCESS_POLICY, useClass: ArtistAccessPolicyImpl },
     artistMediaProvider,
     { provide: ARTIST_SERVICE, useClass: ArtistService },
-    ArtistCreateBodyOwnerHttpGuard,
-    ArtistResourceOwnerHttpGuard,
   ],
   exports: [ARTIST_SERVICE, ARTIST_REPOSITORY, ARTIST_ACCESS_POLICY],
 })

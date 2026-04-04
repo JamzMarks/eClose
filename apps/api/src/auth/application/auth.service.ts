@@ -1,10 +1,12 @@
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   HttpException,
   HttpStatus,
   Inject,
   Injectable,
+  Logger,
   NotFoundException,
   UnauthorizedException,
 } from "@nestjs/common";
@@ -19,7 +21,11 @@ import { RefreshTokenOrmEntity } from "@/auth/infrastructure/persistence/refresh
 import { IUserService } from "@/user/application/ports/user.service.interface";
 import { USER_SERVICE } from "@/user/application/tokens/user.tokens";
 import { UserOrmEntity } from "@/user/infrastructure/persistence/user.orm-entity";
-import { JWT_ACCESS_EXPIRES } from "@/auth/application/auth.constants";
+import {
+  EMAIL_VERIFY_JWT_PURPOSE,
+  JWT_ACCESS_EXPIRES,
+  JWT_EMAIL_VERIFY_EXPIRES,
+} from "@/auth/application/auth.constants";
 import { MfaSetupDto } from "@/auth/interface/http/dto/mfa-setup.dto";
 import { OAuthCallbackDto } from "@/auth/interface/http/dto/oauth-callback.dto";
 import { OAuthStartDto } from "@/auth/interface/http/dto/oauth-start.dto";
@@ -37,6 +43,8 @@ import { OAUTH_PROVIDER_GATEWAY } from "@/auth/application/tokens/auth.tokens";
 
 @Injectable()
 export class AuthService implements IAuthService {
+  private readonly log = new Logger(AuthService.name);
+
   constructor(
     private readonly jwt: JwtService,
     @Inject(ID_GENERATOR)
@@ -273,12 +281,33 @@ export class AuthService implements IAuthService {
     this.notImplemented("alteração de senha");
   }
 
-  async sendEmailVerification(_userId: string): Promise<void> {
-    this.notImplemented("verificação de e-mail");
+  async sendEmailVerification(userId: string): Promise<void> {
+    const row = await this.users.findOne({ where: { id: userId } });
+    if (!row) throw new NotFoundException("Utilizador não encontrado");
+    if (!row.email?.trim()) {
+      throw new BadRequestException("Conta sem e-mail para verificar");
+    }
+    if (row.emailVerifiedAt) return;
+    const token = this.jwt.sign(
+      { sub: userId, purpose: EMAIL_VERIFY_JWT_PURPOSE },
+      { expiresIn: JWT_EMAIL_VERIFY_EXPIRES as import("@nestjs/jwt").JwtSignOptions["expiresIn"] },
+    );
+    this.log.log(
+      `[email-verification] link token for ${row.email} (enviar por canal de notificação quando existir): ${token}`,
+    );
   }
 
-  async verifyEmail(_token: string): Promise<void> {
-    this.notImplemented("confirmar verificação de e-mail");
+  async verifyEmail(token: string): Promise<void> {
+    let payload: { sub?: string; purpose?: string };
+    try {
+      payload = this.jwt.verify<{ sub?: string; purpose?: string }>(token);
+    } catch {
+      throw new BadRequestException("Token inválido ou expirado");
+    }
+    if (payload.purpose !== EMAIL_VERIFY_JWT_PURPOSE || !payload.sub) {
+      throw new BadRequestException("Token inválido");
+    }
+    await this.userService.markEmailVerified(payload.sub);
   }
 
   async changeEmail(_userId: string, _newEmail: string): Promise<void> {

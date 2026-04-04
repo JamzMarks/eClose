@@ -1,8 +1,8 @@
 import { Body, Controller, Inject, Param, Patch, Post, UseGuards } from "@nestjs/common";
 import { CurrentUser } from "@/infrastructure/http/decorators/current-user.decorator";
 import { PrivateRoute } from "@/infrastructure/http/metadata/private-route.metadata";
-import { BookingInquiryCounterpartHttpGuard } from "@/infrastructure/http/guards/booking-inquiry-counterpart.http.guard";
-import { BookingInquiryRequesterHttpGuard } from "@/infrastructure/http/guards/booking-inquiry-requester.http.guard";
+import { BookingInquiryCounterpartHttpGuard } from "@/authorization/interface/http/guards/booking-inquiry-counterpart.http.guard";
+import { BookingInquiryRequesterHttpGuard } from "@/authorization/interface/http/guards/booking-inquiry-requester.http.guard";
 import type { JwtValidatedUser } from "@/auth/infrastructure/passport/jwt.strategy";
 import { IBookingService } from "./interfaces/booking.service.interface";
 import { BOOKING_SERVICE } from "./tokens/booking.tokens";

@@ -19,26 +19,55 @@ import { normalizeHttpError } from "@/infrastructure/http/error-handler";
 import { getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
-export default function LoginScreen() {
+const USERNAME_MIN = 2;
+const USERNAME_MAX = 80;
+const PASSWORD_MIN = 8;
+
+export default function SignupScreen() {
   const { t } = useTranslation("auth");
   const router = useRouter();
-  const { signIn } = useAuth();
+  const { signUp } = useAuth();
   const scheme = useColorScheme() ?? "light";
   const c = getSchemeColors(scheme);
 
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  function validate(): string | null {
+    const u = username.trim();
+    const e = email.trim();
+    if (u.length < USERNAME_MIN || u.length > USERNAME_MAX) {
+      return t("signupUsernameLength");
+    }
+    if (!e.includes("@")) {
+      return t("signupEmailInvalid");
+    }
+    if (password.length < PASSWORD_MIN) {
+      return t("signupPasswordLength");
+    }
+    return null;
+  }
+
   async function onSubmit() {
     setError(null);
+    const v = validate();
+    if (v) {
+      setError(v);
+      return;
+    }
     setLoading(true);
     try {
-      await signIn(email.trim(), password);
+      await signUp({
+        username: username.trim(),
+        email: email.trim(),
+        password,
+      });
       router.replace("/(tabs)");
     } catch (e) {
-      setError(normalizeHttpError(e, t("errorGeneric")).message);
+      setError(normalizeHttpError(e, t("signupErrorGeneric")).message);
     } finally {
       setLoading(false);
     }
@@ -55,13 +84,23 @@ export default function LoginScreen() {
           keyboardShouldPersistTaps="handled"
         >
           <View style={styles.header}>
-            <Text style={[styles.title, { color: c.text }]}>{t("title")}</Text>
+            <Text style={[styles.title, { color: c.text }]}>{t("signupTitle")}</Text>
             <Text style={[styles.subtitle, { color: c.textSecondary }]}>
-              {t("subtitle")}
+              {t("signupSubtitle")}
             </Text>
           </View>
 
           <View style={styles.form}>
+            <AppTextField
+              label={t("username")}
+              value={username}
+              onChangeText={setUsername}
+              autoCapitalize="none"
+              autoComplete="username"
+              textContentType="username"
+              returnKeyType="next"
+              accessibilityLabel={t("username")}
+            />
             <AppTextField
               label={t("email")}
               value={email}
@@ -78,31 +117,29 @@ export default function LoginScreen() {
               value={password}
               onChangeText={setPassword}
               secureTextEntry
-              autoComplete="password"
-              textContentType="password"
+              autoComplete="new-password"
+              textContentType="newPassword"
               returnKeyType="done"
               onSubmitEditing={onSubmit}
               accessibilityLabel={t("password")}
             />
 
-            {error ? (
-              <Text style={styles.formError}>{error}</Text>
-            ) : null}
+            {error ? <Text style={styles.formError}>{error}</Text> : null}
 
             <AppButton
-              title={t("signIn")}
+              title={t("signUp")}
               onPress={onSubmit}
               loading={loading}
               fullWidth
             />
 
             <Pressable
-              onPress={() => router.push("/signup")}
+              onPress={() => router.push("/login")}
               accessibilityRole="link"
-              accessibilityLabel={t("createAccountLink")}
+              accessibilityLabel={t("signupHasAccountLink")}
             >
               <Text style={[styles.link, { color: c.textSecondary }]}>
-                {t("createAccount")}
+                {t("signupHasAccount")}
               </Text>
             </Pressable>
           </View>

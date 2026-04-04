@@ -10,8 +10,8 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { PrivateRoute } from "@/infrastructure/http/metadata/private-route.metadata";
-import { ArtistCreateBodyOwnerHttpGuard } from "@/infrastructure/http/guards/artist-create-body-owner.http.guard";
-import { ArtistResourceOwnerHttpGuard } from "@/infrastructure/http/guards/artist-resource-owner.http.guard";
+import { ArtistCreateBodyOwnerHttpGuard } from "@/authorization/interface/http/guards/artist-create-body-owner.http.guard";
+import { ArtistResourceOwnerHttpGuard } from "@/authorization/interface/http/guards/artist-resource-owner.http.guard";
 import { CreateArtistDto } from "./dto/create-artist.dto";
 import { LinkPrimaryMediaDto } from "./dto/link-primary-media.dto";
 import { IArtistService } from "./interfaces/artist.service.interface";

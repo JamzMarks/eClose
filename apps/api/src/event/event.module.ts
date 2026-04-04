@@ -4,8 +4,6 @@ import { VenueModule } from "@/venue/venue.module";
 import { MediaModule } from "@/media/media.module";
 import { ArtistModule } from "@/artist/artist.module";
 import { CalendarModule } from "@/calendar/calendar.module";
-import { EventOrganizerBodyHttpGuard } from "@/infrastructure/http/guards/event-organizer-body.http.guard";
-import { EventResourceOrganizerHttpGuard } from "@/infrastructure/http/guards/event-resource-organizer.http.guard";
 import { EventController } from "./interface/http/event.controller";
 import { EventService } from "./application/event.service";
 import { EventPersistenceModule } from "./event-persistence.module";
@@ -35,8 +33,6 @@ const eventMediaProvider = {
     { provide: EVENT_ACCESS_POLICY, useClass: EventAccessPolicyImpl },
     eventMediaProvider,
     { provide: EVENT_SERVICE, useClass: EventService },
-    EventOrganizerBodyHttpGuard,
-    EventResourceOrganizerHttpGuard,
   ],
   exports: [EVENT_SERVICE, EventPersistenceModule, EVENT_ACCESS_POLICY],
 })

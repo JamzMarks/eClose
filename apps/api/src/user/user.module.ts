@@ -4,7 +4,6 @@ import { UserOrmEntity } from "@/user/infrastructure/persistence/user.orm-entity
 import { ArtistModule } from "@/artist/artist.module";
 import { VenueModule } from "@/venue/venue.module";
 import { NotificationModule } from "@/notification/notification.module";
-import { SelfUserHttpGuard } from "@/infrastructure/http/guards/self-user.http.guard";
 import { UserController } from "./interface/http/user.controller";
 import { UserService } from "./application/user.service";
 import { USER_SERVICE } from "./application/tokens/user.tokens";
@@ -17,7 +16,7 @@ import { USER_SERVICE } from "./application/tokens/user.tokens";
     VenueModule,
   ],
   controllers: [UserController],
-  providers: [{ provide: USER_SERVICE, useClass: UserService }, SelfUserHttpGuard],
+  providers: [{ provide: USER_SERVICE, useClass: UserService }],
   exports: [USER_SERVICE],
 })
 export class UserModule {}

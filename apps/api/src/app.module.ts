@@ -1,5 +1,4 @@
 import { Module } from "@nestjs/common";
-import { APP_GUARD } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ApplicationCoreModule } from "./infrastructure/application-core.module";
 import { ALL_TYPEORM_ENTITIES } from "./infrastructure/persistence/typeorm-entities.registry";
@@ -12,7 +11,7 @@ import { UserBlocks1740400000000 } from "./infrastructure/persistence/migrations
 import { UserFirstLastNames1740500000000 } from "./infrastructure/persistence/migrations/1740500000000-UserFirstLastNames";
 import { ProfileNamesAcknowledgedAt1740600000000 } from "./infrastructure/persistence/migrations/1740600000000-ProfileNamesAcknowledgedAt";
 import { RenameDisplayNameToUsername1740700000000 } from "./infrastructure/persistence/migrations/1740700000000-RenameDisplayNameToUsername";
-import { PrivateJwtAuthGuard } from "./infrastructure/http/guards/private-jwt-auth.guard";
+import { AuthorizationModule } from "./authorization/authorization.module";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { AuthModule } from "./auth/auth.module";
@@ -74,11 +73,9 @@ import { PostModule } from "./post/post.module";
     BookingModule,
     FriendshipModule,
     PostModule,
+    AuthorizationModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    { provide: APP_GUARD, useClass: PrivateJwtAuthGuard },
-  ],
+  providers: [AppService],
 })
 export class AppModule {}

@@ -218,4 +218,12 @@ export class UserService implements IUserService {
       }));
     return { artists, venues };
   }
+
+  async markEmailVerified(userId: string): Promise<void> {
+    const row = await this.users.findOne({ where: { id: userId } });
+    if (!row) throw new NotFoundException("Utilizador não encontrado");
+    if (row.emailVerifiedAt) return;
+    row.emailVerifiedAt = new Date();
+    await this.users.save(row);
+  }
 }

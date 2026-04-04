@@ -28,4 +28,5 @@ export interface IUserService {
     artists: LinkedArtistSummary[];
     venues: LinkedVenueSummary[];
   }>;
+  markEmailVerified(userId: string): Promise<void>;
 }

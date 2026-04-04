@@ -69,6 +69,14 @@ export class VenueService implements IVenueService {
     return this.venues.listActive();
   }
 
+  async getPublicById(id: string): Promise<Venue | null> {
+    return this.venues.findMarketplaceListedById(id);
+  }
+
+  async listPublicMarketplace(): Promise<Venue[]> {
+    return this.venues.listMarketplaceListedActive();
+  }
+
   async linkPrimaryMedia(venueId: string, mediaAssetId: string): Promise<Venue> {
     const venue = await this.venues.findById(venueId);
     if (!venue) throw new NotFoundException("Venue não encontrado");

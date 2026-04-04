@@ -5,4 +5,7 @@ export interface IVenueRepository {
   findById(id: string): Promise<Venue | null>;
   findBySlug(slug: string): Promise<Venue | null>;
   listActive(): Promise<Venue[]>;
+  /** Espaços activos e visíveis no catálogo público (marketplace). */
+  listMarketplaceListedActive(): Promise<Venue[]>;
+  findMarketplaceListedById(id: string): Promise<Venue | null>;
 }

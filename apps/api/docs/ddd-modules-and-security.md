@@ -26,7 +26,8 @@ interface/       # Nest: controllers, DTOs de entrada, guards (adaptadores HTTP)
 
 Ficheiro `*.module.ts` na raiz de cada módulo; camadas:
 
-- **`auth/`** — `application/` (serviço, constantes, tokens, ports, utils); `domain/types/`; `infrastructure/` (persistence, OAuth, passport JWT); `interface/http/` (controller, DTOs, guards de auth).
+- **`auth/`** — `application/` (serviço, constantes, tokens, ports, utils); `domain/types/`; `infrastructure/` (persistence, OAuth, passport JWT); `interface/http/` (controller, DTOs, `EmailVerifiedHttpGuard`).
+- **`authorization/`** — `authorization.module.ts` (**@Global**), `interface/http/guards/`: `PrivateJwtAuthGuard`, guards de recurso que chamam **ports** `VenueAccessPolicy`, `EventAccessPolicy`, `ArtistAccessPolicy`, `BookingAccessPolicy`. Importa `VenueModule`, `EventModule`, `ArtistModule`, `BookingModule`, `CalendarModule` só para resolver tokens de policy; **não** define entidades.
 - **`user/`** — `application/` (serviço, tokens, ports); `domain/entity/` e `domain/types/`; `infrastructure/persistence/`; `interface/http/`.
 - **`venue/`** — `application/` (`venue.service`, ports, tokens); `domain/entity/` e `domain/types/`; `infrastructure/` (TypeORM repo, policies, media adapters); `interface/http/` (controller, DTOs).
 - **`event/`** — igual em espelho (`event-persistence.module.ts` na raiz para `TypeOrmModule.forFeature` + `EVENT_REPOSITORY`).
@@ -37,45 +38,82 @@ JWT Passport: [`jwt.strategy.ts`](../src/auth/infrastructure/passport/jwt.strate
 
 ## Autenticação vs autorização
 
-- **Autenticação (AUTHN):** “quem és?” — JWT válido, identidade no `request.user`. Hoje: [`PrivateJwtAuthGuard`](src/infrastructure/http/guards/private-jwt-auth.guard.ts) + `@PrivateRoute()`. **Por omissão as rotas são públicas**; marcar só o que exige sessão.
+- **Autenticação (AUTHN):** “quem és?” — JWT válido, identidade no `request.user`. Hoje: [`PrivateJwtAuthGuard`](../src/authorization/interface/http/guards/private-jwt-auth.guard.ts) (registado como `APP_GUARD` em [`AuthorizationModule`](../src/authorization/authorization.module.ts)) + `@PrivateRoute()`. **Por omissão as rotas são públicas**; marcar só o que exige sessão.
 - **Autorização (AUTHZ):** “podes fazer isto neste recurso?” — dono do venue/evento, papel futuro (staff), estado do recurso (rascunho vs publicado).
 
-**Regra:** serviços de domínio / aplicação **não** importam `ExecutionContext` nem `@Injectable()` guards. Recebem `userId` e dados já resolvidos, ou uma **porta** `ICanUserEditEvent(userId, eventId): Promise<boolean>` implementada na infra.
+**Regra:** serviços de domínio / aplicação **não** importam `ExecutionContext` nem `@Injectable()` guards. Recebem `userId` e dados já resolvidos, ou uma **porta** (`VenueAccessPolicyPort`, `EventAccessPolicyPort`, …) implementada na infra.
+
+## Padrão Guard → Policy (HTTP)
+
+| Guard (em `authorization/interface/http/guards/`) | Port / token | Uso típico |
+|---------------------------------------------------|--------------|------------|
+| `VenueCreateBodyOwnerHttpGuard` | `VENUE_ACCESS_POLICY` | `POST /venues` — valida cláusula `ownerUserId` no body |
+| `VenueResourceOwnerHttpGuard` | `VENUE_ACCESS_POLICY` | `PATCH /venues/:id/...` com id na rota |
+| `EventOrganizerBodyHttpGuard` | `EVENT_ACCESS_POLICY` | `POST /events` — `organizerArtistId` pertence ao actor |
+| `EventResourceOrganizerHttpGuard` | `EVENT_ACCESS_POLICY` | `GET/PATCH /events/:id/...` organizador |
+| `ArtistCreateBodyOwnerHttpGuard` | `ARTIST_ACCESS_POLICY` | `POST /artists` |
+| `ArtistResourceOwnerHttpGuard` | `ARTIST_ACCESS_POLICY` | mutações com `:id` |
+| `BookingInquiryRequesterHttpGuard` | `BOOKING_ACCESS_POLICY` | lado requester da inquiry |
+| `BookingInquiryCounterpartHttpGuard` | `BOOKING_ACCESS_POLICY` | lado counterpart |
+| `CalendarArtistOwnerHttpGuard` | `ARTIST_ACCESS_POLICY` | rotas calendário por `artistId` |
+| `CalendarVenueOwnerHttpGuard` | `VENUE_ACCESS_POLICY` | rotas calendário por `venueId` |
+| `SelfUserHttpGuard` | — | `params.id === user.id` (dados pessoais) |
+
+Implementações: `*AccessPolicyImpl` em cada bounded context (`venue/infrastructure`, `event/infrastructure`, etc.). O `BookingModule` **exporta** `BOOKING_ACCESS_POLICY` para o `AuthorizationModule`.
+
+## Auditoria de rotas (público vs privado)
+
+### Venue (`/venues`)
+
+| Método | Rota | Público? | Protecção |
+|--------|------|----------|-----------|
+| GET | `/venues` | Sim | `VenueService.listPublicMarketplace()` — só `isActive` + `marketplaceListed` (repositório) |
+| GET | `/venues/:id` | Sim | `getPublicById` — mesmos invariantes |
+| POST | `/venues` | Não | `@PrivateRoute()` + `VenueCreateBodyOwnerHttpGuard` |
+| PATCH | `/venues/:id/primary-media` | Não | `@PrivateRoute()` + `VenueResourceOwnerHttpGuard` |
+
+### Event (`/events`)
+
+| Método | Rota | Público? | Protecção |
+|--------|------|----------|-----------|
+| GET | `/events` | Sim | `listPublishedPublic` / `listPublishedFiltered` — só publicados |
+| GET | `/events/:id` | Sim | `getPublicById` — só `EventStatus.PUBLISHED` |
+| GET | `/events/:id/organizer` | Não | `@PrivateRoute()` + `EventResourceOrganizerHttpGuard` |
+| POST | `/events` | Não | `@PrivateRoute()` + `EventOrganizerBodyHttpGuard` |
+| PATCH | `/events/:id/primary-media` | Não | `@PrivateRoute()` + `EventResourceOrganizerHttpGuard` |
+
+### Booking (`/booking`)
+
+| Âmbito | Protecção |
+|--------|-----------|
+| Todo o controller | `@PrivateRoute()` a nível de classe |
+| Mutações por `inquiries/:id` | `BookingInquiryRequesterHttpGuard` ou `BookingInquiryCounterpartHttpGuard` conforme o papel |
 
 ## Guards sem acoplar serviços de domínio
 
-1. **Guard HTTP** (Nest) — só orquestra: lê `req.user`, `req.params`, chama uma **Policy** ou **Authorization port** (interface em `application/ports` ou `auth/application/ports`).
-2. **Policy / checker** — classe `@Injectable()` que injeta **repositórios leitura** (ou `QueryHandler`), devolve boolean ou lança `ForbiddenException`.
-3. **Domínio** — funções puras quando a regra for local (ex.: “evento cancelado não aceita edição”).
-
-Exemplo de encaixe:
-
-- `EventOwnerPolicy.canEdit(userId, eventId)` usado por `EventOwnerGuard`.
-- O `EventService.update` continua a validar invariantes de negócio; o guard evita chamadas óbvias sem permissão (defesa em profundidade).
+1. **Guard HTTP** (Nest) — só orquestra: lê `req.user`, `req.params`, chama uma **Policy** ou **Authorization port** (interface em `application/ports` do agregado).
+2. **Policy / checker** — classe `@Injectable()` que injeta **repositórios leitura** (ou query), devolve boolean ou lança erro de domínio mapeado para HTTP no guard.
+3. **Domínio** — funções puras quando a regra for local.
 
 Evitar: `EventService` injetar `Reflector` ou `JwtService`.
 
-## Tipos de guard (roadmap)
+## Verificação de e-mail (API)
 
-| Guard / metadata | Uso |
-|------------------|-----|
-| **PrivateJwtAuthGuard** (actual) | JWT obrigatório onde há `@PrivateRoute()` |
-| **OptionalAuthGuard** (futuro) | Rotas públicas que enriquecem resposta se houver token (ex.: “já segues este evento?”) |
-| **EmailVerifiedGuard** (já existe lógica no Auth para passo `names`) | Rotas estáticas que exigem e-mail verificado |
-| **ResourceOwnerGuard** (futuro) | `venue:owner`, `event:organizer` via policy + id na rota |
-| **Ability / permission** (futuro) | Matriz fina (ex.: moderador) com CASL ou tabela `role` |
+- `POST /auth/email-verification/send` — `@PrivateRoute()`; emite JWT de verificação (expiração `JWT_EMAIL_VERIFY_EXPIRES`); em desenvolvimento o token é registado em log (canal de e-mail em backlog).
+- `POST /auth/email-verification/confirm` — público; body `{ token }`; valida JWT com `purpose: email_verify` e chama `UserService.markEmailVerified`.
 
-## Conteúdo público (menos fricção na app)
+## `AppModule`
 
-- **GET** de recurso “listável” ou “publicável” (evento/venue em estado publicado) **sem** `@PrivateRoute()`.
-- Validação de **visibilidade** dentro do **caso de uso** ou repositório: `findPublicById(id)` vs `findByIdForOwner(id, userId)`.
-- Não expor dados pessoais ou métricas sensíveis em endpoints públicos; DTO **público** separado do DTO **autenticado** quando necessário.
+Importar `AuthorizationModule` (por exemplo no fim da lista `imports`) para registar o `APP_GUARD` e disponibilizar os guards HTTP globais.
 
-## Ordem sugerida de implementação
+## Backlog (auth e produto)
 
-1. Marcar explicitamente controllers Venue/Event: quais GET são públicos vs privados.
-2. Introduzir ports `IVenueAccessPolicy` / `IEventAccessPolicy` (leitura) e guards finos nos PATCH/DELETE.
-3. Extrair regras repetidas de “owner” dos services para as policies.
-4. Opcional: módulo `authorization/` partilhado que exporta guards + policies (sem importar Entity de Event dentro de User).
+| Item | Notas |
+|------|--------|
+| **E-mail transaccional** | Enviar link com token em produção (Notification / provider externo); retirar dependência de log em dev. |
+| **Reset / MFA / troca de e-mail** | Interfaces já em `IAuthService`; implementações continuam `501` até priorização. |
+| **`OptionalAuthGuard`** | Rotas públicas que enriquecem a resposta se existir JWT válido. |
+| **Termos e privacidade no `SignUpDto`** | Campos `termsAcceptedAt` / `privacyAcceptedAt` já existem na entidade User; falta validação e gravação no sign-up HTTP. |
+| **Abilities / CASL / papéis staff** | Matriz fina para moderadores, etc. |
 
 Este ficheiro é normativo para evolução; refinar à medida que os casos de uso crescerem.

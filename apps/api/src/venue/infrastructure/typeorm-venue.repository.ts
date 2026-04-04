@@ -33,6 +33,20 @@ export class TypeormVenueRepository implements IVenueRepository {
     return rows.map((r) => this.toDomain(r));
   }
 
+  async listMarketplaceListedActive(): Promise<Venue[]> {
+    const rows = await this.repo.find({
+      where: { isActive: true, marketplaceListed: true },
+    });
+    return rows.map((r) => this.toDomain(r));
+  }
+
+  async findMarketplaceListedById(id: string): Promise<Venue | null> {
+    const row = await this.repo.findOne({
+      where: { id, isActive: true, marketplaceListed: true },
+    });
+    return row ? this.toDomain(row) : null;
+  }
+
   private toRow(v: Venue): VenueOrmEntity {
     const row = new VenueOrmEntity();
     row.id = v.id;

@@ -1,7 +1,7 @@
 import { ExecutionContext, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { AuthGuard } from "@nestjs/passport";
-import { IS_PRIVATE_ROUTE_KEY } from "../metadata/private-route.metadata";
+import { IS_PRIVATE_ROUTE_KEY } from "@/infrastructure/http/metadata/private-route.metadata";
 
 /**
  * Por omissão as rotas são públicas. Com @PrivateRoute() exige JWT válido.

@@ -20,6 +20,14 @@ export class AuthService implements IAuthService {
     return this.client.post<AuthTokensResponse>("/auth/sign-up", data);
   }
 
+  sendEmailVerification(): Promise<void> {
+    return this.client.post<void>("/auth/email-verification/send", {});
+  }
+
+  confirmEmailVerification(token: string): Promise<void> {
+    return this.client.post<void>("/auth/email-verification/confirm", { token });
+  }
+
   me(): Promise<UserProfileResponse> {
     return this.client.get<UserProfileResponse>("/auth/me");
   }
