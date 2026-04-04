@@ -42,21 +42,6 @@ export class StubOAuthProviderGateway implements IOAuthProviderGateway {
       );
     }
 
-    if (request.provider === OAuthProviderId.GITHUB) {
-      const clientId = process.env.OAUTH_GITHUB_CLIENT_ID;
-      if (!clientId) {
-        throw new ServiceUnavailableException(
-          "OAuth GitHub: defina OAUTH_GITHUB_CLIENT_ID e implemente exchangeCode na infra.",
-        );
-      }
-      const redirect = encodeURIComponent(request.redirectUri);
-      const scope = encodeURIComponent(request.scopes?.length ? request.scopes.join(" ") : "read:user user:email");
-      const authorizationUrl =
-        `https://github.com/login/oauth/authorize?client_id=${encodeURIComponent(clientId)}` +
-        `&redirect_uri=${redirect}&state=${encodeURIComponent(state)}&scope=${scope}`;
-      return { authorizationUrl, state };
-    }
-
     if (request.provider === OAuthProviderId.META) {
       throw new ServiceUnavailableException(
         "OAuth Meta: configure app Meta e implementação na infra.",

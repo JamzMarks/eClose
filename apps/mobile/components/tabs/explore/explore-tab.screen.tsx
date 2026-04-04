@@ -1,13 +1,13 @@
-import { ActivityIndicator, FlatList, RefreshControl, StyleSheet } from "react-native";
+import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
+import { VenueListingCard } from "@/components/listing/venue-listing-card";
 import { Screen } from "@/components/layout/screen";
 import { TabScreenCenterError } from "@/components/shared/tab-screen/TabScreenCenterError";
 import { TabScreenCenterLoading } from "@/components/shared/tab-screen/TabScreenCenterLoading";
 import { TabScreenEmptyHint } from "@/components/shared/tab-screen/TabScreenEmptyHint";
 import { TabScreenHeader } from "@/components/shared/tab-screen/TabScreenHeader";
-import { VenueRowCard } from "@/components/tabs/explore/components/VenueRowCard";
 import { useExploreVenues } from "@/components/tabs/explore/use-explore-venues";
 import { AppPalette, getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -73,16 +73,18 @@ export function ExploreTabScreen() {
         }
         ListFooterComponent={
           venues.loadingMore && venues.canLoadMore ? (
-            <ActivityIndicator style={{ marginVertical: 16 }} color={AppPalette.primary} />
+            <View style={styles.footer}>
+              <ActivityIndicator color={AppPalette.primary} />
+            </View>
           ) : null
         }
         renderItem={({ item }) => (
-          <VenueRowCard
+          <VenueListingCard
             card={item}
+            categoryLabel={item.categoryLabel}
             textColor={c.text}
             subtitleColor={c.textSecondary}
-            thumbBackgroundColor={c.border}
-            borderColor={c.border}
+            imagePlaceholderColor={c.border}
             onPress={() => router.push(`/venue/${item.venue.id}`)}
           />
         )}
@@ -92,5 +94,14 @@ export function ExploreTabScreen() {
 }
 
 const styles = StyleSheet.create({
-  listContent: { paddingBottom: 32, flexGrow: 1 },
+  listContent: {
+    paddingHorizontal: 16,
+    paddingBottom: 32,
+    flexGrow: 1,
+    paddingTop: 4,
+  },
+  footer: {
+    paddingVertical: 16,
+    alignItems: "center",
+  },
 });

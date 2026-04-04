@@ -1,19 +1,19 @@
-import { ActivityIndicator, FlatList, RefreshControl, StyleSheet } from "react-native";
+import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
+import { EventListingCard } from "@/components/listing/event-listing-card";
 import { Screen } from "@/components/layout/screen";
 import { TabScreenCenterError } from "@/components/shared/tab-screen/TabScreenCenterError";
 import { TabScreenCenterLoading } from "@/components/shared/tab-screen/TabScreenCenterLoading";
 import { TabScreenEmptyHint } from "@/components/shared/tab-screen/TabScreenEmptyHint";
 import { TabScreenHeader } from "@/components/shared/tab-screen/TabScreenHeader";
-import { EventCard } from "@/components/tabs/home/components/EventCard";
 import { useHomePublishedEvents } from "@/components/tabs/home/use-home-published-events";
 import { AppPalette, getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
 /**
- * Orquestra a tab Home: dados via hook, UI composta por componentes partilhados e específicos da tab.
+ * Tab Home: eventos em cartões partilhando layout com espaços (tab Explorar).
  */
 export function HomeTabScreen() {
   const { t } = useTranslation("discover");
@@ -60,7 +60,7 @@ export function HomeTabScreen() {
       {header}
       <FlatList
         data={events.items}
-        keyExtractor={(it) => it.id}
+        keyExtractor={(it) => it.event.id}
         refreshControl={
           <RefreshControl
             refreshing={events.refreshing}
@@ -76,18 +76,21 @@ export function HomeTabScreen() {
         }
         ListFooterComponent={
           events.loadingMore && events.canLoadMore ? (
-            <ActivityIndicator style={{ marginVertical: 16 }} color={AppPalette.primary} />
+            <View style={styles.footer}>
+              <ActivityIndicator color={AppPalette.primary} />
+            </View>
           ) : null
         }
         renderItem={({ item }) => (
-          <EventCard
-            event={item}
+          <EventListingCard
+            event={item.event}
+            primaryMediaUrl={item.primaryMediaUrl}
+            categoryLabel={item.categoryLabel}
             textColor={c.text}
             subtitleColor={c.textSecondary}
-            surfaceColor={c.surface}
-            borderColor={c.border}
+            imagePlaceholderColor={c.border}
             onlineLabel={t("online")}
-            onPress={() => router.push(`/event/${item.id}`)}
+            onPress={() => router.push(`/event/${item.event.id}`)}
           />
         )}
       />
@@ -96,5 +99,14 @@ export function HomeTabScreen() {
 }
 
 const styles = StyleSheet.create({
-  listContent: { padding: 16, paddingBottom: 32, flexGrow: 1 },
+  listContent: {
+    paddingHorizontal: 16,
+    paddingBottom: 32,
+    flexGrow: 1,
+    paddingTop: 4,
+  },
+  footer: {
+    paddingVertical: 16,
+    alignItems: "center",
+  },
 });

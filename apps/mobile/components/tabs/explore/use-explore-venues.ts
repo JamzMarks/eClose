@@ -2,11 +2,13 @@ import { useCallback, useEffect, useState } from "react";
 
 import { MarketplaceService } from "@/infrastructure/api/marketplace/marketplace.service";
 import type { MarketplaceVenueCardDto } from "@/infrastructure/api/types/venue.types";
+import { mockPaginatedVenues } from "@/infrastructure/discover/mock-discover-api";
+import type { ExploreVenueRow } from "@/infrastructure/discover/mock-discover-data";
 import { normalizeHttpError } from "@/infrastructure/http/error-handler";
-import { DISCOVER_PAGE_SIZE } from "@/lib/discover-config";
+import { DISCOVER_PAGE_SIZE, USE_MOCK_DISCOVER } from "@/lib/discover-config";
 
 export function useExploreVenues(tError: (key: string) => string) {
-  const [items, setItems] = useState<MarketplaceVenueCardDto[]>([]);
+  const [items, setItems] = useState<ExploreVenueRow[]>([]);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -16,6 +18,18 @@ export function useExploreVenues(tError: (key: string) => string) {
 
   const fetchPage = useCallback(
     async (nextPage: number, mode: "replace" | "append") => {
+      if (USE_MOCK_DISCOVER) {
+        const res = await mockPaginatedVenues(nextPage, DISCOVER_PAGE_SIZE);
+        setTotal(res.total);
+        if (mode === "replace") {
+          setItems(res.items);
+        } else {
+          setItems((prev) => [...prev, ...res.items]);
+        }
+        setPage(nextPage);
+        return;
+      }
+
       const svc = new MarketplaceService();
       const res = await svc.listVenues({
         page: nextPage,
@@ -24,10 +38,13 @@ export function useExploreVenues(tError: (key: string) => string) {
         order: "ASC",
       });
       setTotal(res.total);
+      const mapped: ExploreVenueRow[] = res.items.map((row: MarketplaceVenueCardDto) => ({
+        ...row,
+      }));
       if (mode === "replace") {
-        setItems(res.items);
+        setItems(mapped);
       } else {
-        setItems((prev) => [...prev, ...res.items]);
+        setItems((prev) => [...prev, ...mapped]);
       }
       setPage(nextPage);
     },

@@ -10,8 +10,7 @@ import {
 import { OAuthProviderId } from "@/auth/domain/types/oauth-provider-id.type";
 
 /**
- * Troca `code` → tokens via HTTP (Google / GitHub). Requer secrets em env.
- * URLs de autorização seguem o mesmo contrato do stub.
+ * Troca `code` → tokens via HTTP (Google). Requer secrets em env.
  */
 @Injectable()
 export class HttpOAuthProviderGateway implements IOAuthProviderGateway {
@@ -36,21 +35,6 @@ export class HttpOAuthProviderGateway implements IOAuthProviderGateway {
       return { authorizationUrl, state };
     }
 
-    if (request.provider === OAuthProviderId.GITHUB) {
-      const clientId = process.env.OAUTH_GITHUB_CLIENT_ID;
-      if (!clientId) {
-        throw new ServiceUnavailableException(
-          "OAuth GitHub: defina OAUTH_GITHUB_CLIENT_ID e OAUTH_GITHUB_CLIENT_SECRET.",
-        );
-      }
-      const redirect = encodeURIComponent(request.redirectUri);
-      const scope = encodeURIComponent(request.scopes?.length ? request.scopes.join(" ") : "read:user user:email");
-      const authorizationUrl =
-        `https://github.com/login/oauth/authorize?client_id=${encodeURIComponent(clientId)}` +
-        `&redirect_uri=${redirect}&state=${encodeURIComponent(state)}&scope=${scope}`;
-      return { authorizationUrl, state };
-    }
-
     if (request.provider === OAuthProviderId.APPLE || request.provider === OAuthProviderId.META) {
       throw new ServiceUnavailableException(`OAuth ${request.provider}: não implementado neste gateway.`);
     }
@@ -61,9 +45,6 @@ export class HttpOAuthProviderGateway implements IOAuthProviderGateway {
   async exchangeCode(payload: OAuthCallbackPayload): Promise<OAuthExternalIdentity> {
     if (payload.provider === OAuthProviderId.GOOGLE) {
       return this.exchangeGoogle(payload);
-    }
-    if (payload.provider === OAuthProviderId.GITHUB) {
-      return this.exchangeGitHub(payload);
     }
     throw new ServiceUnavailableException("Troca de código não suportada para este provedor.");
   }
@@ -125,73 +106,6 @@ export class HttpOAuthProviderGateway implements IOAuthProviderGateway {
       givenName: profile.given_name,
       familyName: profile.family_name,
       picture: profile.picture,
-    };
-  }
-
-  private async exchangeGitHub(payload: OAuthCallbackPayload): Promise<OAuthExternalIdentity> {
-    const clientId = process.env.OAUTH_GITHUB_CLIENT_ID;
-    const clientSecret = process.env.OAUTH_GITHUB_CLIENT_SECRET;
-    if (!clientId || !clientSecret) {
-      throw new ServiceUnavailableException("Defina OAUTH_GITHUB_CLIENT_ID e OAUTH_GITHUB_CLIENT_SECRET.");
-    }
-    const body = JSON.stringify({
-      client_id: clientId,
-      client_secret: clientSecret,
-      code: payload.code,
-      redirect_uri: payload.redirectUri,
-    });
-    const tokenRes = await fetch("https://github.com/login/oauth/access_token", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body,
-    });
-    if (!tokenRes.ok) {
-      const t = await tokenRes.text();
-      throw new UnauthorizedException(`GitHub token exchange falhou: ${t}`);
-    }
-    const tokens = (await tokenRes.json()) as { access_token?: string; error?: string };
-    if (tokens.error || !tokens.access_token) {
-      throw new UnauthorizedException(tokens.error ?? "GitHub não retornou access_token.");
-    }
-    const userRes = await fetch("https://api.github.com/user", {
-      headers: {
-        Authorization: `Bearer ${tokens.access_token}`,
-        Accept: "application/vnd.github+json",
-      },
-    });
-    if (!userRes.ok) {
-      const t = await userRes.text();
-      throw new UnauthorizedException(`GitHub user falhou: ${t}`);
-    }
-    const profile = (await userRes.json()) as {
-      id?: number;
-      email?: string | null;
-      name?: string | null;
-    };
-    let email = profile.email ?? undefined;
-    if (!email) {
-      const emailsRes = await fetch("https://api.github.com/user/emails", {
-        headers: {
-          Authorization: `Bearer ${tokens.access_token}`,
-          Accept: "application/vnd.github+json",
-        },
-      });
-      if (emailsRes.ok) {
-        const list = (await emailsRes.json()) as { email?: string; primary?: boolean; verified?: boolean }[];
-        email = list.find((e) => e.primary && e.verified)?.email ?? list.find((e) => e.verified)?.email;
-      }
-    }
-    if (profile.id == null) {
-      throw new UnauthorizedException("Perfil GitHub sem id.");
-    }
-    return {
-      provider: OAuthProviderId.GITHUB,
-      providerAccountId: String(profile.id),
-      email,
-      name: profile.name ?? undefined,
     };
   }
 }

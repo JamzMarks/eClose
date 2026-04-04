@@ -2,11 +2,13 @@ import { useCallback, useEffect, useState } from "react";
 
 import { EventService } from "@/infrastructure/api/event/event.service";
 import type { EventDto } from "@/infrastructure/api/types/event.types";
+import { mockPaginatedEvents } from "@/infrastructure/discover/mock-discover-api";
+import type { PublishedEventRow } from "@/infrastructure/discover/mock-discover-data";
 import { normalizeHttpError } from "@/infrastructure/http/error-handler";
-import { DISCOVER_PAGE_SIZE } from "@/lib/discover-config";
+import { DISCOVER_PAGE_SIZE, USE_MOCK_DISCOVER } from "@/lib/discover-config";
 
 export function useHomePublishedEvents(tError: (key: string) => string) {
-  const [items, setItems] = useState<EventDto[]>([]);
+  const [items, setItems] = useState<PublishedEventRow[]>([]);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -16,6 +18,18 @@ export function useHomePublishedEvents(tError: (key: string) => string) {
 
   const fetchPage = useCallback(
     async (nextPage: number, mode: "replace" | "append") => {
+      if (USE_MOCK_DISCOVER) {
+        const res = await mockPaginatedEvents(nextPage, DISCOVER_PAGE_SIZE);
+        setTotal(res.total);
+        if (mode === "replace") {
+          setItems(res.items);
+        } else {
+          setItems((prev) => [...prev, ...res.items]);
+        }
+        setPage(nextPage);
+        return;
+      }
+
       const svc = new EventService();
       const res = await svc.listPublished({
         page: nextPage,
@@ -24,10 +38,14 @@ export function useHomePublishedEvents(tError: (key: string) => string) {
         order: "ASC",
       });
       setTotal(res.total);
+      const mapped: PublishedEventRow[] = res.items.map((event: EventDto) => ({
+        event,
+        primaryMediaUrl: null,
+      }));
       if (mode === "replace") {
-        setItems(res.items);
+        setItems(mapped);
       } else {
-        setItems((prev) => [...prev, ...res.items]);
+        setItems((prev) => [...prev, ...mapped]);
       }
       setPage(nextPage);
     },
