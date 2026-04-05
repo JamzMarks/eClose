@@ -1,19 +1,17 @@
 import { useCallback, useEffect, useState } from "react";
 
+import type { DiscoverVenueListFilters } from "@/services/discover/discover-list-filters.types";
+import type { MarketplaceVenueListItem } from "@/services/discover/discover-list.types";
 import { MarketplaceService } from "@/services/marketplace/marketplace.service";
-import type { MarketplaceVenueCardDto } from "@/services/types/venue.types";
-import type { DiscoverVenueListFilters } from "@/infrastructure/discover/discover-list-filters.types";
-import { mockPaginatedVenues } from "@/infrastructure/discover/mock-discover-api";
-import type { ExploreVenueRow } from "@/infrastructure/discover/mock-discover-data";
+import { DISCOVER_PAGE_SIZE } from "@/services/config/discover-mode";
 import { normalizeHttpError } from "@/infrastructure/http/error-handler";
-import { DISCOVER_PAGE_SIZE, USE_MOCK_DISCOVER } from "@/lib/discover-config";
 
 export function useExploreVenues(
   tError: (key: string) => string,
   filters: DiscoverVenueListFilters,
   enabled = true,
 ) {
-  const [items, setItems] = useState<ExploreVenueRow[]>([]);
+  const [items, setItems] = useState<MarketplaceVenueListItem[]>([]);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(() => enabled);
@@ -23,18 +21,6 @@ export function useExploreVenues(
 
   const fetchPage = useCallback(
     async (nextPage: number, mode: "replace" | "append") => {
-      if (USE_MOCK_DISCOVER) {
-        const res = await mockPaginatedVenues(nextPage, DISCOVER_PAGE_SIZE, filters);
-        setTotal(res.total);
-        if (mode === "replace") {
-          setItems(res.items);
-        } else {
-          setItems((prev) => [...prev, ...res.items]);
-        }
-        setPage(nextPage);
-        return;
-      }
-
       const svc = new MarketplaceService();
       const res = await svc.listVenues({
         page: nextPage,
@@ -46,13 +32,10 @@ export function useExploreVenues(
         openToInquiriesOnly: filters.openToInquiriesOnly ? true : undefined,
       });
       setTotal(res.total);
-      const mapped: ExploreVenueRow[] = res.items.map((row: MarketplaceVenueCardDto) => ({
-        ...row,
-      }));
       if (mode === "replace") {
-        setItems(mapped);
+        setItems(res.items);
       } else {
-        setItems((prev) => [...prev, ...mapped]);
+        setItems((prev) => [...prev, ...res.items]);
       }
       setPage(nextPage);
     },

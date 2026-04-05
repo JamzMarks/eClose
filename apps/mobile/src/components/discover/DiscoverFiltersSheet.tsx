@@ -9,11 +9,8 @@ import BottomSheet, {
 import type { DiscoverListKind } from "@/components/discover/discover-segmented-kind";
 import { AppPalette, getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import type {
-  DiscoverEventListFilters,
-  DiscoverVenueListFilters,
-  EventLocationModeFilter,
-} from "@/infrastructure/discover/discover-list-filters.types";
+import type { DiscoverEventListFilters, DiscoverVenueListFilters } from "@/services/discover/discover-list-filters.types";
+import type { DiscoveryLocationModeFilter } from "@/services/types/event.types";
 
 export type DiscoverFiltersSheetLabels = {
   title: string;
@@ -102,7 +99,7 @@ export function DiscoverFiltersSheet({
     }
   };
 
-  const modeChip = (mode: EventLocationModeFilter, text: string) => {
+  const modeChip = (mode: DiscoveryLocationModeFilter, text: string) => {
     const selected = draftEvents.locationMode === mode;
     return (
       <Pressable

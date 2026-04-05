@@ -1,3 +1,7 @@
+import type {
+  MarketplaceVenueListItem,
+  PublishedEventListItem,
+} from "@/services/discover/discover-list.types";
 import type { EventDto } from "@/services/types/event.types";
 import type { MarketplaceVenueCardDto } from "@/services/types/venue.types";
 
@@ -78,20 +82,8 @@ function eventDto(p: {
 const u = (path: string) =>
   `https://images.unsplash.com/${path}?auto=format&w=640&q=75`;
 
-export type ExploreVenueRow = MarketplaceVenueCardDto & {
-  categoryLabel?: string;
-  galleryUrls?: string[];
-};
-
-export type PublishedEventRow = {
-  event: EventDto;
-  primaryMediaUrl: string | null;
-  galleryUrls?: string[];
-  categoryLabel?: string;
-};
-
-/** Espaços físicos variados (mock MVP). */
-export const MOCK_EXPLORE_VENUES: ExploreVenueRow[] = [
+/** Espaços físicos variados (dados locais quando `USE_MOCK_DISCOVER`). */
+export const MOCK_EXPLORE_VENUES: MarketplaceVenueListItem[] = [
   {
     venue: venueDto("mock-v1", "Casa da Música", "casa-da-musica", "Porto", "Porto", 41.1579, -8.6291),
     primaryMediaUrl: u("photo-1514525253161-7a46d19cd819"),
@@ -149,7 +141,8 @@ function nextWeekday(hour: number, dayOffset: number): Date {
   return d;
 }
 
-export const MOCK_HOME_EVENTS: PublishedEventRow[] = [
+/** Eventos publicados (dados locais quando `USE_MOCK_DISCOVER`). */
+export const MOCK_HOME_EVENTS: PublishedEventListItem[] = [
   {
     event: eventDto({
       id: "mock-e1",

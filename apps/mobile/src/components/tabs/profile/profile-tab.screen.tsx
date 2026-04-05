@@ -1,9 +1,8 @@
 import { useMemo } from "react";
-import { Alert, Linking, ScrollView, StyleSheet } from "react-native";
+import { Alert, ScrollView, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import * as WebBrowser from "expo-web-browser";
 
 import { Screen } from "@/components/layout/screen";
 import { ProfileIdentityBlock } from "@/components/tabs/profile/components/ProfileIdentityBlock";
@@ -14,17 +13,9 @@ import {
 } from "@/components/tabs/profile/utils/email-handle";
 import { SettingsNavigationRow } from "@/components/settings/components/SettingsNavigationRow";
 import { SettingsSectionHeader } from "@/components/settings/components/SettingsSectionHeader";
-import { getLegalUrls } from "@/constants/legal-urls";
 import { getSchemeColors } from "@/constants/palette";
 import { useAuth } from "@/contexts/auth-context";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-
-async function openUrl(url: string): Promise<void> {
-  const can = await Linking.canOpenURL(url);
-  if (can) {
-    await WebBrowser.openBrowserAsync(url);
-  }
-}
 
 /**
  * Perfil MVP: identidade, listas de desejos (modal), definições, legais e terminar sessão.
@@ -37,8 +28,6 @@ export function ProfileTabScreen() {
   const scheme = useColorScheme() ?? "light";
   const c = getSchemeColors(scheme);
   const { user, signOut } = useAuth();
-  const legal = useMemo(() => getLegalUrls(), []);
-
   const handle = useMemo(() => handleFromEmail(user?.email), [user?.email]);
   const profileUsername = useMemo(() => {
     const u = user?.username?.trim();
@@ -114,7 +103,7 @@ export function ProfileTabScreen() {
         <SettingsSectionHeader title={t("sectionLegal")} color={c.textMuted} />
         <SettingsNavigationRow
           title={t("privacyPolicy")}
-          onPress={() => void openUrl(legal.privacyPolicyUrl)}
+          onPress={() => router.push({ pathname: "/profile-legal", params: { kind: "privacy" } })}
           textColor={c.text}
           subtitleColor={c.textMuted}
           borderColor={c.border}
@@ -122,7 +111,7 @@ export function ProfileTabScreen() {
         />
         <SettingsNavigationRow
           title={t("termsOfService")}
-          onPress={() => void openUrl(legal.termsOfServiceUrl)}
+          onPress={() => router.push({ pathname: "/profile-legal", params: { kind: "terms" } })}
           textColor={c.text}
           subtitleColor={c.textMuted}
           borderColor={c.border}
@@ -130,7 +119,7 @@ export function ProfileTabScreen() {
         />
         <SettingsNavigationRow
           title={t("helpContact")}
-          onPress={() => void Linking.openURL(legal.helpMailto)}
+          onPress={() => router.push({ pathname: "/profile-legal", params: { kind: "help" } })}
           textColor={c.text}
           subtitleColor={c.textMuted}
           borderColor={c.border}

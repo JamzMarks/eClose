@@ -1,3 +1,6 @@
+import { USE_MOCK_DISCOVER } from "@/services/config/discover-mode";
+import type { MarketplaceVenueListItem } from "@/services/discover/discover-list.types";
+import { paginateLocalVenues } from "@/services/discover/discover.stub-pagination";
 import { getApiClient } from "@/services/api-client";
 import type {
   IMarketplaceService,
@@ -12,7 +15,11 @@ export class MarketplaceService implements IMarketplaceService {
 
   listVenues(
     params?: ListMarketplaceVenuesParams,
-  ): Promise<PaginatedResponse<MarketplaceVenueCardDto>> {
+  ): Promise<PaginatedResponse<MarketplaceVenueListItem>> {
+    if (USE_MOCK_DISCOVER) {
+      return paginateLocalVenues(params);
+    }
+
     const q = toQueryString({
       city: params?.city,
       region: params?.region,
@@ -23,8 +30,12 @@ export class MarketplaceService implements IMarketplaceService {
       sortBy: params?.sortBy,
       order: params?.order,
     });
-    return this.client.get<PaginatedResponse<MarketplaceVenueCardDto>>(
-      `/marketplace/venues${q}`,
-    );
+
+    return this.client
+      .get<PaginatedResponse<MarketplaceVenueCardDto>>(`/marketplace/venues${q}`)
+      .then((res) => ({
+        ...res,
+        items: res.items.map((row) => ({ ...row }) satisfies MarketplaceVenueListItem),
+      }));
   }
 }

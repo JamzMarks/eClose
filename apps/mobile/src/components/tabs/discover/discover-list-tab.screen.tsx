@@ -20,7 +20,7 @@ import {
   defaultDiscoverVenueFilters,
   type DiscoverEventListFilters,
   type DiscoverVenueListFilters,
-} from "@/infrastructure/discover/discover-list-filters.types";
+} from "@/services/discover/discover-list-filters.types";
 
 export function DiscoverListTabScreen() {
   const { t } = useTranslation("discover");

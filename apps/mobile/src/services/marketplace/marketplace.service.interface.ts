@@ -1,4 +1,4 @@
-import type { MarketplaceVenueCardDto } from "@/services/types/venue.types";
+import type { MarketplaceVenueListItem } from "@/services/discover/discover-list.types";
 import type { PaginatedResponse } from "@/services/types/pagination.types";
 
 export type ListMarketplaceVenuesParams = {
@@ -15,5 +15,5 @@ export type ListMarketplaceVenuesParams = {
 export interface IMarketplaceService {
   listVenues(
     params?: ListMarketplaceVenuesParams,
-  ): Promise<PaginatedResponse<MarketplaceVenueCardDto>>;
+  ): Promise<PaginatedResponse<MarketplaceVenueListItem>>;
 }

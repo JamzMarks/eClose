@@ -1,9 +1,9 @@
-export type EventLocationModeFilter = "ALL" | "PHYSICAL" | "ONLINE";
+import type { DiscoveryLocationModeFilter } from "@/services/types/event.types";
 
-/** Filtros de listagem — ordenação fixa na API/mock (data para eventos, nome para espaços). */
+/** Filtros de listagem — ordenação fixa na API (data para eventos, nome para espaços). */
 export type DiscoverEventListFilters = {
   city: string;
-  locationMode: EventLocationModeFilter;
+  locationMode: DiscoveryLocationModeFilter;
   query: string;
 };
 

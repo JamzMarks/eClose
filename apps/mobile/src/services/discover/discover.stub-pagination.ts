@@ -1,13 +1,12 @@
+/**
+ * Paginação em memória sobre `discover.seed-data` — apenas para consumo interno dos serviços.
+ */
+import type { DiscoverEventListFilters, DiscoverVenueListFilters } from "@/services/discover/discover-list-filters.types";
+import type { MarketplaceVenueListItem, PublishedEventListItem } from "@/services/discover/discover-list.types";
+import { MOCK_EXPLORE_VENUES, MOCK_HOME_EVENTS } from "@/services/discover/discover.seed-data";
+import type { ListMarketplaceVenuesParams } from "@/services/marketplace/marketplace.service.interface";
+import type { ListPublishedEventsParams } from "@/services/types/event.types";
 import type { PaginatedResponse } from "@/services/types/pagination.types";
-
-import type { DiscoverEventListFilters, DiscoverVenueListFilters } from "@/infrastructure/discover/discover-list-filters.types";
-
-import {
-  MOCK_EXPLORE_VENUES,
-  MOCK_HOME_EVENTS,
-  type ExploreVenueRow,
-  type PublishedEventRow,
-} from "./mock-discover-data";
 
 function slicePage<T>(all: T[], page: number, limit: number): PaginatedResponse<T> {
   const start = (page - 1) * limit;
@@ -15,7 +14,7 @@ function slicePage<T>(all: T[], page: number, limit: number): PaginatedResponse<
   return { items, total: all.length, page, limit };
 }
 
-function mockDelay(): Promise<void> {
+function stubDelay(): Promise<void> {
   return new Promise((r) => setTimeout(r, 320));
 }
 
@@ -25,7 +24,7 @@ function matchesCity(text: string | null | undefined, cityFilter: string): boole
   return t.includes(cityFilter.trim().toLowerCase());
 }
 
-function applyVenueFilters(all: ExploreVenueRow[], f: DiscoverVenueListFilters): ExploreVenueRow[] {
+function applyVenueFilters(all: MarketplaceVenueListItem[], f: DiscoverVenueListFilters): MarketplaceVenueListItem[] {
   let rows = [...all];
   if (f.city.trim()) {
     const c = f.city.trim().toLowerCase();
@@ -42,7 +41,7 @@ function applyVenueFilters(all: ExploreVenueRow[], f: DiscoverVenueListFilters):
   return rows;
 }
 
-function applyEventFilters(all: PublishedEventRow[], f: DiscoverEventListFilters): PublishedEventRow[] {
+function applyEventFilters(all: PublishedEventListItem[], f: DiscoverEventListFilters): PublishedEventListItem[] {
   let rows = [...all];
   if (f.city.trim()) {
     const c = f.city.trim().toLowerCase();
@@ -72,22 +71,38 @@ function applyEventFilters(all: PublishedEventRow[], f: DiscoverEventListFilters
   return rows;
 }
 
-export async function mockPaginatedVenues(
-  page: number,
-  limit: number,
-  filters: DiscoverVenueListFilters,
-): Promise<PaginatedResponse<ExploreVenueRow>> {
-  await mockDelay();
-  const filtered = applyVenueFilters(MOCK_EXPLORE_VENUES, filters);
+function eventFiltersFromListParams(p?: ListPublishedEventsParams): DiscoverEventListFilters {
+  return {
+    city: (p?.city ?? "").trim(),
+    query: (p?.q ?? "").trim(),
+    locationMode: p?.discoveryLocationMode ?? "ALL",
+  };
+}
+
+function venueFiltersFromListParams(p?: ListMarketplaceVenuesParams): DiscoverVenueListFilters {
+  return {
+    city: (p?.city ?? "").trim(),
+    region: (p?.region ?? "").trim(),
+    openToInquiriesOnly: p?.openToInquiriesOnly ?? false,
+  };
+}
+
+export async function paginateLocalPublishedEvents(
+  params?: ListPublishedEventsParams,
+): Promise<PaginatedResponse<PublishedEventListItem>> {
+  await stubDelay();
+  const page = params?.page ?? 1;
+  const limit = params?.limit ?? 15;
+  const filtered = applyEventFilters(MOCK_HOME_EVENTS, eventFiltersFromListParams(params));
   return slicePage(filtered, page, limit);
 }
 
-export async function mockPaginatedEvents(
-  page: number,
-  limit: number,
-  filters: DiscoverEventListFilters,
-): Promise<PaginatedResponse<PublishedEventRow>> {
-  await mockDelay();
-  const filtered = applyEventFilters(MOCK_HOME_EVENTS, filters);
+export async function paginateLocalVenues(
+  params?: ListMarketplaceVenuesParams,
+): Promise<PaginatedResponse<MarketplaceVenueListItem>> {
+  await stubDelay();
+  const page = params?.page ?? 1;
+  const limit = params?.limit ?? 15;
+  const filtered = applyVenueFilters(MOCK_EXPLORE_VENUES, venueFiltersFromListParams(params));
   return slicePage(filtered, page, limit);
 }

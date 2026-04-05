@@ -1,19 +1,17 @@
 import { useCallback, useEffect, useState } from "react";
 
+import type { DiscoverEventListFilters } from "@/services/discover/discover-list-filters.types";
+import type { PublishedEventListItem } from "@/services/discover/discover-list.types";
 import { EventService } from "@/services/event/event.service";
-import type { EventDto } from "@/services/types/event.types";
-import type { DiscoverEventListFilters } from "@/infrastructure/discover/discover-list-filters.types";
-import { mockPaginatedEvents } from "@/infrastructure/discover/mock-discover-api";
-import type { PublishedEventRow } from "@/infrastructure/discover/mock-discover-data";
+import { DISCOVER_PAGE_SIZE } from "@/services/config/discover-mode";
 import { normalizeHttpError } from "@/infrastructure/http/error-handler";
-import { DISCOVER_PAGE_SIZE, USE_MOCK_DISCOVER } from "@/lib/discover-config";
 
 export function useHomePublishedEvents(
   tError: (key: string) => string,
   filters: DiscoverEventListFilters,
   enabled = true,
 ) {
-  const [items, setItems] = useState<PublishedEventRow[]>([]);
+  const [items, setItems] = useState<PublishedEventListItem[]>([]);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(() => enabled);
@@ -23,18 +21,6 @@ export function useHomePublishedEvents(
 
   const fetchPage = useCallback(
     async (nextPage: number, mode: "replace" | "append") => {
-      if (USE_MOCK_DISCOVER) {
-        const res = await mockPaginatedEvents(nextPage, DISCOVER_PAGE_SIZE, filters);
-        setTotal(res.total);
-        if (mode === "replace") {
-          setItems(res.items);
-        } else {
-          setItems((prev) => [...prev, ...res.items]);
-        }
-        setPage(nextPage);
-        return;
-      }
-
       const svc = new EventService();
       const res = await svc.listPublished({
         page: nextPage,
@@ -43,22 +29,13 @@ export function useHomePublishedEvents(
         order: "ASC",
         city: filters.city.trim() || undefined,
         q: filters.query.trim() || undefined,
+        discoveryLocationMode: filters.locationMode,
       });
       setTotal(res.total);
-      let mapped: PublishedEventRow[] = res.items.map((event: EventDto) => ({
-        event,
-        primaryMediaUrl: null,
-        galleryUrls: undefined,
-      }));
-      if (filters.locationMode === "PHYSICAL") {
-        mapped = mapped.filter((r) => r.event.locationMode === "PHYSICAL");
-      } else if (filters.locationMode === "ONLINE") {
-        mapped = mapped.filter((r) => r.event.locationMode === "ONLINE");
-      }
       if (mode === "replace") {
-        setItems(mapped);
+        setItems(res.items);
       } else {
-        setItems((prev) => [...prev, ...mapped]);
+        setItems((prev) => [...prev, ...res.items]);
       }
       setPage(nextPage);
     },

@@ -67,6 +67,14 @@ export default function RootLayout() {
                 }}
               />
               <Stack.Screen
+                name="profile-legal"
+                options={{
+                  presentation: "fullScreenModal",
+                  headerShown: false,
+                  animation: "slide_from_right",
+                }}
+              />
+              <Stack.Screen
                 name="modal"
                 options={{ presentation: "modal", title: "Modal" }}
               />

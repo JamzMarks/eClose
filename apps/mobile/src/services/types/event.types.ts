@@ -21,6 +21,8 @@ export type EventDto = {
   updatedAt: string;
 };
 
+export type DiscoveryLocationModeFilter = "ALL" | "PHYSICAL" | "ONLINE";
+
 export type ListPublishedEventsParams = {
   from?: string;
   to?: string;
@@ -32,4 +34,6 @@ export type ListPublishedEventsParams = {
   limit?: number;
   sortBy?: "startsAt" | "createdAt" | "title";
   order?: "ASC" | "DESC";
+  /** Filtro da listagem (mock e cliente se a API não filtrar). */
+  discoveryLocationMode?: DiscoveryLocationModeFilter;
 };
