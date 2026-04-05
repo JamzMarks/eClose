@@ -1,12 +1,12 @@
 {
-  "posts": "publicações",
-  "followers": "seguidores",
-  "following": "a seguir",
-  "editProfile": "Editar perfil",
-  "signOut": "Terminar sessão",
-  "cancel": "Cancelar",
-  "menuTitle": "Conta",
   "nameFallback": "Conta eClose",
-  "bioPlaceholder": "Eventos · música · comunidade",
-  "emptyPosts": "Ainda não tens publicações. Quando partilhares algo, aparece aqui."
+  "sectionLists": "Listas",
+  "sharedWishlists": "Listas partilhadas",
+  "sharedWishlistsHint": "Wishlists de eventos com amigos",
+  "sectionAccount": "Conta",
+  "openSettingsHint": "Notificações, idioma e mais",
+  "sectionLegal": "Legal e apoio",
+  "privacyPolicy": "Política de privacidade",
+  "termsOfService": "Termos de utilização",
+  "helpContact": "Ajuda e contacto"
 }

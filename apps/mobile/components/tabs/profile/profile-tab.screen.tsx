@@ -1,25 +1,33 @@
 import { useMemo } from "react";
-import { ScrollView, StyleSheet, Text } from "react-native";
+import { Alert, Linking, ScrollView, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import * as WebBrowser from "expo-web-browser";
 
 import { Screen } from "@/components/layout/screen";
-import { ProfileEditProfileButton } from "@/components/tabs/profile/components/ProfileEditProfileButton";
-import { ProfileHeaderBlock } from "@/components/tabs/profile/components/ProfileHeaderBlock";
-import { ProfileMediaTabStrip } from "@/components/tabs/profile/components/ProfileMediaTabStrip";
-import { ProfilePostsPlaceholderGrid } from "@/components/tabs/profile/components/ProfilePostsPlaceholderGrid";
+import { ProfileIdentityBlock } from "@/components/tabs/profile/components/ProfileIdentityBlock";
 import { ProfileTopBar } from "@/components/tabs/profile/components/ProfileTopBar";
 import {
   displayNameFromEmail,
   handleFromEmail,
 } from "@/components/tabs/profile/utils/email-handle";
+import { SettingsNavigationRow } from "@/components/settings/components/SettingsNavigationRow";
+import { SettingsSectionHeader } from "@/components/settings/components/SettingsSectionHeader";
+import { getLegalUrls } from "@/constants/legal-urls";
 import { getSchemeColors } from "@/constants/palette";
 import { useAuth } from "@/contexts/auth-context";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
+async function openUrl(url: string): Promise<void> {
+  const can = await Linking.canOpenURL(url);
+  if (can) {
+    await WebBrowser.openBrowserAsync(url);
+  }
+}
+
 /**
- * Orquestra o perfil: definições via modal (`/settings`); UI em subcomponentes da tab.
+ * Perfil MVP: identidade mínima, listas partilhadas, definições, legais e terminar sessão.
  */
 export function ProfileTabScreen() {
   const { t } = useTranslation("profile");
@@ -28,7 +36,8 @@ export function ProfileTabScreen() {
   const insets = useSafeAreaInsets();
   const scheme = useColorScheme() ?? "light";
   const c = getSchemeColors(scheme);
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
+  const legal = useMemo(() => getLegalUrls(), []);
 
   const handle = useMemo(() => handleFromEmail(user?.email), [user?.email]);
   const profileUsername = useMemo(() => {
@@ -37,7 +46,21 @@ export function ProfileTabScreen() {
     return displayNameFromEmail(user?.email, t("nameFallback"));
   }, [user?.username, user?.email, t]);
 
-  const editBg = scheme === "dark" ? c.surfaceElevated : "#EFEFEF";
+  async function handleSignOut() {
+    await signOut();
+    router.replace("/login");
+  }
+
+  function confirmSignOut() {
+    Alert.alert(tSettings("signOutConfirmTitle"), tSettings("signOutConfirmMessage"), [
+      { text: tSettings("cancel"), style: "cancel" },
+      {
+        text: tSettings("signOutConfirmAction"),
+        style: "destructive",
+        onPress: () => void handleSignOut(),
+      },
+    ]);
+  }
 
   return (
     <Screen>
@@ -47,8 +70,7 @@ export function ProfileTabScreen() {
           styles.scrollContent,
           { paddingBottom: insets.bottom + 24 },
         ]}
-        showsVerticalScrollIndicator={false}
-      >
+        showsVerticalScrollIndicator={false}>
         <ProfileTopBar
           handle={handle}
           textColor={c.text}
@@ -57,42 +79,74 @@ export function ProfileTabScreen() {
           onOpenSettings={() => router.push("/settings")}
         />
 
-        <ProfileHeaderBlock
+        <ProfileIdentityBlock
           avatarSeed={user?.id ?? handle}
+          displayName={profileUsername}
+          email={user?.email ?? "—"}
           borderColor={c.borderStrong}
           surfaceColor={c.surface}
           textColor={c.text}
           mutedColor={c.textSecondary}
-          stats={{ posts: "0", followers: "0", following: "0" }}
-          labels={{
-            posts: t("posts"),
-            followers: t("followers"),
-            following: t("following"),
-          }}
         />
 
-        <Text style={[styles.displayName, { color: c.text }]}>{profileUsername}</Text>
-        <Text style={[styles.bio, { color: c.text }]}>{t("bioPlaceholder")}</Text>
-
-        <ProfileEditProfileButton
-          label={t("editProfile")}
+        <SettingsSectionHeader title={t("sectionLists")} color={c.textMuted} />
+        <SettingsNavigationRow
+          title={t("sharedWishlists")}
+          subtitle={t("sharedWishlistsHint")}
+          onPress={() => router.push("/wishlists")}
           textColor={c.text}
-          backgroundColor={editBg}
+          subtitleColor={c.textMuted}
           borderColor={c.border}
-          onPress={() => {}}
+          backgroundColor={c.surface}
         />
 
-        <ProfileMediaTabStrip
+        <SettingsSectionHeader title={t("sectionAccount")} color={c.textMuted} />
+        <SettingsNavigationRow
+          title={tSettings("title")}
+          subtitle={t("openSettingsHint")}
+          onPress={() => router.push("/settings")}
           textColor={c.text}
-          mutedColor={c.textMuted}
+          subtitleColor={c.textMuted}
           borderColor={c.border}
+          backgroundColor={c.surface}
         />
 
-        <ProfilePostsPlaceholderGrid
-          surfaceColor={c.surface}
+        <SettingsSectionHeader title={t("sectionLegal")} color={c.textMuted} />
+        <SettingsNavigationRow
+          title={t("privacyPolicy")}
+          onPress={() => void openUrl(legal.privacyPolicyUrl)}
+          textColor={c.text}
+          subtitleColor={c.textMuted}
           borderColor={c.border}
-          emptyHint={t("emptyPosts")}
-          hintColor={c.textMuted}
+          backgroundColor={c.surface}
+        />
+        <SettingsNavigationRow
+          title={t("termsOfService")}
+          onPress={() => void openUrl(legal.termsOfServiceUrl)}
+          textColor={c.text}
+          subtitleColor={c.textMuted}
+          borderColor={c.border}
+          backgroundColor={c.surface}
+        />
+        <SettingsNavigationRow
+          title={t("helpContact")}
+          onPress={() => void Linking.openURL(legal.helpMailto)}
+          textColor={c.text}
+          subtitleColor={c.textMuted}
+          borderColor={c.border}
+          backgroundColor={c.surface}
+        />
+
+        <SettingsSectionHeader title={tSettings("sectionSession")} color={c.textMuted} />
+        <SettingsNavigationRow
+          title={tSettings("signOut")}
+          onPress={confirmSignOut}
+          textColor={c.text}
+          subtitleColor={c.textMuted}
+          borderColor={c.border}
+          backgroundColor={c.surface}
+          destructive
+          showChevron={false}
         />
       </ScrollView>
     </Screen>
@@ -102,14 +156,4 @@ export function ProfileTabScreen() {
 const styles = StyleSheet.create({
   scroll: { flex: 1 },
   scrollContent: { paddingHorizontal: 16 },
-  displayName: {
-    fontSize: 15,
-    fontWeight: "600",
-    marginTop: 14,
-  },
-  bio: {
-    fontSize: 14,
-    lineHeight: 20,
-    marginTop: 4,
-  },
 });

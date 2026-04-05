@@ -4,6 +4,7 @@ import {
   PlusSquare,
   User,
   Heart,
+  SlidersHorizontal,
 } from 'lucide-react-native';
 
 import { IconSizes, AppIcon } from '../icon.types';
@@ -15,6 +16,7 @@ const map = {
   [AppIcon.Create]: PlusSquare,
   [AppIcon.Profile]: User,
   [AppIcon.Like]: Heart,
+  [AppIcon.Filter]: SlidersHorizontal,
 };
 
 export const lucideProvider: IconProvider = ({

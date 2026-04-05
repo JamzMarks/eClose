@@ -19,6 +19,9 @@ function map(name: AppIcon, filled?: boolean) {
     case AppIcon.Like:
       return filled ? 'heart' : 'heart-outline';
 
+    case AppIcon.Filter:
+      return 'options-outline';
+
     default:
       return 'help-circle';
   }

@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -9,7 +10,9 @@ import {
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useTranslation } from "react-i18next";
 
+import { AddToWishlistModal } from "@/components/wishlists/add-to-wishlist-modal";
 import { AppPalette, getSchemeColors } from "@/constants/palette";
+import { useAuth } from "@/contexts/auth-context";
 import { EventService } from "@/infrastructure/api/event/event.service";
 import type { EventDto } from "@/infrastructure/api/types/event.types";
 import { normalizeHttpError } from "@/infrastructure/http/error-handler";
@@ -21,10 +24,13 @@ export default function EventDetailScreen() {
   const id = Array.isArray(rawId) ? rawId[0] : rawId;
   const navigation = useNavigation();
   const { t } = useTranslation("discover");
+  const { t: tWishlists } = useTranslation("wishlists");
+  const { isSignedIn } = useAuth();
   const scheme = useColorScheme() ?? "light";
   const c = getSchemeColors(scheme);
 
   const [event, setEvent] = useState<EventDto | null>(null);
+  const [wishlistOpen, setWishlistOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,8 +40,18 @@ export default function EventDetailScreen() {
       headerTintColor: AppPalette.primary,
       headerStyle: { backgroundColor: c.surface },
       headerTitleStyle: { color: c.text },
+      headerRight:
+        isSignedIn && id
+          ? () => (
+              <Pressable onPress={() => setWishlistOpen(true)} hitSlop={12} style={{ marginRight: 12 }}>
+                <Text style={{ color: AppPalette.primary, fontWeight: "600", fontSize: 15 }}>
+                  {tWishlists("addToWishlist")}
+                </Text>
+              </Pressable>
+            )
+          : undefined,
     });
-  }, [navigation, event?.title, t, c.surface, c.text]);
+  }, [navigation, event?.title, t, c.surface, c.text, isSignedIn, id, tWishlists]);
 
   useEffect(() => {
     if (!id) {
@@ -94,6 +110,7 @@ export default function EventDetailScreen() {
       : "—");
 
   return (
+    <>
     <ScrollView
       style={[styles.scroll, { backgroundColor: c.background }]}
       contentContainerStyle={styles.content}
@@ -113,6 +130,14 @@ export default function EventDetailScreen() {
         </>
       ) : null}
     </ScrollView>
+    {id ? (
+      <AddToWishlistModal
+        visible={wishlistOpen}
+        eventId={id}
+        onClose={() => setWishlistOpen(false)}
+      />
+    ) : null}
+    </>
   );
 }
 

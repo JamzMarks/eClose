@@ -9,6 +9,7 @@ import ptOnboarding from './locales/pt/onboarding.json';
 import ptProfile from './locales/pt/profile.json';
 import ptSettings from './locales/pt/settings.json';
 import ptTabs from './locales/pt/tabs.json';
+import ptWishlists from './locales/pt/wishlists.json';
 
 i18n.use(initReactI18next)
   .init({
@@ -24,10 +25,11 @@ i18n.use(initReactI18next)
         profile: ptProfile,
         settings: ptSettings,
         tabs: ptTabs,
+        wishlists: ptWishlists,
       },
     },
 
-    ns: ['common', 'tabs', 'auth', 'onboarding', 'discover', 'profile', 'settings'],
+    ns: ['common', 'tabs', 'auth', 'onboarding', 'discover', 'profile', 'settings', 'wishlists'],
     defaultNS: 'common',
 
     interpolation: {

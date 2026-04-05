@@ -1,0 +1,75 @@
+import type { ListRenderItem } from "react-native";
+import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from "react-native";
+
+import { TabScreenEmptyHint } from "@/components/shared/tab-screen/TabScreenEmptyHint";
+import { AppPalette } from "@/constants/palette";
+
+export type DiscoverPaginatedFlatListProps<T> = {
+  data: T[];
+  keyExtractor: (item: T) => string;
+  renderItem: ListRenderItem<T>;
+  emptyMessage: string;
+  emptyHintColor: string;
+  refreshing: boolean;
+  onRefresh: () => void;
+  onEndReached: () => void;
+  loadingMore: boolean;
+  canLoadMore: boolean;
+};
+
+/**
+ * Lista partilhada para descoberta (eventos ou espaços): pull-to-refresh, página infinita, vazio.
+ */
+export function DiscoverPaginatedFlatList<T>({
+  data,
+  keyExtractor,
+  renderItem,
+  emptyMessage,
+  emptyHintColor,
+  refreshing,
+  onRefresh,
+  onEndReached,
+  loadingMore,
+  canLoadMore,
+}: DiscoverPaginatedFlatListProps<T>) {
+  return (
+    <FlatList
+      data={data}
+      keyExtractor={keyExtractor}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          tintColor={AppPalette.primary}
+        />
+      }
+      onEndReached={onEndReached}
+      onEndReachedThreshold={0.35}
+      contentContainerStyle={styles.listContent}
+      ListEmptyComponent={
+        <TabScreenEmptyHint message={emptyMessage} color={emptyHintColor} />
+      }
+      ListFooterComponent={
+        loadingMore && canLoadMore ? (
+          <View style={styles.footer}>
+            <ActivityIndicator color={AppPalette.primary} />
+          </View>
+        ) : null
+      }
+      renderItem={renderItem}
+    />
+  );
+}
+
+const styles = StyleSheet.create({
+  listContent: {
+    paddingHorizontal: 16,
+    paddingBottom: 32,
+    flexGrow: 1,
+    paddingTop: 4,
+  },
+  footer: {
+    paddingVertical: 16,
+    alignItems: "center",
+  },
+});

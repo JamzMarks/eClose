@@ -16,6 +16,9 @@ import { VenueOrmEntity } from "@/venue/infrastructure/persistence/venue.orm-ent
 import { FriendRequestOrmEntity } from "@/friendship/infrastructure/persistence/friend-request.orm-entity";
 import { UserBlockOrmEntity } from "@/friendship/infrastructure/persistence/user-block.orm-entity";
 import { PostOrmEntity } from "@/post/infrastructure/persistence/post.orm-entity";
+import { SharedEventListItemOrmEntity } from "@/shared-event-list/infrastructure/persistence/shared-event-list-item.orm-entity";
+import { SharedEventListMemberOrmEntity } from "@/shared-event-list/infrastructure/persistence/shared-event-list-member.orm-entity";
+import { SharedEventListOrmEntity } from "@/shared-event-list/infrastructure/persistence/shared-event-list.orm-entity";
 
 /** Registro da composição: cada entidade vive no bounded context correspondente. */
 export const ALL_TYPEORM_ENTITIES = [
@@ -37,4 +40,7 @@ export const ALL_TYPEORM_ENTITIES = [
   FriendRequestOrmEntity,
   UserBlockOrmEntity,
   PostOrmEntity,
+  SharedEventListOrmEntity,
+  SharedEventListMemberOrmEntity,
+  SharedEventListItemOrmEntity,
 ];

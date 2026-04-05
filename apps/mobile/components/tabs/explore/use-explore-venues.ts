@@ -2,16 +2,21 @@ import { useCallback, useEffect, useState } from "react";
 
 import { MarketplaceService } from "@/infrastructure/api/marketplace/marketplace.service";
 import type { MarketplaceVenueCardDto } from "@/infrastructure/api/types/venue.types";
+import type { DiscoverVenueListFilters } from "@/infrastructure/discover/discover-list-filters.types";
 import { mockPaginatedVenues } from "@/infrastructure/discover/mock-discover-api";
 import type { ExploreVenueRow } from "@/infrastructure/discover/mock-discover-data";
 import { normalizeHttpError } from "@/infrastructure/http/error-handler";
 import { DISCOVER_PAGE_SIZE, USE_MOCK_DISCOVER } from "@/lib/discover-config";
 
-export function useExploreVenues(tError: (key: string) => string) {
+export function useExploreVenues(
+  tError: (key: string) => string,
+  filters: DiscoverVenueListFilters,
+  enabled = true,
+) {
   const [items, setItems] = useState<ExploreVenueRow[]>([]);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => enabled);
   const [loadingMore, setLoadingMore] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -19,7 +24,7 @@ export function useExploreVenues(tError: (key: string) => string) {
   const fetchPage = useCallback(
     async (nextPage: number, mode: "replace" | "append") => {
       if (USE_MOCK_DISCOVER) {
-        const res = await mockPaginatedVenues(nextPage, DISCOVER_PAGE_SIZE);
+        const res = await mockPaginatedVenues(nextPage, DISCOVER_PAGE_SIZE, filters);
         setTotal(res.total);
         if (mode === "replace") {
           setItems(res.items);
@@ -34,8 +39,11 @@ export function useExploreVenues(tError: (key: string) => string) {
       const res = await svc.listVenues({
         page: nextPage,
         limit: DISCOVER_PAGE_SIZE,
-        sortBy: "name",
-        order: "ASC",
+        sortBy: filters.sortBy,
+        order: filters.order,
+        city: filters.city.trim() || undefined,
+        region: filters.region.trim() || undefined,
+        openToInquiriesOnly: filters.openToInquiriesOnly ? true : undefined,
       });
       setTotal(res.total);
       const mapped: ExploreVenueRow[] = res.items.map((row: MarketplaceVenueCardDto) => ({
@@ -48,7 +56,7 @@ export function useExploreVenues(tError: (key: string) => string) {
       }
       setPage(nextPage);
     },
-    [],
+    [filters],
   );
 
   const loadInitial = useCallback(async () => {
@@ -64,8 +72,12 @@ export function useExploreVenues(tError: (key: string) => string) {
   }, [fetchPage, tError]);
 
   useEffect(() => {
+    if (!enabled) {
+      setLoading(false);
+      return;
+    }
     void loadInitial();
-  }, [loadInitial]);
+  }, [loadInitial, enabled]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -100,6 +112,7 @@ export function useExploreVenues(tError: (key: string) => string) {
     loadingMore,
     refreshing,
     error,
+    total,
     loadInitial,
     onRefresh,
     onEndReached,

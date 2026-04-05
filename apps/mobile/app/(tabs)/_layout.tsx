@@ -66,7 +66,7 @@ export default function TabLayout() {
               filled={focused}
             />
           ),
-          tabBarAccessibilityLabel: 'Explore',
+          tabBarAccessibilityLabel: t('mapTab'),
         }}
       />
 

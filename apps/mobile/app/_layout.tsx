@@ -52,6 +52,7 @@ export default function RootLayout() {
               name="venue/[id]"
               options={{ headerShown: true, headerBackTitle: "Voltar" }}
             />
+            <Stack.Screen name="wishlists" options={{ headerShown: false }} />
             <Stack.Screen
               name="settings"
               options={{

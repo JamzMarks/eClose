@@ -10,6 +10,7 @@ Este documento alinha a direcção para a implementação “oficial”: camadas
 | **User** | Perfil, preferências, agregado `SocialUser` (regras de idade/consentimento no fluxo quick-signup), tokens push | `users` |
 | **Venue** | Ciclo de vida do espaço, regras de visibilidade (`marketplace_listed`, etc.) | `venues` + repositórios |
 | **Event** | Evento, estados, organizador (artist), visibilidade pública | `events` + repositórios |
+| **SharedEventList** | Wishlists de eventos partilhadas entre amigos (membros com papel; só amigos do dono podem ser adicionados) | `shared_event_lists`, `shared_event_list_members`, `shared_event_list_items` |
 
 **Auth** não deve conter regras de negócio de Venue/Event; apenas **compor** identidade (quem é o `userId` na sessão) e **políticas transversais** (ex.: “só conta verificada pode X”).
 

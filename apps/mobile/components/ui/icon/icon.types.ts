@@ -4,6 +4,7 @@ export enum AppIcon {
   Create = 'create',
   Profile = 'profile',
   Like = 'like',
+  Filter = 'filter',
 }
 
 export const IconSizes = {

@@ -9,6 +9,8 @@ function venueDto(
   slug: string,
   city: string,
   region: string,
+  geoLat: number,
+  geoLng: number,
 ): MarketplaceVenueCardDto["venue"] {
   const now = iso(new Date());
   return {
@@ -26,8 +28,8 @@ function venueDto(
       countryCode: "PT",
       postalCode: "1000-001",
     },
-    geoLat: null,
-    geoLng: null,
+    geoLat,
+    geoLng,
     timezone: "Europe/Lisbon",
     openingHours: [],
     taxonomyTermIds: [],
@@ -87,42 +89,42 @@ export type PublishedEventRow = {
 /** Espaços físicos variados (mock MVP). */
 export const MOCK_EXPLORE_VENUES: ExploreVenueRow[] = [
   {
-    venue: venueDto("mock-v1", "Casa da Música", "casa-da-musica", "Porto", "Porto"),
+    venue: venueDto("mock-v1", "Casa da Música", "casa-da-musica", "Porto", "Porto", 41.1579, -8.6291),
     primaryMediaUrl: u("photo-1514525253161-7a46d19cd819"),
     categoryLabel: "Sala de concertos",
   },
   {
-    venue: venueDto("mock-v2", "Lux Frágil", "lux-fragil", "Lisboa", "Lisboa"),
+    venue: venueDto("mock-v2", "Lux Frágil", "lux-fragil", "Lisboa", "Lisboa", 38.7139, -9.1394),
     primaryMediaUrl: u("photo-1571266028243-e473f6f482d8"),
     categoryLabel: "Clube / nightlife",
   },
   {
-    venue: venueDto("mock-v3", "Estúdio Norte", "estudio-norte", "Braga", "Braga"),
+    venue: venueDto("mock-v3", "Estúdio Norte", "estudio-norte", "Braga", "Braga", 41.5454, -8.4265),
     primaryMediaUrl: u("photo-1598488035139-bdbb2231ce04"),
     categoryLabel: "Estúdio",
   },
   {
-    venue: venueDto("mock-v4", "Teatro Villaret", "teatro-villaret", "Lisboa", "Lisboa"),
+    venue: venueDto("mock-v4", "Teatro Villaret", "teatro-villaret", "Lisboa", "Lisboa", 38.7169, -9.139),
     primaryMediaUrl: u("photo-1503095396549-807759245b35"),
     categoryLabel: "Teatro",
   },
   {
-    venue: venueDto("mock-v5", "Armazém F", "armazem-f", "Coimbra", "Coimbra"),
+    venue: venueDto("mock-v5", "Armazém F", "armazem-f", "Coimbra", "Coimbra", 40.2056, -8.4196),
     primaryMediaUrl: u("photo-1470229722913-7c0e2dbbafd3"),
     categoryLabel: "Centro de eventos",
   },
   {
-    venue: venueDto("mock-v6", "Jazz ao Largo", "jazz-ao-largo", "Faro", "Faro"),
+    venue: venueDto("mock-v6", "Jazz ao Largo", "jazz-ao-largo", "Faro", "Faro", 37.0194, -7.9322),
     primaryMediaUrl: u("photo-1415201364774-f6f0bb35f28f"),
     categoryLabel: "Bar com palco",
   },
   {
-    venue: venueDto("mock-v7", "Arena Atlântico", "arena-atlantico", "Matosinhos", "Porto"),
+    venue: venueDto("mock-v7", "Arena Atlântico", "arena-atlantico", "Matosinhos", "Porto", 41.1828, -8.6944),
     primaryMediaUrl: u("photo-1540039155733-5bb27b91a67e"),
     categoryLabel: "Arena",
   },
   {
-    venue: venueDto("mock-v8", "Rooftop Cais", "rooftop-cais", "Lisboa", "Lisboa"),
+    venue: venueDto("mock-v8", "Rooftop Cais", "rooftop-cais", "Lisboa", "Lisboa", 38.7076, -9.1431),
     primaryMediaUrl: u("photo-1519677100203-a0e668c92439"),
     categoryLabel: "Terraço",
   },
