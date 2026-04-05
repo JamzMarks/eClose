@@ -1,10 +1,11 @@
 export enum AppIcon {
-  Home = 'home',
-  Explore = 'explore',
-  Create = 'create',
-  Profile = 'profile',
-  Like = 'like',
-  Filter = 'filter',
+  Home = "home",
+  Explore = "explore",
+  Programacao = "programacao",
+  Wishlist = "wishlist",
+  Profile = "profile",
+  Like = "like",
+  Filter = "filter",
 }
 
 export const IconSizes = {

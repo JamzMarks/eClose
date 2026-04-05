@@ -1,8 +1,8 @@
-import { getApiClient } from "@/infrastructure/api/api-client";
-import type { IEventService } from "@/infrastructure/api/event/event.service.interface";
-import type { EventDto, ListPublishedEventsParams } from "@/infrastructure/api/types/event.types";
-import type { PaginatedResponse } from "@/infrastructure/api/types/pagination.types";
-import { toQueryString } from "@/infrastructure/api/utils/query-string";
+import { getApiClient } from "@/services/api-client";
+import type { IEventService } from "@/services/event/event.service.interface";
+import type { EventDto, ListPublishedEventsParams } from "@/services/types/event.types";
+import type { PaginatedResponse } from "@/services/types/pagination.types";
+import { toQueryString } from "@/services/utils/query-string";
 
 export class EventService implements IEventService {
   private readonly client = getApiClient();

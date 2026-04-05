@@ -1,19 +1,21 @@
 import {
   Home,
   Compass,
-  PlusSquare,
   User,
   Heart,
   SlidersHorizontal,
-} from 'lucide-react-native';
+  CalendarDays,
+  Bookmark,
+} from "lucide-react-native";
 
-import { IconSizes, AppIcon } from '../icon.types';
-import { IconProvider } from './icon.provider';
+import { IconSizes, AppIcon } from "../icon.types";
+import { IconProvider } from "./icon.provider";
 
 const map = {
   [AppIcon.Home]: Home,
   [AppIcon.Explore]: Compass,
-  [AppIcon.Create]: PlusSquare,
+  [AppIcon.Programacao]: CalendarDays,
+  [AppIcon.Wishlist]: Bookmark,
   [AppIcon.Profile]: User,
   [AppIcon.Like]: Heart,
   [AppIcon.Filter]: SlidersHorizontal,

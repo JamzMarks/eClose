@@ -1,9 +1,9 @@
-import { getApiClient } from "@/infrastructure/api/api-client";
-import type { INotificationPreferencesService } from "@/infrastructure/api/user/notification-preferences.service.interface";
+import { getApiClient } from "@/services/api-client";
+import type { INotificationPreferencesService } from "@/services/user/notification-preferences.service.interface";
 import type {
   NotificationPreferencesDto,
   PatchNotificationPreferencesDto,
-} from "@/infrastructure/api/types/notification-preferences.types";
+} from "@/services/types/notification-preferences.types";
 
 export class NotificationPreferencesService implements INotificationPreferencesService {
   private readonly client = getApiClient();

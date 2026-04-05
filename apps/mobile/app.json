@@ -8,6 +8,7 @@
     "scheme": "mobile",
     "extra": {
       "apiUrl": "http://localhost:3000",
+      "useMockAuth": true,
       "privacyPolicyUrl": "https://eclose.app/privacy",
       "termsOfServiceUrl": "https://eclose.app/terms",
       "helpMailto": "mailto:support@eclose.app"

@@ -10,11 +10,11 @@ import {
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useTranslation } from "react-i18next";
 
-import { AddToWishlistModal } from "@/components/wishlists/add-to-wishlist-modal";
+import { AddToWishlistSheet } from "@/components/wishlists/add-to-wishlist-sheet";
 import { AppPalette, getSchemeColors } from "@/constants/palette";
 import { useAuth } from "@/contexts/auth-context";
-import { EventService } from "@/infrastructure/api/event/event.service";
-import type { EventDto } from "@/infrastructure/api/types/event.types";
+import { EventService } from "@/services/event/event.service";
+import type { EventDto } from "@/services/types/event.types";
 import { normalizeHttpError } from "@/infrastructure/http/error-handler";
 import { formatEventRange } from "@/lib/format-date";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -131,7 +131,7 @@ export default function EventDetailScreen() {
       ) : null}
     </ScrollView>
     {id ? (
-      <AddToWishlistModal
+      <AddToWishlistSheet
         visible={wishlistOpen}
         eventId={id}
         onClose={() => setWishlistOpen(false)}

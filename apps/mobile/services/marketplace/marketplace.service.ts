@@ -1,11 +1,11 @@
-import { getApiClient } from "@/infrastructure/api/api-client";
+import { getApiClient } from "@/services/api-client";
 import type {
   IMarketplaceService,
   ListMarketplaceVenuesParams,
-} from "@/infrastructure/api/marketplace/marketplace.service.interface";
-import type { PaginatedResponse } from "@/infrastructure/api/types/pagination.types";
-import type { MarketplaceVenueCardDto } from "@/infrastructure/api/types/venue.types";
-import { toQueryString } from "@/infrastructure/api/utils/query-string";
+} from "@/services/marketplace/marketplace.service.interface";
+import type { PaginatedResponse } from "@/services/types/pagination.types";
+import type { MarketplaceVenueCardDto } from "@/services/types/venue.types";
+import { toQueryString } from "@/services/utils/query-string";
 
 export class MarketplaceService implements IMarketplaceService {
   private readonly client = getApiClient();

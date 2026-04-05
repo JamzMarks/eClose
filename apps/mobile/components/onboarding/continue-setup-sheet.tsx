@@ -14,11 +14,11 @@ import { useTranslation } from "react-i18next";
 import { AppButton } from "@/components/ui/button";
 import { AppPalette, getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import type { IAuthService } from "@/infrastructure/api/auth/auth.service.interface";
-import { AuthService } from "@/infrastructure/api/auth/auth.service";
-import type { INotificationPreferencesService } from "@/infrastructure/api/user/notification-preferences.service.interface";
-import { NotificationPreferencesService } from "@/infrastructure/api/user/notification-preferences.service";
-import type { NotificationPreferencesDto } from "@/infrastructure/api/types/notification-preferences.types";
+import type { IAuthService } from "@/services/auth/auth.service.interface";
+import { AuthService } from "@/services/auth/auth.service";
+import type { INotificationPreferencesService } from "@/services/user/notification-preferences.service.interface";
+import { NotificationPreferencesService } from "@/services/user/notification-preferences.service";
+import type { NotificationPreferencesDto } from "@/services/types/notification-preferences.types";
 import { normalizeHttpError } from "@/infrastructure/http/error-handler";
 
 export type ContinueSetupSheetMode = "onboarding" | "manual";

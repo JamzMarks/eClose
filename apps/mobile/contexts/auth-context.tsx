@@ -9,10 +9,9 @@ import {
   type ReactNode,
 } from "react";
 
-import { AuthService } from "@/infrastructure/api/auth/auth.service";
-import type { IAuthService } from "@/infrastructure/api/auth/auth.service.interface";
-import type { SignUpRequest } from "@/infrastructure/api/types/auth.types";
-import type { UserProfileResponse } from "@/infrastructure/api/types/auth.types";
+import { AuthService } from "@/services/auth/auth.service";
+import type { IAuthService } from "@/services/auth/auth.service.interface";
+import type { SignUpRequest, UserProfileResponse } from "@/services/types/auth.types";
 import {
   clearAuthAccessToken,
   setAuthAccessToken,
@@ -24,6 +23,12 @@ import {
 } from "@/lib/session/session-storage";
 import { subscribeSessionInvalidated } from "@/lib/session/session-invalidate";
 import { registerDevicePushToken } from "@/lib/push/register-device-push-token";
+import {
+  getMockAccessToken,
+  isAuthMockEnabled,
+  MOCK_USER,
+} from "@/lib/auth-mock";
+import { isMockSessionActive, setMockSessionActive } from "@/lib/session/mock-auth-flag";
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
@@ -32,6 +37,7 @@ type AuthContextValue = {
   isSignedIn: boolean;
   user: UserProfileResponse | null;
   signIn: (email: string, password: string) => Promise<void>;
+  signInMock: () => Promise<void>;
   signUp: (data: SignUpRequest) => Promise<void>;
   signOut: () => Promise<void>;
   refreshUser: () => Promise<void>;
@@ -51,10 +57,24 @@ export function AuthProvider({
 
   const hydrate = useCallback(async () => {
     try {
+      const mockEnabled = isAuthMockEnabled();
+      const mockActive = await isMockSessionActive();
+      if (mockEnabled && mockActive) {
+        setAuthAccessToken(getMockAccessToken());
+        setUser(MOCK_USER);
+        return;
+      }
+
       const { accessToken } = await loadStoredTokens();
       if (!accessToken) {
         setAuthAccessToken(null);
         setUser(null);
+        return;
+      }
+      if (mockEnabled && accessToken === getMockAccessToken()) {
+        await setMockSessionActive(true);
+        setAuthAccessToken(accessToken);
+        setUser(MOCK_USER);
         return;
       }
       setAuthAccessToken(accessToken);
@@ -64,6 +84,7 @@ export function AuthProvider({
       setAuthAccessToken(null);
       setUser(null);
       await clearStoredTokens();
+      await setMockSessionActive(false);
     } finally {
       setIsReady(true);
       await SplashScreen.hideAsync();
@@ -82,11 +103,13 @@ export function AuthProvider({
 
   useEffect(() => {
     if (!user?.id) return;
+    if (isAuthMockEnabled() && user.id === MOCK_USER.id) return;
     void registerDevicePushToken();
   }, [user?.id]);
 
   const signIn = useCallback(
     async (email: string, password: string) => {
+      await setMockSessionActive(false);
       const tokens = await authService.signIn({ email, password });
       await persistTokens({
         accessToken: tokens.accessToken,
@@ -99,8 +122,17 @@ export function AuthProvider({
     [authService],
   );
 
+  const signInMock = useCallback(async () => {
+    await setMockSessionActive(true);
+    const token = getMockAccessToken();
+    await persistTokens({ accessToken: token, refreshToken: null });
+    setAuthAccessToken(token);
+    setUser(MOCK_USER);
+  }, []);
+
   const signUp = useCallback(
     async (data: SignUpRequest) => {
+      await setMockSessionActive(false);
       const tokens = await authService.signUp(data);
       await persistTokens({
         accessToken: tokens.accessToken,
@@ -115,20 +147,27 @@ export function AuthProvider({
 
   const signOut = useCallback(async () => {
     try {
-      await authService.logout();
+      if (!isAuthMockEnabled() || user?.id !== MOCK_USER.id) {
+        await authService.logout();
+      }
     } catch {
       // sessão local limpa mesmo se o servidor falhar
     } finally {
       await clearStoredTokens();
+      await setMockSessionActive(false);
       clearAuthAccessToken();
       setUser(null);
     }
-  }, [authService]);
+  }, [authService, user?.id]);
 
   const refreshUser = useCallback(async () => {
+    if (user?.id === MOCK_USER.id && (await isMockSessionActive())) {
+      setUser(MOCK_USER);
+      return;
+    }
     const profile = await authService.me();
     setUser(profile);
-  }, [authService]);
+  }, [authService, user?.id]);
 
   const value = useMemo<AuthContextValue>(
     () => ({
@@ -136,11 +175,12 @@ export function AuthProvider({
       isSignedIn: !!user,
       user,
       signIn,
+      signInMock,
       signUp,
       signOut,
       refreshUser,
     }),
-    [isReady, user, signIn, signUp, signOut, refreshUser],
+    [isReady, user, signIn, signInMock, signUp, signOut, refreshUser],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

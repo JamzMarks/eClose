@@ -1,8 +1,12 @@
-import { DiscoverScreenHeader } from "@/components/discover/DiscoverScreenHeader";
+import { Pressable } from "react-native";
+
+import { AppTabScreenHeader } from "@/components/shared/tab-screen/AppTabScreenHeader";
 import {
   DiscoverSegmentedKind,
   type DiscoverListKind,
 } from "@/components/discover/discover-segmented-kind";
+import { Icon } from "@/components/ui/icon/icon";
+import { AppIcon } from "@/components/ui/icon/icon.types";
 
 export type DiscoverListToolbarProps = {
   title: string;
@@ -25,7 +29,7 @@ export type DiscoverListToolbarProps = {
 };
 
 /**
- * Cabeçalho da tab Descobrir: título, subtítulo dinâmico, filtro e segmento Eventos | Espaços.
+ * Cabeçalho reutilizável + segmento Eventos | Espaços (tab Programação).
  */
 export function DiscoverListToolbar({
   title,
@@ -39,15 +43,21 @@ export function DiscoverListToolbar({
 }: DiscoverListToolbarProps) {
   return (
     <>
-      <DiscoverScreenHeader
+      <AppTabScreenHeader
         title={title}
         subtitle={subtitle}
         borderColor={colors.border}
         titleColor={colors.title}
         subtitleColor={colors.subtitle}
-        filterIconColor={colors.filterIcon}
-        filterAccessibilityLabel={filterAccessibilityLabel}
-        onFilterPress={onFilterPress}
+        trailing={
+          <Pressable
+            onPress={onFilterPress}
+            hitSlop={12}
+            accessibilityRole="button"
+            accessibilityLabel={filterAccessibilityLabel}>
+            <Icon name={AppIcon.Filter} size="lg" color={colors.filterIcon} />
+          </Pressable>
+        }
       />
       <DiscoverSegmentedKind
         value={listKind}

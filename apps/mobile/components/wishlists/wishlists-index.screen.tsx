@@ -1,8 +1,7 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
-  Modal,
   Pressable,
   RefreshControl,
   StyleSheet,
@@ -10,22 +9,29 @@ import {
   TextInput,
   View,
 } from "react-native";
+import BottomSheet, {
+  BottomSheetBackdrop,
+  type BottomSheetBackdropProps,
+  BottomSheetScrollView,
+} from "@gorhom/bottom-sheet";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
 import { Screen } from "@/components/layout/screen";
+import { AppTabScreenHeader } from "@/components/shared/tab-screen/AppTabScreenHeader";
 import { TabScreenCenterError } from "@/components/shared/tab-screen/TabScreenCenterError";
 import { AppPalette, getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { SharedEventListService } from "@/infrastructure/api/shared-event-list/shared-event-list.service";
-import type { SharedEventListSummaryDto } from "@/infrastructure/api/shared-event-list/shared-event-list.types";
 import { normalizeHttpError } from "@/infrastructure/http/error-handler";
+import { SharedEventListService } from "@/services/shared-event-list/shared-event-list.service";
+import type { SharedEventListSummaryDto } from "@/services/shared-event-list/shared-event-list.types";
 
 export function WishlistsIndexScreen() {
   const { t } = useTranslation("wishlists");
   const router = useRouter();
   const scheme = useColorScheme() ?? "light";
   const c = getSchemeColors(scheme);
+  const snapPoints = useMemo(() => ["38%", "55%"], []);
 
   const [items, setItems] = useState<SharedEventListSummaryDto[]>([]);
   const [loading, setLoading] = useState(true);
@@ -73,6 +79,19 @@ export function WishlistsIndexScreen() {
     }
   }, [load, t]);
 
+  const renderBackdrop = useCallback(
+    (props: BottomSheetBackdropProps) => (
+      <BottomSheetBackdrop
+        {...props}
+        disappearsOnIndex={-1}
+        appearsOnIndex={0}
+        opacity={0.4}
+        pressBehavior="close"
+      />
+    ),
+    [],
+  );
+
   async function handleCreate() {
     const title = newTitle.trim();
     if (!title || creating) return;
@@ -91,9 +110,20 @@ export function WishlistsIndexScreen() {
     }
   }
 
+  const header = (
+    <AppTabScreenHeader
+      title={t("title")}
+      subtitle={t("subtitle")}
+      borderColor={c.border}
+      titleColor={c.text}
+      subtitleColor={c.textSecondary}
+    />
+  );
+
   if (loading && items.length === 0 && !error) {
     return (
       <Screen>
+        {header}
         <View style={[styles.centered, { backgroundColor: c.background }]}>
           <ActivityIndicator color={AppPalette.primary} size="large" />
           <Text style={[styles.hint, { color: c.textSecondary }]}>{t("loading")}</Text>
@@ -105,6 +135,7 @@ export function WishlistsIndexScreen() {
   if (error && items.length === 0) {
     return (
       <Screen>
+        {header}
         <TabScreenCenterError message={error} retryLabel={t("retry")} onRetry={() => void load()} />
       </Screen>
     );
@@ -112,6 +143,7 @@ export function WishlistsIndexScreen() {
 
   return (
     <Screen>
+      {header}
       <FlatList
         data={items}
         keyExtractor={(it) => it.id}
@@ -150,33 +182,41 @@ export function WishlistsIndexScreen() {
         )}
       />
 
-      <Modal visible={createOpen} animationType="slide" transparent onRequestClose={() => setCreateOpen(false)}>
-        <View style={styles.modalRoot}>
-          <Pressable style={styles.modalFlex} onPress={() => setCreateOpen(false)} />
-          <View style={[styles.modalSheet, { backgroundColor: c.background }]}>
-            <Text style={[styles.modalLabel, { color: c.text }]}>{t("newListTitle")}</Text>
-            <TextInput
-              value={newTitle}
-              onChangeText={setNewTitle}
-              placeholder={t("newListPlaceholder")}
-              placeholderTextColor={c.textMuted}
-              style={[styles.input, { color: c.text, borderColor: c.border }]}
-              editable={!creating}
-            />
-            <View style={styles.modalActions}>
-              <Pressable onPress={() => setCreateOpen(false)} style={styles.modalBtn}>
-                <Text style={{ color: c.textSecondary }}>{t("cancel")}</Text>
-              </Pressable>
-              <Pressable
-                onPress={() => void handleCreate()}
-                style={[styles.modalBtnPrimary, { backgroundColor: AppPalette.primary }]}
-                disabled={creating}>
-                <Text style={styles.modalBtnPrimaryText}>{t("create")}</Text>
-              </Pressable>
-            </View>
+      <BottomSheet
+        index={createOpen ? 0 : -1}
+        snapPoints={snapPoints}
+        enablePanDownToClose
+        onChange={(i) => {
+          if (i === -1) setCreateOpen(false);
+        }}
+        backdropComponent={renderBackdrop}
+        backgroundStyle={{ backgroundColor: c.background }}
+        handleIndicatorStyle={{ backgroundColor: c.border }}>
+        <BottomSheetScrollView
+          contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 32 }}
+          keyboardShouldPersistTaps="handled">
+          <Text style={[styles.sheetLabel, { color: c.text }]}>{t("newListTitle")}</Text>
+          <TextInput
+            value={newTitle}
+            onChangeText={setNewTitle}
+            placeholder={t("newListPlaceholder")}
+            placeholderTextColor={c.textMuted}
+            style={[styles.input, { color: c.text, borderColor: c.border }]}
+            editable={!creating}
+          />
+          <View style={styles.sheetActions}>
+            <Pressable onPress={() => setCreateOpen(false)} style={styles.modalBtn}>
+              <Text style={{ color: c.textSecondary }}>{t("cancel")}</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => void handleCreate()}
+              style={[styles.modalBtnPrimary, { backgroundColor: AppPalette.primary }]}
+              disabled={creating}>
+              <Text style={styles.modalBtnPrimaryText}>{t("create")}</Text>
+            </Pressable>
           </View>
-        </View>
-      </Modal>
+        </BottomSheetScrollView>
+      </BottomSheet>
     </Screen>
   );
 }
@@ -184,7 +224,7 @@ export function WishlistsIndexScreen() {
 const styles = StyleSheet.create({
   centered: { flex: 1, justifyContent: "center", alignItems: "center" },
   hint: { marginTop: 12, fontSize: 15 },
-  list: { padding: 16, paddingBottom: 32, flexGrow: 1 },
+  list: { paddingHorizontal: 16, paddingBottom: 32, flexGrow: 1 },
   newRow: {
     padding: 16,
     borderRadius: 12,
@@ -203,21 +243,7 @@ const styles = StyleSheet.create({
   cardMeta: { fontSize: 14, marginTop: 6 },
   cardRole: { fontSize: 12, marginTop: 4, textTransform: "uppercase" },
   empty: { textAlign: "center", marginTop: 40, fontSize: 15, paddingHorizontal: 24 },
-  modalRoot: {
-    flex: 1,
-    justifyContent: "flex-end",
-    backgroundColor: "rgba(0,0,0,0.35)",
-  },
-  modalFlex: {
-    flex: 1,
-  },
-  modalSheet: {
-    padding: 24,
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-    marginTop: "auto",
-  },
-  modalLabel: { fontSize: 18, fontWeight: "700", marginBottom: 12 },
+  sheetLabel: { fontSize: 18, fontWeight: "700", marginBottom: 12, marginTop: 8 },
   input: {
     borderWidth: StyleSheet.hairlineWidth,
     borderRadius: 10,
@@ -225,7 +251,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     fontSize: 16,
   },
-  modalActions: { flexDirection: "row", justifyContent: "flex-end", gap: 16, marginTop: 20 },
+  sheetActions: { flexDirection: "row", justifyContent: "flex-end", gap: 16, marginTop: 20 },
   modalBtn: { paddingVertical: 12, paddingHorizontal: 8 },
   modalBtnPrimary: { paddingVertical: 12, paddingHorizontal: 20, borderRadius: 12 },
   modalBtnPrimaryText: { color: "#fff", fontWeight: "700" },

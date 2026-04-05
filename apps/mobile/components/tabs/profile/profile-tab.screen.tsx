@@ -27,7 +27,7 @@ async function openUrl(url: string): Promise<void> {
 }
 
 /**
- * Perfil MVP: identidade mínima, listas partilhadas, definições, legais e terminar sessão.
+ * Perfil MVP: identidade mínima, definições, legais e terminar sessão (listas na tab dedicada).
  */
 export function ProfileTabScreen() {
   const { t } = useTranslation("profile");
@@ -87,17 +87,6 @@ export function ProfileTabScreen() {
           surfaceColor={c.surface}
           textColor={c.text}
           mutedColor={c.textSecondary}
-        />
-
-        <SettingsSectionHeader title={t("sectionLists")} color={c.textMuted} />
-        <SettingsNavigationRow
-          title={t("sharedWishlists")}
-          subtitle={t("sharedWishlistsHint")}
-          onPress={() => router.push("/wishlists")}
-          textColor={c.text}
-          subtitleColor={c.textMuted}
-          borderColor={c.border}
-          backgroundColor={c.surface}
         />
 
         <SettingsSectionHeader title={t("sectionAccount")} color={c.textMuted} />

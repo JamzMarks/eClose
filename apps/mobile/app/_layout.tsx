@@ -1,3 +1,4 @@
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "@/infrastructure/http/setup";
 import type { ReactNode } from "react";
 import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
@@ -36,38 +37,40 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <SafeAreaProvider>
-      <AuthProvider>
-        <NavigationThemeBridge>
-          <Stack>
-            <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="login" options={{ headerShown: false }} />
-            <Stack.Screen name="signup" options={{ headerShown: false }} />
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen
-              name="event/[id]"
-              options={{ headerShown: true, headerBackTitle: "Voltar" }}
-            />
-            <Stack.Screen
-              name="venue/[id]"
-              options={{ headerShown: true, headerBackTitle: "Voltar" }}
-            />
-            <Stack.Screen name="wishlists" options={{ headerShown: false }} />
-            <Stack.Screen
-              name="settings"
-              options={{
-                presentation: "modal",
-                headerShown: true,
-              }}
-            />
-            <Stack.Screen
-              name="modal"
-              options={{ presentation: "modal", title: "Modal" }}
-            />
-          </Stack>
-          <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
-        </NavigationThemeBridge>
-      </AuthProvider>
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <AuthProvider>
+          <NavigationThemeBridge>
+            <Stack>
+              <Stack.Screen name="index" options={{ headerShown: false }} />
+              <Stack.Screen name="login" options={{ headerShown: false }} />
+              <Stack.Screen name="signup" options={{ headerShown: false }} />
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen
+                name="event/[id]"
+                options={{ headerShown: true, headerBackTitle: "Voltar" }}
+              />
+              <Stack.Screen
+                name="venue/[id]"
+                options={{ headerShown: true, headerBackTitle: "Voltar" }}
+              />
+              <Stack.Screen name="wishlists" options={{ headerShown: false }} />
+              <Stack.Screen
+                name="settings"
+                options={{
+                  presentation: "modal",
+                  headerShown: true,
+                }}
+              />
+              <Stack.Screen
+                name="modal"
+                options={{ presentation: "modal", title: "Modal" }}
+              />
+            </Stack>
+            <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
+          </NavigationThemeBridge>
+        </AuthProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }

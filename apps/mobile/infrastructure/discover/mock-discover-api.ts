@@ -1,4 +1,4 @@
-import type { PaginatedResponse } from "@/infrastructure/api/types/pagination.types";
+import type { PaginatedResponse } from "@/services/types/pagination.types";
 
 import type { DiscoverEventListFilters, DiscoverVenueListFilters } from "@/infrastructure/discover/discover-list-filters.types";
 
@@ -38,12 +38,7 @@ function applyVenueFilters(all: ExploreVenueRow[], f: DiscoverVenueListFilters):
   if (f.openToInquiriesOnly) {
     rows = rows.filter((r) => r.venue.openToArtistInquiries);
   }
-  rows.sort((a, b) => {
-    const av = f.sortBy === "city" ? a.venue.address.city : a.venue.name;
-    const bv = f.sortBy === "city" ? b.venue.address.city : b.venue.name;
-    const cmp = av.localeCompare(bv, "pt");
-    return f.order === "ASC" ? cmp : -cmp;
-  });
+  rows.sort((a, b) => a.venue.name.localeCompare(b.venue.name, "pt"));
   return rows;
 }
 
@@ -71,15 +66,9 @@ function applyEventFilters(all: PublishedEventRow[], f: DiscoverEventListFilters
     const q = f.query.trim().toLowerCase();
     rows = rows.filter((r) => r.event.title.toLowerCase().includes(q));
   }
-  rows.sort((a, b) => {
-    if (f.sortBy === "title") {
-      const cmp = a.event.title.localeCompare(b.event.title, "pt");
-      return f.order === "ASC" ? cmp : -cmp;
-    }
-    const ta = new Date(a.event.startsAt).getTime();
-    const tb = new Date(b.event.startsAt).getTime();
-    return f.order === "ASC" ? ta - tb : tb - ta;
-  });
+  rows.sort(
+    (a, b) => new Date(a.event.startsAt).getTime() - new Date(b.event.startsAt).getTime(),
+  );
   return rows;
 }
 

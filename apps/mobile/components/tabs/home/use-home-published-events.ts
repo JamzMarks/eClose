@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { EventService } from "@/infrastructure/api/event/event.service";
-import type { EventDto } from "@/infrastructure/api/types/event.types";
+import { EventService } from "@/services/event/event.service";
+import type { EventDto } from "@/services/types/event.types";
 import type { DiscoverEventListFilters } from "@/infrastructure/discover/discover-list-filters.types";
 import { mockPaginatedEvents } from "@/infrastructure/discover/mock-discover-api";
 import type { PublishedEventRow } from "@/infrastructure/discover/mock-discover-data";
@@ -39,8 +39,8 @@ export function useHomePublishedEvents(
       const res = await svc.listPublished({
         page: nextPage,
         limit: DISCOVER_PAGE_SIZE,
-        sortBy: filters.sortBy,
-        order: filters.order,
+        sortBy: "startsAt",
+        order: "ASC",
         city: filters.city.trim() || undefined,
         q: filters.query.trim() || undefined,
       });

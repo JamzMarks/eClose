@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { MarketplaceService } from "@/infrastructure/api/marketplace/marketplace.service";
-import type { MarketplaceVenueCardDto } from "@/infrastructure/api/types/venue.types";
+import { MarketplaceService } from "@/services/marketplace/marketplace.service";
+import type { MarketplaceVenueCardDto } from "@/services/types/venue.types";
 import type { DiscoverVenueListFilters } from "@/infrastructure/discover/discover-list-filters.types";
 import { mockPaginatedVenues } from "@/infrastructure/discover/mock-discover-api";
 import type { ExploreVenueRow } from "@/infrastructure/discover/mock-discover-data";
@@ -39,8 +39,8 @@ export function useExploreVenues(
       const res = await svc.listVenues({
         page: nextPage,
         limit: DISCOVER_PAGE_SIZE,
-        sortBy: filters.sortBy,
-        order: filters.order,
+        sortBy: "name",
+        order: "ASC",
         city: filters.city.trim() || undefined,
         region: filters.region.trim() || undefined,
         openToInquiriesOnly: filters.openToInquiriesOnly ? true : undefined,

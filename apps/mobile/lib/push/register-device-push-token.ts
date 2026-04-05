@@ -1,7 +1,7 @@
 import { Platform } from "react-native";
 import Constants from "expo-constants";
 
-import { PushTokensService } from "@/infrastructure/api/user/push-tokens.service";
+import { PushTokensService } from "@/services/user/push-tokens.service";
 
 /**
  * Obtém token Expo Push, junta à lista no servidor (PATCH).

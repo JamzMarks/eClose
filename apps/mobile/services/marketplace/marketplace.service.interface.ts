@@ -1,5 +1,5 @@
-import type { MarketplaceVenueCardDto } from "@/infrastructure/api/types/venue.types";
-import type { PaginatedResponse } from "@/infrastructure/api/types/pagination.types";
+import type { MarketplaceVenueCardDto } from "@/services/types/venue.types";
+import type { PaginatedResponse } from "@/services/types/pagination.types";
 
 export type ListMarketplaceVenuesParams = {
   city?: string;

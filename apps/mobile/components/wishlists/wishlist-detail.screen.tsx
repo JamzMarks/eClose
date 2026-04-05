@@ -16,11 +16,11 @@ import { Screen } from "@/components/layout/screen";
 import { TabScreenCenterError } from "@/components/shared/tab-screen/TabScreenCenterError";
 import { AppPalette, getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { SharedEventListService } from "@/infrastructure/api/shared-event-list/shared-event-list.service";
+import { SharedEventListService } from "@/services/shared-event-list/shared-event-list.service";
 import type {
   SharedEventListDetailDto,
   SharedListEventRowDto,
-} from "@/infrastructure/api/shared-event-list/shared-event-list.types";
+} from "@/services/shared-event-list/shared-event-list.types";
 import { normalizeHttpError } from "@/infrastructure/http/error-handler";
 import { formatEventRange } from "@/lib/format-date";
 

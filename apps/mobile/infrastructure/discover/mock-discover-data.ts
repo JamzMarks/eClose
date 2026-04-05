@@ -1,5 +1,5 @@
-import type { EventDto } from "@/infrastructure/api/types/event.types";
-import type { MarketplaceVenueCardDto } from "@/infrastructure/api/types/venue.types";
+import type { EventDto } from "@/services/types/event.types";
+import type { MarketplaceVenueCardDto } from "@/services/types/venue.types";
 
 const iso = (d: Date) => d.toISOString();
 

@@ -10,8 +10,8 @@ import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useTranslation } from "react-i18next";
 
 import { AppPalette, getSchemeColors } from "@/constants/palette";
-import type { VenueDto } from "@/infrastructure/api/types/venue.types";
-import { VenueService } from "@/infrastructure/api/venue/venue.service";
+import type { VenueDto } from "@/services/types/venue.types";
+import { VenueService } from "@/services/venue/venue.service";
 import { normalizeHttpError } from "@/infrastructure/http/error-handler";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 

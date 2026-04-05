@@ -1,5 +1,5 @@
-import { getApiClient } from "@/infrastructure/api/api-client";
-import type { IAuthService } from "@/infrastructure/api/auth/auth.service.interface";
+import { getApiClient } from "@/services/api-client";
+import type { IAuthService } from "@/services/auth/auth.service.interface";
 import type {
   AuthTokensResponse,
   OnboardingStepRequest,
@@ -7,7 +7,7 @@ import type {
   SignInRequest,
   SignUpRequest,
   UserProfileResponse,
-} from "@/infrastructure/api/types/auth.types";
+} from "@/services/types/auth.types";
 
 export class AuthService implements IAuthService {
   private readonly client = getApiClient();

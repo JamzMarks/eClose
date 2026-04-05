@@ -5,7 +5,7 @@ import type {
   SignInRequest,
   SignUpRequest,
   UserProfileResponse,
-} from "@/infrastructure/api/types/auth.types";
+} from "@/services/types/auth.types";
 
 export interface IAuthService {
   signIn(credentials: SignInRequest): Promise<AuthTokensResponse>;

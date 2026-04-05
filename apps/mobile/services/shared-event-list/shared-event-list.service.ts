@@ -1,4 +1,4 @@
-import { getApiClient } from "@/infrastructure/api/api-client";
+import { getApiClient } from "@/services/api-client";
 
 import type {
   SharedEventListDetailDto,

@@ -1,4 +1,4 @@
-/** Coordenadas aproximadas para eventos presenciais no mock (mapa / região). */
+/** Coordenadas mock para pins quando o mapa interactivo voltar (ex.: react-native-maps + região visível). */
 export const MOCK_EVENT_MAP_COORDS: Record<string, { latitude: number; longitude: number }> = {
   "mock-e1": { latitude: 38.7139, longitude: -9.1394 },
   "mock-e2": { latitude: 38.7076, longitude: -9.1431 },

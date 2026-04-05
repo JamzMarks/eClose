@@ -1,5 +1,5 @@
-import { DiscoverListTabScreen } from "@/components/tabs/discover/discover-list-tab.screen";
+import { HomeFeedTabScreen } from "@/components/tabs/home/home-feed-tab.screen";
 
-export default function HomeRoute() {
-  return <DiscoverListTabScreen />;
+export default function HomeTabRoute() {
+  return <HomeFeedTabScreen />;
 }

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
-import { DiscoverFiltersModal } from "@/components/discover/DiscoverFiltersModal";
+import { DiscoverFiltersSheet } from "@/components/discover/DiscoverFiltersSheet";
 import { DiscoverListToolbar } from "@/components/discover/DiscoverListToolbar";
 import { DiscoverPaginatedFlatList } from "@/components/discover/DiscoverPaginatedFlatList";
 import type { DiscoverListKind } from "@/components/discover/discover-segmented-kind";
@@ -60,20 +60,12 @@ export function DiscoverListTabScreen() {
     locationModeAll: t("filtersLocationAll"),
     locationModePhysical: t("filtersLocationPhysical"),
     locationModeOnline: t("filtersLocationOnline"),
-    sortSection: t("filtersSortSection"),
-    sortStartsAt: t("filtersSortStartsAt"),
-    sortTitle: t("filtersSortTitle"),
-    sortName: t("filtersSortName"),
-    sortCity: t("filtersSortCity"),
-    orderSection: t("filtersOrderSection"),
-    orderAsc: t("filtersOrderAsc"),
-    orderDesc: t("filtersOrderDesc"),
     openToInquiries: t("filtersOpenToInquiries"),
     locationModeSection: t("filtersLocationModeSection"),
   };
 
-  const filtersModal = (
-    <DiscoverFiltersModal
+  const filtersSheet = (
+    <DiscoverFiltersSheet
       visible={filtersOpen}
       onClose={() => setFiltersOpen(false)}
       listKind={listKind}
@@ -87,7 +79,7 @@ export function DiscoverListTabScreen() {
 
   const header = (
     <DiscoverListToolbar
-      title={t("discoverNavTitle")}
+      title={t("programacaoTitle")}
       subtitle={listKind === "events" ? t("homeSubtitle") : t("exploreSubtitle")}
       listKind={listKind}
       onListKindChange={setListKind}
@@ -103,7 +95,7 @@ export function DiscoverListTabScreen() {
       <Screen>
         {header}
         <TabScreenCenterLoading message={t("loading")} subtitleColor={c.textSecondary} />
-        {filtersModal}
+        {filtersSheet}
       </Screen>
     );
   }
@@ -117,7 +109,7 @@ export function DiscoverListTabScreen() {
           retryLabel={t("retry")}
           onRetry={active.loadInitial}
         />
-        {filtersModal}
+        {filtersSheet}
       </Screen>
     );
   }
@@ -172,7 +164,7 @@ export function DiscoverListTabScreen() {
           )}
         />
       )}
-      {filtersModal}
+      {filtersSheet}
     </Screen>
   );
 }

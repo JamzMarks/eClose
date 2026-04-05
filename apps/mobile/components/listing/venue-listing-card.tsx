@@ -1,4 +1,4 @@
-import type { MarketplaceVenueCardDto } from "@/infrastructure/api/types/venue.types";
+import type { MarketplaceVenueCardDto } from "@/services/types/venue.types";
 
 import { ListingCardShell } from "./listing-card-shell";
 import { ListingTypeChip } from "./listing-type-chip";

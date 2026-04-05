@@ -1,29 +1,27 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import type { ReactNode } from "react";
+import { StyleSheet, Text, View } from "react-native";
 
-import { Icon } from "@/components/ui/icon/icon";
-import { AppIcon } from "@/components/ui/icon/icon.types";
-
-export type DiscoverScreenHeaderProps = {
+/**
+ * Cabeçalho reutilizável para ecrãs dentro das tabs (título, subtítulo opcional, ação à direita opcional).
+ */
+export type AppTabScreenHeaderProps = {
   title: string;
   subtitle?: string;
   borderColor: string;
   titleColor: string;
   subtitleColor: string;
-  filterIconColor: string;
-  filterAccessibilityLabel: string;
-  onFilterPress: () => void;
+  /** Ícone, botão ou grupo à direita (ex.: filtro, “Lista”). */
+  trailing?: ReactNode;
 };
 
-export function DiscoverScreenHeader({
+export function AppTabScreenHeader({
   title,
   subtitle,
   borderColor,
   titleColor,
   subtitleColor,
-  filterIconColor,
-  filterAccessibilityLabel,
-  onFilterPress,
-}: DiscoverScreenHeaderProps) {
+  trailing,
+}: AppTabScreenHeaderProps) {
   return (
     <View style={[styles.header, { borderBottomColor: borderColor }]}>
       <View style={styles.topRow}>
@@ -33,13 +31,7 @@ export function DiscoverScreenHeader({
             <Text style={[styles.subtitle, { color: subtitleColor }]}>{subtitle}</Text>
           ) : null}
         </View>
-        <Pressable
-          onPress={onFilterPress}
-          hitSlop={12}
-          accessibilityRole="button"
-          accessibilityLabel={filterAccessibilityLabel}>
-          <Icon name={AppIcon.Filter} size="lg" color={filterIconColor} />
-        </Pressable>
+        {trailing ? <View style={styles.trailing}>{trailing}</View> : null}
       </View>
     </View>
   );
@@ -64,4 +56,8 @@ const styles = StyleSheet.create({
   },
   title: { fontSize: 28, fontWeight: "700" },
   subtitle: { fontSize: 15, marginTop: 4 },
+  trailing: {
+    alignSelf: "flex-start",
+    paddingTop: 2,
+  },
 });

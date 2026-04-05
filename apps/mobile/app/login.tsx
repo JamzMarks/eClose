@@ -15,6 +15,7 @@ import { AppButton } from "@/components/ui/button";
 import { AppTextField } from "@/components/ui/text-field";
 import { Screen } from "@/components/layout/screen";
 import { useAuth } from "@/contexts/auth-context";
+import { isAuthMockEnabled } from "@/lib/auth-mock";
 import { normalizeHttpError } from "@/infrastructure/http/error-handler";
 import { getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -22,7 +23,8 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 export default function LoginScreen() {
   const { t } = useTranslation("auth");
   const router = useRouter();
-  const { signIn } = useAuth();
+  const { signIn, signInMock } = useAuth();
+  const mockAuth = isAuthMockEnabled();
   const scheme = useColorScheme() ?? "light";
   const c = getSchemeColors(scheme);
 
@@ -30,6 +32,19 @@ export default function LoginScreen() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  async function onMockExplore() {
+    setError(null);
+    setLoading(true);
+    try {
+      await signInMock();
+      router.replace("/(tabs)");
+    } catch (e) {
+      setError(normalizeHttpError(e, t("errorGeneric")).message);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   async function onSubmit() {
     setError(null);
@@ -96,6 +111,21 @@ export default function LoginScreen() {
               fullWidth
             />
 
+            {mockAuth ? (
+              <>
+                <AppButton
+                  title={t("signInMock")}
+                  onPress={onMockExplore}
+                  loading={loading}
+                  fullWidth
+                  variant="secondary"
+                />
+                <Text style={[styles.mockHint, { color: c.textSecondary }]}>
+                  {t("signInMockHint")}
+                </Text>
+              </>
+            ) : null}
+
             <Pressable
               onPress={() => router.push("/signup")}
               accessibilityRole="link"
@@ -147,5 +177,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
     textDecorationLine: "underline",
     marginTop: 8,
+  },
+  mockHint: {
+    fontSize: 13,
+    lineHeight: 18,
+    textAlign: "center",
+    marginTop: -8,
   },
 });
