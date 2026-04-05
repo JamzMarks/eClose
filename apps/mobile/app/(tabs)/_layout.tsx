@@ -56,17 +56,17 @@ export default function TabLayout() {
         />
 
         <Tabs.Screen
-          name="wishlist"
+          name="create"
           options={{
             tabBarIcon: ({ color, focused }) => (
               <Icon
-                name={AppIcon.Wishlist}
+                name={AppIcon.Create}
                 size="lg"
                 color={color}
                 filled={focused}
               />
             ),
-            tabBarAccessibilityLabel: t("wishlist"),
+            tabBarAccessibilityLabel: t("createTab"),
           }}
         />
 

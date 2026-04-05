@@ -1,0 +1,199 @@
+import type { ReactNode } from "react";
+import { useCallback, useMemo, useState } from "react";
+import {
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
+import { Image } from "expo-image";
+
+const LIST_HORIZONTAL_INSET = 32;
+const CAROUSEL_HEIGHT = 132;
+
+export type ListingCardShellProps = {
+  /** URLs das imagens do carrossel (primeira = capa). */
+  mediaUrls: string[];
+  imageAccessibilityLabel: string;
+  title: string;
+  subtitle: string;
+  onPress: () => void;
+  meta?: string | null;
+  imageOverlay?: ReactNode;
+  colors: {
+    text: string;
+    subtitle: string;
+    imagePlaceholder: string;
+  };
+};
+
+/**
+ * Marketplace: carrossel de imagens compacto + texto.
+ */
+export function ListingCardShell({
+  mediaUrls,
+  imageAccessibilityLabel,
+  title,
+  subtitle,
+  meta,
+  onPress,
+  imageOverlay,
+  colors,
+}: ListingCardShellProps) {
+  const { width: windowWidth } = useWindowDimensions();
+  const slideWidth = Math.max(0, windowWidth - LIST_HORIZONTAL_INSET);
+  const urls = useMemo(
+    () => mediaUrls.map((u) => u.trim()).filter((u) => u.length > 0),
+    [mediaUrls],
+  );
+  const [page, setPage] = useState(0);
+
+  const onMomentumScrollEnd = useCallback(
+    (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+      const x = e.nativeEvent.contentOffset.x;
+      const i = Math.round(x / slideWidth);
+      setPage(Math.min(Math.max(i, 0), Math.max(urls.length - 1, 0)));
+    },
+    [slideWidth, urls.length],
+  );
+
+  return (
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [styles.card, pressed && styles.pressed]}
+      accessibilityRole="button"
+      accessibilityLabel={`${title}. ${subtitle}`}
+    >
+      <View style={[styles.carouselWrap, { width: slideWidth }]}>
+        <View
+          style={[styles.slidesViewport, { height: CAROUSEL_HEIGHT, backgroundColor: colors.imagePlaceholder }]}
+          accessibilityLabel={imageAccessibilityLabel}
+        >
+          {urls.length === 0 ? null : urls.length === 1 ? (
+            <Image
+              source={{ uri: urls[0] }}
+              style={{ width: slideWidth, height: CAROUSEL_HEIGHT }}
+              contentFit="cover"
+              transition={200}
+            />
+          ) : (
+            <ScrollView
+              horizontal
+              nestedScrollEnabled
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              decelerationRate="fast"
+              snapToInterval={slideWidth}
+              snapToAlignment="start"
+              onMomentumScrollEnd={onMomentumScrollEnd}
+              style={StyleSheet.absoluteFill}
+              contentContainerStyle={styles.pagerContent}
+            >
+              {urls.map((uri) => (
+                <Image
+                  key={uri}
+                  source={{ uri }}
+                  style={{ width: slideWidth, height: CAROUSEL_HEIGHT }}
+                  contentFit="cover"
+                  transition={200}
+                />
+              ))}
+            </ScrollView>
+          )}
+        </View>
+        {urls.length > 1 ? (
+          <View style={styles.dots} pointerEvents="none">
+            {urls.map((_, i) => (
+              <View
+                key={i}
+                style={[
+                  styles.dot,
+                  {
+                    backgroundColor: i === page ? colors.text : colors.subtitle,
+                    opacity: i === page ? 1 : 0.35,
+                  },
+                ]}
+              />
+            ))}
+          </View>
+        ) : null}
+        {imageOverlay ? <View style={styles.overlay}>{imageOverlay}</View> : null}
+      </View>
+      <View style={styles.body}>
+        <Text style={[styles.title, { color: colors.text }]} numberOfLines={2}>
+          {title}
+        </Text>
+        <Text style={[styles.subtitle, { color: colors.subtitle }]} numberOfLines={2}>
+          {subtitle}
+        </Text>
+        {meta ? (
+          <Text style={[styles.meta, { color: colors.subtitle }]} numberOfLines={1}>
+            {meta}
+          </Text>
+        ) : null}
+      </View>
+    </Pressable>
+  );
+}
+
+const styles = StyleSheet.create({
+  card: {
+    marginBottom: 18,
+  },
+  pressed: {
+    opacity: 0.92,
+  },
+  carouselWrap: {
+    borderRadius: 12,
+    overflow: "hidden",
+    alignSelf: "center",
+  },
+  slidesViewport: {
+    borderRadius: 12,
+    overflow: "hidden",
+  },
+  pagerContent: {
+    flexDirection: "row",
+  },
+  dots: {
+    position: "absolute",
+    bottom: 8,
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 6,
+  },
+  dot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  overlay: {
+    position: "absolute",
+    left: 10,
+    top: 10,
+    maxWidth: "85%",
+  },
+  body: {
+    marginTop: 8,
+    gap: 2,
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: "600",
+    letterSpacing: -0.2,
+  },
+  subtitle: {
+    fontSize: 14,
+    lineHeight: 19,
+  },
+  meta: {
+    fontSize: 13,
+    marginTop: 2,
+  },
+});
