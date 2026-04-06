@@ -32,7 +32,9 @@ export class TypeormMediaRepository implements IMediaRepository {
   }
 
   async findPrimary(parentType: MediaParentType, parentId: string): Promise<MediaAsset | null> {
-    const row = await this.repo.findOne({ where: { parentType, parentId, isPrimary: true } });
+    const row = await this.repo.findOne({
+      where: { parentType, parentId, isPrimary: true, listable: true },
+    });
     return row ? this.toDomain(row) : null;
   }
 
@@ -47,6 +49,7 @@ export class TypeormMediaRepository implements IMediaRepository {
       .where("m.parentType = :pt", { pt: parentType })
       .andWhere("m.parentId IN (:...ids)", { ids: parentIds })
       .andWhere("m.isPrimary = true")
+      .andWhere("m.listable = true")
       .getMany();
     for (const row of rows) {
       out.set(row.parentId, this.toDomain(row));
@@ -72,6 +75,7 @@ export class TypeormMediaRepository implements IMediaRepository {
     row.caption = a.caption;
     row.sortOrder = a.sortOrder;
     row.isPrimary = a.isPrimary;
+    row.listable = a.listable;
     row.createdAt = a.createdAt;
     return row;
   }
@@ -94,6 +98,7 @@ export class TypeormMediaRepository implements IMediaRepository {
       caption: row.caption,
       sortOrder: row.sortOrder,
       isPrimary: row.isPrimary,
+      listable: row.listable ?? true,
       createdAt: row.createdAt,
     });
   }

@@ -55,5 +55,20 @@
   "partnerSheetBody": "O registo de venues é feito em parceria: validação, dados do negócio e visibilidade no marketplace. Entraremos em contacto ou usa os canais oficiais de apoio quando o fluxo estiver aberto.",
   "partnerSheetClose": "Entendi",
   "createMvpBody": "No MVP actual a app foca-se em descobrir eventos e espaços. Criar eventos, pedidos de booking e ferramentas de organizador chegam numa próxima fase.",
-  "createMvpBadge": "MVP · descoberta"
+  "createMvpBadge": "MVP · descoberta",
+  "trustSemiReliable": "Semi confiável",
+  "trustVerifiedDetail": "Este espaço completou verificação de documentos (nível 2).",
+  "venueVerifyTitle": "Verificação do espaço",
+  "venueVerifyCnpj": "CNPJ",
+  "venueVerifyDocCnpjUrl": "URL do documento do CNPJ (PDF ou imagem)",
+  "venueVerifyDocAddressUrl": "URL do comprovante de endereço",
+  "venueVerifyHint": "MVP: cola URLs públicas (HTTPS) dos ficheiros. Upload directo virá depois.",
+  "venueVerifySubmit": "Enviar para análise",
+  "venueVerifySuccess": "Documentos enviados. Estado: em análise.",
+  "venueTrustStatus_none": "Verificação não iniciada",
+  "venueTrustStatus_pending_review": "Em análise",
+  "venueTrustStatus_verified_l2": "Verificado (semi confiável)",
+  "venueTrustStatus_rejected": "Rejeitado — podes reenviar",
+  "venueManageVerification": "Completar verificação",
+  "venueViewAsOwner": "Gerir este espaço"
 }

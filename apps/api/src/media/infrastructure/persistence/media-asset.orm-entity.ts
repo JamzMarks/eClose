@@ -51,6 +51,9 @@ export class MediaAssetOrmEntity {
   @Column({ name: "is_primary", type: "boolean", default: false })
   isPrimary!: boolean;
 
+  @Column({ type: "boolean", default: true })
+  listable!: boolean;
+
   @CreateDateColumn({ name: "created_at", type: "timestamptz" })
   createdAt!: Date;
 }

@@ -12,6 +12,7 @@ import {
   MarketplaceVenueCard,
   Paginated,
 } from "@/marketplace/interfaces/marketplace.service.interface";
+import { serializeVenueForPublic } from "@/venue/interface/http/venue-public.serializer";
 
 @Injectable()
 export class MarketplaceService implements IMarketplaceService {
@@ -125,6 +126,8 @@ export class MarketplaceService implements IMarketplaceService {
     const order = filters.order ?? "ASC";
     const mul = order === "DESC" ? -1 : 1;
     list = [...list].sort((a, b) => {
+      const trust = Number(b.isVerifiedL2) - Number(a.isVerifiedL2);
+      if (trust !== 0) return trust;
       const av =
         sortBy === "city" ? a.address.city.toLowerCase() : a.name.toLowerCase();
       const bv =
@@ -144,7 +147,7 @@ export class MarketplaceService implements IMarketplaceService {
     const items: MarketplaceVenueCard[] = slice.map((venue) => {
       const primary = primaryByVenueId.get(venue.id) ?? null;
       return {
-        venue,
+        venue: serializeVenueForPublic(venue),
         primaryMediaUrl: primary?.sourceUrl ?? null,
       };
     });

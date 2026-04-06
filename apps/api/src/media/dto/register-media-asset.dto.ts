@@ -51,6 +51,11 @@ export class RegisterMediaAssetDto {
   @IsBoolean()
   setAsPrimary?: boolean;
 
+  /** false = não listado em GET /media/parents/... (anexos privados). */
+  @IsOptional()
+  @IsBoolean()
+  listable?: boolean;
+
   @IsOptional()
   @IsString()
   @MaxLength(1024)

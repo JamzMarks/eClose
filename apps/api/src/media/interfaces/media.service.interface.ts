@@ -11,6 +11,7 @@ import { SignedUploadIntentResult } from "../types/signed-upload-intent.type";
 export interface IMediaService {
   registerAsset(dto: RegisterMediaAssetDto): Promise<MediaAsset>;
   requestSignedUploadIntent(dto: RequestUploadIntentDto): Promise<SignedUploadIntentResult>;
+  findById(id: string): Promise<MediaAsset | null>;
   listByParent(parentType: MediaParentType, parentId: string): Promise<MediaAsset[]>;
   getPrimary(parentType: MediaParentType, parentId: string): Promise<MediaAsset | null>;
   getPrimaryMany(

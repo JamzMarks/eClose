@@ -1,3 +1,5 @@
+import { View } from "react-native";
+
 import type { MarketplaceVenueCardDto } from "@/services/types/venue.types";
 
 import { ListingCardShell } from "./listing-card-shell";
@@ -13,6 +15,8 @@ export type VenueListingCardProps = {
   subtitleColor: string;
   imagePlaceholderColor: string;
   onPress: () => void;
+  /** Ex.: “Semi confiável” quando `venue.isVerifiedL2`. */
+  trustBadgeLabel?: string;
 };
 
 function citySubtitle(card: MarketplaceVenueCardDto): string {
@@ -29,6 +33,7 @@ export function VenueListingCard({
   subtitleColor,
   imagePlaceholderColor,
   onPress,
+  trustBadgeLabel,
 }: VenueListingCardProps) {
   const { venue, primaryMediaUrl, galleryUrls } = card;
   const mediaUrls = [primaryMediaUrl, ...(galleryUrls ?? [])].filter(
@@ -43,12 +48,23 @@ export function VenueListingCard({
       subtitle={citySubtitle(card)}
       onPress={onPress}
       imageOverlay={
-        categoryLabel ? (
-          <ListingTypeChip
-            label={categoryLabel}
-            textColor={chipTextColor}
-            backgroundColor={chipBackgroundColor}
-          />
+        categoryLabel || (trustBadgeLabel && venue.isVerifiedL2) ? (
+          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6 }}>
+            {categoryLabel ? (
+              <ListingTypeChip
+                label={categoryLabel}
+                textColor={chipTextColor}
+                backgroundColor={chipBackgroundColor}
+              />
+            ) : null}
+            {trustBadgeLabel && venue.isVerifiedL2 ? (
+              <ListingTypeChip
+                label={trustBadgeLabel}
+                textColor={chipTextColor}
+                backgroundColor="rgba(34,197,94,0.92)"
+              />
+            ) : null}
+          </View>
         ) : undefined
       }
       colors={{

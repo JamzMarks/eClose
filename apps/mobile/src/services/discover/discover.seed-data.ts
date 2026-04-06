@@ -41,6 +41,7 @@ function venueDto(
     openToArtistInquiries: true,
     primaryMediaAssetId: null,
     isActive: true,
+    isVerifiedL2: false,
     createdAt: now,
     updatedAt: now,
   };
@@ -85,7 +86,10 @@ const u = (path: string) =>
 /** Espaços físicos variados (dados locais quando `USE_MOCK_DISCOVER`). */
 export const MOCK_EXPLORE_VENUES: MarketplaceVenueListItem[] = [
   {
-    venue: venueDto("mock-v1", "Casa da Música", "casa-da-musica", "Porto", "Porto", 41.1579, -8.6291),
+    venue: {
+      ...venueDto("mock-v1", "Casa da Música", "casa-da-musica", "Porto", "Porto", 41.1579, -8.6291),
+      isVerifiedL2: true,
+    },
     primaryMediaUrl: u("photo-1514525253161-7a46d19cd819"),
     galleryUrls: [u("photo-1493225457124-a3eb161ffa5f"), u("photo-1511671782779-b29710aed9fc")],
     categoryLabel: "Sala de concertos",

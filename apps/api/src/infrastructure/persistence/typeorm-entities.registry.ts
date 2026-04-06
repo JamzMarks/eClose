@@ -11,8 +11,10 @@ import { MediaAssetOrmEntity } from "@/media/infrastructure/persistence/media-as
 import { OutboxEventOrmEntity } from "@/media/infrastructure/persistence/outbox-event.orm-entity";
 import { NotificationOrmEntity } from "@/notification/infrastructure/persistence/notification.orm-entity";
 import { TaxonomyTermOrmEntity } from "@/taxonomy/infrastructure/persistence/taxonomy-term.orm-entity";
+import { AuditLogOrmEntity } from "@/infrastructure/audit/audit-log.orm-entity";
 import { UserOrmEntity } from "@/user/infrastructure/persistence/user.orm-entity";
 import { VenueOrmEntity } from "@/venue/infrastructure/persistence/venue.orm-entity";
+import { VenueVerificationHistoryOrmEntity } from "@/venue/infrastructure/persistence/venue-verification-history.orm-entity";
 import { FriendRequestOrmEntity } from "@/friendship/infrastructure/persistence/friend-request.orm-entity";
 import { UserBlockOrmEntity } from "@/friendship/infrastructure/persistence/user-block.orm-entity";
 import { PostOrmEntity } from "@/post/infrastructure/persistence/post.orm-entity";
@@ -22,12 +24,14 @@ import { SharedEventListOrmEntity } from "@/shared-event-list/infrastructure/per
 
 /** Registro da composição: cada entidade vive no bounded context correspondente. */
 export const ALL_TYPEORM_ENTITIES = [
+  AuditLogOrmEntity,
   UserOrmEntity,
   OAuthAccountOrmEntity,
   RefreshTokenOrmEntity,
   TaxonomyTermOrmEntity,
   ArtistOrmEntity,
   VenueOrmEntity,
+  VenueVerificationHistoryOrmEntity,
   EventOrmEntity,
   MediaAssetOrmEntity,
   ConversationOrmEntity,

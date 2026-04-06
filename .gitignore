@@ -33,6 +33,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# API — media local (MEDIA_OBJECT_STORAGE_ADAPTER=local)
+apps/api/var/
+
 # Misc
 .DS_Store
 *.pem

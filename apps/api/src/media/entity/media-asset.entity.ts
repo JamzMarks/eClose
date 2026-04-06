@@ -20,6 +20,8 @@ export type MediaAssetProps = {
   caption: string | null;
   sortOrder: number;
   isPrimary: boolean;
+  /** Se false, não aparece em GET público por parent (ex.: anexos de verificação). */
+  listable: boolean;
   createdAt: Date;
 };
 
@@ -40,6 +42,7 @@ export class MediaAsset {
   caption: string | null;
   sortOrder: number;
   isPrimary: boolean;
+  listable: boolean;
   createdAt: Date;
 
   private constructor(props: MediaAssetProps) {
@@ -73,6 +76,7 @@ export class MediaAsset {
     caption?: string | null;
     sortOrder?: number;
     isPrimary?: boolean;
+    listable?: boolean;
     now?: Date;
   }): MediaAsset {
     if (!props.sourceUrl?.trim()) throw new Error("sourceUrl é obrigatório");
@@ -93,6 +97,7 @@ export class MediaAsset {
       caption: props.caption?.trim() ?? null,
       sortOrder: props.sortOrder ?? 0,
       isPrimary: props.isPrimary ?? false,
+      listable: props.listable ?? true,
       createdAt: props.now ?? new Date(),
     });
   }

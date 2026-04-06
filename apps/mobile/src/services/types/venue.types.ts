@@ -8,6 +8,13 @@ export type VenueAddressDto = {
   postalCode?: string | null;
 };
 
+export type VenueVerificationStatus =
+  | "none"
+  | "pending_documents"
+  | "pending_review"
+  | "verified_l2"
+  | "rejected";
+
 export type VenueDto = {
   id: string;
   name: string;
@@ -24,8 +31,20 @@ export type VenueDto = {
   openToArtistInquiries: boolean;
   primaryMediaAssetId: string | null;
   isActive: boolean;
+  /** Resposta pública da API (sem CNPJ nem anexos). */
+  isVerifiedL2?: boolean;
   createdAt: string;
   updatedAt: string;
+};
+
+/** GET /venues/:id/manage — dono. */
+export type VenueManageDto = VenueDto & {
+  verificationStatus: VenueVerificationStatus;
+  cnpj: string | null;
+  verificationCnpjDocMediaAssetId: string | null;
+  verificationAddressProofMediaAssetId: string | null;
+  hasCnpjDocument: boolean;
+  hasAddressProofDocument: boolean;
 };
 
 export type MarketplaceVenueCardDto = {

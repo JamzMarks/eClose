@@ -37,6 +37,10 @@ Identificadores novos (PKs de agregados, etc.) usam **UUID v7** via `ID_GENERATO
 
 Novos domínios: crie `src/<dominio>/` com o padrão acima quando fizer sentido, registe em `app.module.ts` em `imports: [..., NovoDominioModule]`.
 
+**Variáveis úteis:** `DATABASE_URL`, `TYPEORM_RUN_MIGRATIONS`, `ADMIN_API_KEY` (revisão de verificação de venue em `PATCH /internal/venue-trust/:venueId` com header `x-admin-api-key`; ver `docs/ddd-modules-and-security.md`). Para `POST /venues/:id/trust-verification`, a validação usa a porta **`IBrazilianVenueTrustDataPort`** (domínio estável); a implementação por defeito é HTTP **BrasilAPI** (`BrasilApiTrustDataAdapter` + mapper wire→domínio). `BRASILAPI_BASE_URL` e `BRASILAPI_TIMEOUT_MS` são opcionais.
+
+**Upload de media:** `POST /media/upload-intent` usa **`IMediaObjectStoragePort`**. `MEDIA_OBJECT_STORAGE_ADAPTER=env|local|s3|azure` (omissão `env`). **Local (testes/MVP):** `local` grava em disco (`MEDIA_LOCAL_ROOT`, omissão `var/local-media` sob `cwd`), URLs com `MEDIA_PUBLIC_APP_URL` (omissão `http://127.0.0.1:$PORT`); upload `POST /media/local-write` (JWT) com multipart `file`; leitura pública `GET /media/local-public?k=...`. Opcional: `MEDIA_LOCAL_MAX_UPLOAD_BYTES`. S3: `MEDIA_S3_BUCKET`, `AWS_REGION`, credenciais AWS. Azure: `MEDIA_AZURE_CONTAINER`, `AZURE_STORAGE_ACCOUNT_NAME`, `AZURE_STORAGE_ACCOUNT_KEY`. Modo `env` com CDN: `MEDIA_CDN_PUBLIC_BASE_URL` (ou `CDN_PUBLIC_URL`) e `MEDIA_UPLOAD_BASE_URL`.
+
 ## Project setup
 
 ```bash

@@ -48,6 +48,27 @@ export class VenueOrmEntity {
   @Column({ name: "is_active", type: "boolean", default: true })
   isActive!: boolean;
 
+  @Column({ name: "verification_status", type: "varchar", length: 32, default: "none" })
+  verificationStatus!: string;
+
+  @Column({ type: "varchar", length: 14, nullable: true })
+  cnpj!: string | null;
+
+  @Column({ name: "verification_cnpj_doc_media_asset_id", type: "uuid", nullable: true })
+  verificationCnpjDocMediaAssetId!: string | null;
+
+  @Column({ name: "verification_address_proof_media_asset_id", type: "uuid", nullable: true })
+  verificationAddressProofMediaAssetId!: string | null;
+
+  @Column({ name: "registry_snapshot_hash", type: "varchar", length: 64, nullable: true })
+  registrySnapshotHash!: string | null;
+
+  @Column({ name: "registry_checked_at", type: "timestamptz", nullable: true })
+  registryCheckedAt!: Date | null;
+
+  @Column({ name: "verification_rejection_reason", type: "text", nullable: true })
+  verificationRejectionReason!: string | null;
+
   @CreateDateColumn({ name: "created_at", type: "timestamptz" })
   createdAt!: Date;
 

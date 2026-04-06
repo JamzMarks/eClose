@@ -1,5 +1,5 @@
 import { Artist } from "@/artist/entity/artist.entity";
-import { Venue } from "@/venue/domain/entity/venue.entity";
+import type { PublicVenueSnapshot } from "@/venue/interface/http/venue-public.serializer";
 
 export type MarketplaceArtistCard = {
   artist: Artist;
@@ -7,7 +7,7 @@ export type MarketplaceArtistCard = {
 };
 
 export type MarketplaceVenueCard = {
-  venue: Venue;
+  venue: PublicVenueSnapshot;
   primaryMediaUrl: string | null;
 };
 

@@ -7,6 +7,7 @@ import {
   Text,
   View,
 } from "react-native";
+import { Image } from "expo-image";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useTranslation } from "react-i18next";
 
@@ -115,6 +116,14 @@ export default function EventDetailScreen() {
       style={[styles.scroll, { backgroundColor: c.background }]}
       contentContainerStyle={styles.content}
     >
+      {event.primaryMediaUrl?.trim() ? (
+        <Image
+          source={{ uri: event.primaryMediaUrl }}
+          style={styles.hero}
+          contentFit="cover"
+          accessibilityLabel={event.title}
+        />
+      ) : null}
       <Text style={[styles.title, { color: c.text }]}>{event.title}</Text>
       <Text style={[styles.meta, { color: c.textSecondary }]}>
         {formatEventRange(event.startsAt, event.endsAt)}
@@ -144,6 +153,13 @@ export default function EventDetailScreen() {
 const styles = StyleSheet.create({
   scroll: { flex: 1 },
   content: { padding: 20, paddingBottom: 40 },
+  hero: {
+    width: "100%",
+    height: 200,
+    borderRadius: 12,
+    marginBottom: 16,
+    backgroundColor: "#E7E5E4",
+  },
   centered: { flex: 1, justifyContent: "center", alignItems: "center" },
   title: { fontSize: 24, fontWeight: "700", marginBottom: 8 },
   meta: { fontSize: 15, marginBottom: 20 },

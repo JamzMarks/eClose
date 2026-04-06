@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { ListRenderItem } from "react-native";
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from "react-native";
 
@@ -15,6 +16,7 @@ export type DiscoverPaginatedFlatListProps<T> = {
   onEndReached: () => void;
   loadingMore: boolean;
   canLoadMore: boolean;
+  listHeaderComponent?: ReactNode;
 };
 
 /**
@@ -31,11 +33,13 @@ export function DiscoverPaginatedFlatList<T>({
   onEndReached,
   loadingMore,
   canLoadMore,
+  listHeaderComponent,
 }: DiscoverPaginatedFlatListProps<T>) {
   return (
     <FlatList
       data={data}
       keyExtractor={keyExtractor}
+      ListHeaderComponent={listHeaderComponent ?? null}
       refreshControl={
         <RefreshControl
           refreshing={refreshing}

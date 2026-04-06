@@ -25,6 +25,10 @@ import { UpdateNotificationPreferencesDto } from "@/user/interface/http/dto/upda
 import { UpdatePushTokensDto } from "@/user/interface/http/dto/update-push-tokens.dto";
 import { applySocialUserToRow, socialUserFromRow } from "@/user/infrastructure/persistence/user.orm-mapper";
 import { IUserService } from "@/user/application/ports/user.service.interface";
+import {
+  currentPrivacyVersion,
+  currentTermsVersion,
+} from "@/shared/legal/current-legal-document-versions";
 
 @Injectable()
 export class UserService implements IUserService {
@@ -78,6 +82,8 @@ export class UserService implements IUserService {
 
     const row = new UserOrmEntity();
     applySocialUserToRow(user, row);
+    row.termsVersion = dto.termsVersion?.trim() || currentTermsVersion();
+    row.privacyVersion = dto.privacyVersion?.trim() || currentPrivacyVersion();
     row.notificationPreferences = { email: true, push: true, sms: true };
     row.pushTokens = [];
     if (user.firstName?.trim() && user.lastName?.trim()) {

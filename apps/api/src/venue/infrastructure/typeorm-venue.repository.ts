@@ -5,6 +5,7 @@ import { VenueOrmEntity } from "@/venue/infrastructure/persistence/venue.orm-ent
 import { Venue, VenueAddress } from "@/venue/domain/entity/venue.entity";
 import { IVenueRepository } from "@/venue/application/ports/venue.repository.interface";
 import { VenueOpeningSlot } from "@/venue/domain/types/venue-opening-slot.type";
+import type { VenueVerificationStatus } from "@/venue/domain/types/venue-verification-status.type";
 
 @Injectable()
 export class TypeormVenueRepository implements IVenueRepository {
@@ -64,12 +65,21 @@ export class TypeormVenueRepository implements IVenueRepository {
     row.openToArtistInquiries = v.openToArtistInquiries;
     row.primaryMediaAssetId = v.primaryMediaAssetId;
     row.isActive = v.isActive;
+    row.verificationStatus = v.verificationStatus;
+    row.cnpj = v.cnpj;
+    row.verificationCnpjDocMediaAssetId = v.verificationCnpjDocMediaAssetId;
+    row.verificationAddressProofMediaAssetId = v.verificationAddressProofMediaAssetId;
+    row.registrySnapshotHash = v.registrySnapshotHash;
+    row.registryCheckedAt = v.registryCheckedAt;
+    row.verificationRejectionReason = v.verificationRejectionReason;
     row.createdAt = v.createdAt;
     row.updatedAt = v.updatedAt;
     return row;
   }
 
   private toDomain(row: VenueOrmEntity): Venue {
+    const verificationStatus = (row.verificationStatus ?? "none") as VenueVerificationStatus;
+    const isVerifiedL2 = verificationStatus === "verified_l2";
     return Venue.hydrate({
       id: row.id,
       name: row.name,
@@ -86,6 +96,14 @@ export class TypeormVenueRepository implements IVenueRepository {
       openToArtistInquiries: row.openToArtistInquiries,
       primaryMediaAssetId: row.primaryMediaAssetId,
       isActive: row.isActive,
+      verificationStatus,
+      cnpj: row.cnpj ?? null,
+      verificationCnpjDocMediaAssetId: row.verificationCnpjDocMediaAssetId ?? null,
+      verificationAddressProofMediaAssetId: row.verificationAddressProofMediaAssetId ?? null,
+      registrySnapshotHash: row.registrySnapshotHash ?? null,
+      registryCheckedAt: row.registryCheckedAt ?? null,
+      verificationRejectionReason: row.verificationRejectionReason ?? null,
+      isVerifiedL2,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
     });

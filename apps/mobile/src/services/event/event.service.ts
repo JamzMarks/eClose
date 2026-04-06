@@ -36,7 +36,7 @@ export class EventService implements IEventService {
       .then((res) => {
         let items: PublishedEventListItem[] = res.items.map((event) => ({
           event,
-          primaryMediaUrl: null,
+          primaryMediaUrl: event.primaryMediaUrl ?? null,
           galleryUrls: undefined,
         }));
         if (discoveryLocationMode === "PHYSICAL") {

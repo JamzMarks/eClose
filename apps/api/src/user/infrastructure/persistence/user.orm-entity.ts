@@ -63,6 +63,12 @@ export class UserOrmEntity {
   @Column({ name: "privacy_accepted_at", type: "timestamptz", nullable: true })
   privacyAcceptedAt!: Date | null;
 
+  @Column({ name: "terms_version", type: "varchar", length: 64, nullable: true })
+  termsVersion!: string | null;
+
+  @Column({ name: "privacy_version", type: "varchar", length: 64, nullable: true })
+  privacyVersion!: string | null;
+
   @Column({ name: "marketing_opt_in", type: "boolean", default: false })
   marketingOptIn!: boolean;
 

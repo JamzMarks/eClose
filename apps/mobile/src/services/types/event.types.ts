@@ -19,6 +19,8 @@ export type EventDto = {
   status: string;
   createdAt: string;
   updatedAt: string;
+  /** Presente nas respostas públicas quando a API enriquece a listagem/detalhe. */
+  primaryMediaUrl?: string | null;
 };
 
 export type DiscoveryLocationModeFilter = "ALL" | "PHYSICAL" | "ONLINE";

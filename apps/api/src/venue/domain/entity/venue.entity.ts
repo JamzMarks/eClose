@@ -1,4 +1,5 @@
 import { VenueOpeningSlot } from "../types/venue-opening-slot.type";
+import type { VenueVerificationStatus } from "../types/venue-verification-status.type";
 
 export type VenueAddress = {
   line1: string;
@@ -30,6 +31,19 @@ export type VenueProps = {
   openToArtistInquiries: boolean;
   primaryMediaAssetId: string | null;
   isActive: boolean;
+  verificationStatus: VenueVerificationStatus;
+  /** CNPJ normalizado (14 dígitos) após submissão; null se nunca submetido. */
+  cnpj: string | null;
+  verificationCnpjDocMediaAssetId: string | null;
+  verificationAddressProofMediaAssetId: string | null;
+  /** Hash SHA-256 (hex) dos snapshots públicos usados na última submissão de verificação. */
+  registrySnapshotHash: string | null;
+  /** Momento da última consulta/validação de registos na submissão. */
+  registryCheckedAt: Date | null;
+  /** Motivo interno quando a revisão admin marca `rejected` (não expor em API pública). */
+  verificationRejectionReason: string | null;
+  /** Espelho para serialização JSON em listagens públicas. */
+  isVerifiedL2: boolean;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -50,6 +64,14 @@ export class Venue {
   openToArtistInquiries: boolean;
   primaryMediaAssetId: string | null;
   isActive: boolean;
+  verificationStatus: VenueVerificationStatus;
+  cnpj: string | null;
+  verificationCnpjDocMediaAssetId: string | null;
+  verificationAddressProofMediaAssetId: string | null;
+  registrySnapshotHash: string | null;
+  registryCheckedAt: Date | null;
+  verificationRejectionReason: string | null;
+  isVerifiedL2: boolean;
   createdAt: Date;
   updatedAt: Date;
 
@@ -104,6 +126,14 @@ export class Venue {
       openToArtistInquiries: props.openToArtistInquiries ?? false,
       primaryMediaAssetId: props.primaryMediaAssetId ?? null,
       isActive: true,
+      verificationStatus: "none",
+      cnpj: null,
+      verificationCnpjDocMediaAssetId: null,
+      verificationAddressProofMediaAssetId: null,
+      registrySnapshotHash: null,
+      registryCheckedAt: null,
+      verificationRejectionReason: null,
+      isVerifiedL2: false,
       createdAt: now,
       updatedAt: now,
     });

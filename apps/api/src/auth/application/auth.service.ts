@@ -40,6 +40,10 @@ import {
   OAuthAuthorizeResult,
 } from "@/auth/application/ports/oauth-provider-gateway.interface";
 import { OAUTH_PROVIDER_GATEWAY } from "@/auth/application/tokens/auth.tokens";
+import {
+  currentPrivacyVersion,
+  currentTermsVersion,
+} from "@/shared/legal/current-legal-document-versions";
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -82,8 +86,11 @@ export class AuthService implements IAuthService {
     row.eventInterests = [];
     row.emailVerifiedAt = null;
     row.phoneVerifiedAt = null;
-    row.termsAcceptedAt = null;
-    row.privacyAcceptedAt = null;
+    const acceptedAt = new Date();
+    row.termsAcceptedAt = acceptedAt;
+    row.privacyAcceptedAt = acceptedAt;
+    row.termsVersion = dto.termsVersion?.trim() || currentTermsVersion();
+    row.privacyVersion = dto.privacyVersion?.trim() || currentPrivacyVersion();
     row.marketingOptIn = false;
     row.isActive = true;
     await this.users.save(row);
@@ -228,6 +235,8 @@ export class AuthService implements IAuthService {
         user.phoneVerifiedAt = null;
         user.termsAcceptedAt = null;
         user.privacyAcceptedAt = null;
+        user.termsVersion = null;
+        user.privacyVersion = null;
         user.marketingOptIn = false;
         user.isActive = true;
         if (!user.email) {

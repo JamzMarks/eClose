@@ -29,6 +29,8 @@ import { FriendshipModule } from "./friendship/friendship.module";
 import { PostModule } from "./post/post.module";
 import { SharedEventListModule } from "./shared-event-list/shared-event-list.module";
 import { SharedEventLists1740800000000 } from "./infrastructure/persistence/migrations/1740800000000-SharedEventLists";
+import { VenueTrustAndMediaListable1740900000000 } from "./infrastructure/persistence/migrations/1740900000000-VenueTrustAndMediaListable";
+import { LegalConsentVenueTrustEvidenceAudit1741000000000 } from "./infrastructure/persistence/migrations/1741000000000-LegalConsentVenueTrustEvidenceAudit";
 
 @Module({
   imports: [
@@ -55,6 +57,8 @@ import { SharedEventLists1740800000000 } from "./infrastructure/persistence/migr
             ProfileNamesAcknowledgedAt1740600000000,
             RenameDisplayNameToUsername1740700000000,
             SharedEventLists1740800000000,
+            VenueTrustAndMediaListable1740900000000,
+            LegalConsentVenueTrustEvidenceAudit1741000000000,
           ],
           migrationsRun: process.env.TYPEORM_RUN_MIGRATIONS === "true",
           namingStrategy: new SnakeNamingStrategy(),

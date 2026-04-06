@@ -54,6 +54,18 @@ export class QuickSignupDto {
   @Equals(true, { message: "É necessário aceitar a política de privacidade" })
   privacyAccepted!: true;
 
+  /** Versão dos termos; omissão usa valor corrente no servidor. */
+  @IsOptional()
+  @IsString()
+  @MaxLength(64)
+  termsVersion?: string;
+
+  /** Versão da privacidade; omissão usa valor corrente no servidor. */
+  @IsOptional()
+  @IsString()
+  @MaxLength(64)
+  privacyVersion?: string;
+
   @IsOptional()
   @IsBoolean()
   marketingOptIn?: boolean;

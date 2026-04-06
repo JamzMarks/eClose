@@ -21,8 +21,14 @@ import { EVENT_MEDIA_PORT } from "@/event/application/tokens/event-media.tokens"
 import { CreateEventDto } from "@/event/interface/http/dto/create-event.dto";
 import { EventAdhocAddress } from "@/event/domain/types/event-adhoc-address.type";
 import { IEventRepository, ListPublishedEventsParams } from "@/event/application/ports/event.repository.interface";
-import { IEventService } from "@/event/application/ports/event.service.interface";
+import {
+  IEventService,
+  PublicEventWithPrimaryUrl,
+} from "@/event/application/ports/event.service.interface";
 import { EVENT_REPOSITORY } from "@/event/application/tokens/event.tokens";
+import { IMediaService } from "@/media/interfaces/media.service.interface";
+import { MEDIA_SERVICE } from "@/media/tokens/media.tokens";
+import { MediaParentType } from "@/media/types/media-parent-type.type";
 import { EventLocationMode } from "@/event/domain/types/event-location-mode.type";
 import { EventStatus } from "@/event/domain/types/event-status.type";
 
@@ -36,6 +42,7 @@ export class EventService implements IEventService {
     @Inject(EVENT_MEDIA_PORT) private readonly eventMedia: IEventMediaPort,
     @Inject(CALENDAR_SERVICE) private readonly calendar: ICalendarService,
     @Inject(ARTIST_REPOSITORY) private readonly artists: IArtistRepository,
+    @Inject(MEDIA_SERVICE) private readonly media: IMediaService,
   ) {}
 
   async create(dto: CreateEventDto): Promise<Event> {
@@ -142,10 +149,14 @@ export class EventService implements IEventService {
     return this.events.findById(id);
   }
 
-  async getPublicById(id: string): Promise<Event | null> {
+  async getPublicById(id: string): Promise<PublicEventWithPrimaryUrl | null> {
     const e = await this.events.findById(id);
     if (!e || e.status !== EventStatus.PUBLISHED) return null;
-    return e;
+    const primaries = await this.media.getPrimaryMany(MediaParentType.EVENT, [e.id]);
+    return {
+      ...e,
+      primaryMediaUrl: primaries.get(e.id)?.sourceUrl ?? null,
+    };
   }
 
   async listPublishedPublic(
@@ -155,7 +166,12 @@ export class EventService implements IEventService {
       sortBy?: ListPublishedEventsParams["sortBy"];
       order?: ListPublishedEventsParams["order"];
     },
-  ): Promise<{ items: Event[]; total: number; page: number; limit: number }> {
+  ): Promise<{
+    items: PublicEventWithPrimaryUrl[];
+    total: number;
+    page: number;
+    limit: number;
+  }> {
     if (params.from && Number.isNaN(params.from.getTime())) {
       throw new BadRequestException("Parâmetro from inválido");
     }
@@ -179,7 +195,15 @@ export class EventService implements IEventService {
       sortBy,
       order,
     });
-    return { items, total, page, limit };
+    const primaries = await this.media.getPrimaryMany(
+      MediaParentType.EVENT,
+      items.map((ev) => ev.id),
+    );
+    const withUrls: PublicEventWithPrimaryUrl[] = items.map((ev) => ({
+      ...ev,
+      primaryMediaUrl: primaries.get(ev.id)?.sourceUrl ?? null,
+    }));
+    return { items: withUrls, total, page, limit };
   }
 
   async linkPrimaryMedia(eventId: string, mediaAssetId: string): Promise<Event> {

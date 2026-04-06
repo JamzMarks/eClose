@@ -69,9 +69,19 @@ Implementações: `*AccessPolicyImpl` em cada bounded context (`venue/infrastruc
 | Método | Rota | Público? | Protecção |
 |--------|------|----------|-----------|
 | GET | `/venues` | Sim | `VenueService.listPublicMarketplace()` — só `isActive` + `marketplaceListed` (repositório) |
-| GET | `/venues/:id` | Sim | `getPublicById` — mesmos invariantes |
+| GET | `/venues/:id` | Sim | `getPublicById` — mesmos invariantes; resposta **pública** sem CNPJ nem ids de anexos; inclui `isVerifiedL2` |
+| GET | `/venues/:id/manage` | Não | `@PrivateRoute()` + `VenueResourceOwnerHttpGuard` — estado completo de verificação para o dono |
 | POST | `/venues` | Não | `@PrivateRoute()` + `VenueCreateBodyOwnerHttpGuard` |
+| POST | `/venues/:id/trust-verification` | Não | `@PrivateRoute()` + `VenueResourceOwnerHttpGuard` — CNPJ + dois `media_asset_id` (anexos `listable: false`) |
 | PATCH | `/venues/:id/primary-media` | Não | `@PrivateRoute()` + `VenueResourceOwnerHttpGuard` |
+
+### Verificação de venue (nível 2 — “semi confiável”)
+
+- **Dono:** regista dois ficheiros como `POST /media/assets` com `parentType: VENUE`, `parentId` do espaço, `listable: false`, `kind` `IMAGE` ou `DOCUMENT` (PDF/JPEG/PNG/WebP), depois `POST /venues/:id/trust-verification` com `cnpj` + ids dos assets. O estado passa a `pending_review`.
+- **Dados CNPJ/CEP (porta + adapter):** o caso de uso usa só `IBrazilianVenueTrustDataPort` (`shared/application/ports`) e snapshots de domínio (`BrazilianPostalCodeLocationSnapshot`, `CompanyRegistryTrustSnapshot` em `shared/domain/br`). A implementação actual é `BrasilApiTrustDataAdapter`, que chama [BrasilAPI](https://brasilapi.com.br) e mapeia o JSON wire → domínio em `brasil-api-wire-to-domain.mapper.ts`. Para trocar de fornecedor, implementar a mesma porta + novo mapper wire → snapshots, e registar o adapter em `VenueModule`. Variáveis do adapter actual: `BRASILAPI_BASE_URL`, `BRASILAPI_TIMEOUT_MS` (opcional).
+- **Público:** `GET /venues/...` e marketplace só expõem `isVerifiedL2`; anexos não entram em `GET /media/parents/VENUE/...` (filtro `listable`).
+- **Operações / revisão (MVP):** `PATCH /internal/venue-trust/:venueId` com header `x-admin-api-key` igual a `ADMIN_API_KEY` no ambiente; body `{ "status": "verified_l2" | "rejected" }`. Sem `ADMIN_API_KEY` configurada a rota responde 401.
+- **Alternativa SQL (revisão manual):** atualizar `venues.verification_status` para `verified_l2` ou `rejected` (e `updated_at`). O campo `isVerifiedL2` na API é derivado de `verification_status === 'verified_l2'` ao hidratar o agregado.
 
 ### Event (`/events`)
 
@@ -97,6 +107,19 @@ Implementações: `*AccessPolicyImpl` em cada bounded context (`venue/infrastruc
 3. **Domínio** — funções puras quando a regra for local.
 
 Evitar: `EventService` injetar `Reflector` ou `JwtService`.
+
+## Media — armazenamento de objectos (upload)
+
+O caso de uso `MediaService.requestSignedUploadIntent` depende só de **`IMediaObjectStoragePort`** (`media/application/ports/media-object-storage.port.ts`), com tipos estáveis (`MediaObjectStorageUploadIntentRequest` / `MediaObjectStorageUploadIntent`). Implementações em `media/infrastructure/object-storage/`:
+
+| Adapter | `MEDIA_OBJECT_STORAGE_ADAPTER` | Notas |
+|---------|-------------------------------|--------|
+| `EnvPrefixObjectStorageAdapter` | `env` (omissão) | Prefixos `MEDIA_UPLOAD_BASE_URL` + `MEDIA_CDN_PUBLIC_BASE_URL` (MVP sem SDK). |
+| `LocalFilesystemObjectStorageAdapter` | `local` | Disco + `POST /media/local-write` (JWT, multipart `file`) e `GET /media/local-public`; `MEDIA_PUBLIC_APP_URL`, `MEDIA_LOCAL_ROOT`, opcional `MEDIA_LOCAL_MAX_UPLOAD_BYTES`. |
+| `S3PresignedObjectStorageAdapter` | `s3` | PUT presigned (`@aws-sdk/client-s3` + `@aws-sdk/s3-request-presigner`); `MEDIA_S3_BUCKET`, `AWS_REGION`, credenciais IAM/env. |
+| `AzureBlobSasObjectStorageAdapter` | `azure` | SAS para upload (`@azure/storage-blob`); `AZURE_STORAGE_ACCOUNT_NAME`, `AZURE_STORAGE_ACCOUNT_KEY`, `MEDIA_AZURE_CONTAINER`. |
+
+Trocar de cloud = novo adapter + `createMediaObjectStorageAdapter()` em `media-object-storage.adapter.factory.ts` (ou registo Nest equivalente). A resposta HTTP de `POST /media/upload-intent` inclui `httpMethod`, `headers` e, no modo local, `multipartFieldName` quando o upload é `multipart/form-data`.
 
 ## Verificação de e-mail (API)
 

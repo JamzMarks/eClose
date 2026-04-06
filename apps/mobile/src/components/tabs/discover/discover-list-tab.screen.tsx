@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
@@ -63,6 +64,24 @@ export function DiscoverListTabScreen() {
     locationModeSection: t("filtersLocationModeSection"),
   };
 
+  const eventsErrorBanner =
+    events.error && events.items.length > 0 ? (
+      <View style={{ paddingBottom: 10, paddingHorizontal: 4 }}>
+        <Text style={{ color: AppPalette.error, fontSize: 14, lineHeight: 20 }}>
+          {events.error}
+        </Text>
+      </View>
+    ) : null;
+
+  const venuesErrorBanner =
+    venues.error && venues.items.length > 0 ? (
+      <View style={{ paddingBottom: 10, paddingHorizontal: 4 }}>
+        <Text style={{ color: AppPalette.error, fontSize: 14, lineHeight: 20 }}>
+          {venues.error}
+        </Text>
+      </View>
+    ) : null;
+
   const filtersSheet = (
     <DiscoverFiltersSheet
       visible={filtersOpen}
@@ -121,6 +140,7 @@ export function DiscoverListTabScreen() {
           keyExtractor={(it) => it.event.id}
           emptyMessage={t("emptyEvents")}
           emptyHintColor={c.textSecondary}
+          listHeaderComponent={eventsErrorBanner}
           refreshing={events.refreshing}
           onRefresh={events.onRefresh}
           onEndReached={events.onEndReached}
@@ -146,6 +166,7 @@ export function DiscoverListTabScreen() {
           keyExtractor={(it) => it.venue.id}
           emptyMessage={t("emptyVenues")}
           emptyHintColor={c.textSecondary}
+          listHeaderComponent={venuesErrorBanner}
           refreshing={venues.refreshing}
           onRefresh={venues.onRefresh}
           onEndReached={venues.onEndReached}
@@ -155,6 +176,7 @@ export function DiscoverListTabScreen() {
             <VenueListingCard
               card={item}
               categoryLabel={item.categoryLabel}
+              trustBadgeLabel={t("trustSemiReliable")}
               textColor={c.text}
               subtitleColor={c.textSecondary}
               imagePlaceholderColor={c.border}
