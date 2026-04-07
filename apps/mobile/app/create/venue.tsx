@@ -12,8 +12,8 @@ import { Redirect, useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
 import { Screen } from "@/components/layout/screen";
-import { AppButton } from "@/components/ui/button";
-import { AppTextField } from "@/components/ui/text-field";
+import { AppButton } from "@/components/ui/Button";
+import { AppTextField } from "@/components/ui/Input";
 import { AppPalette, getSchemeColors } from "@/constants/palette";
 import { useAuth } from "@/contexts/auth-context";
 import { useColorScheme } from "@/hooks/use-color-scheme";

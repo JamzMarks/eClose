@@ -11,8 +11,8 @@ import {
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
-import { AppButton } from "@/components/ui/button";
-import { AppTextField } from "@/components/ui/text-field";
+import { AppButton } from "@/components/ui/Button";
+import { AppTextField } from "@/components/ui/Input";
 import { Screen } from "@/components/layout/screen";
 import { useAuth } from "@/contexts/auth-context";
 import { isAuthMockEnabled } from "@/lib/auth-mock";

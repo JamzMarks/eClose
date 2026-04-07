@@ -13,6 +13,8 @@ export type SettingsNavigationRowProps = {
   backgroundColor: string;
   destructive?: boolean;
   showChevron?: boolean;
+  /** Em grupos tipo cartão, a última linha não leva divisor inferior. */
+  showDividerBelow?: boolean;
 };
 
 export function SettingsNavigationRow({
@@ -25,13 +27,18 @@ export function SettingsNavigationRow({
   backgroundColor,
   destructive,
   showChevron = true,
+  showDividerBelow = true,
 }: SettingsNavigationRowProps) {
   return (
     <Pressable
       onPress={onPress}
       style={({ pressed }) => [
         styles.row,
-        { backgroundColor, borderBottomColor: borderColor },
+        {
+          backgroundColor,
+          borderBottomColor: borderColor,
+          borderBottomWidth: showDividerBelow ? StyleSheet.hairlineWidth : 0,
+        },
         pressed && styles.pressed,
       ]}
     >
@@ -49,7 +56,7 @@ export function SettingsNavigationRow({
         ) : null}
       </View>
       {showChevron && !destructive ? (
-        <Ionicons name="chevron-forward" size={20} color={subtitleColor} />
+        <Ionicons name="chevron-forward" size={18} color={subtitleColor} style={styles.chevron} />
       ) : null}
     </Pressable>
   );
@@ -59,13 +66,13 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
     paddingVertical: 14,
-    borderBottomWidth: StyleSheet.hairlineWidth,
     gap: 12,
   },
   pressed: { opacity: 0.7 },
   textCol: { flex: 1 },
-  title: { fontSize: 16 },
+  title: { fontSize: 16, fontWeight: "500" },
   subtitle: { fontSize: 13, marginTop: 4 },
+  chevron: { opacity: 0.55 },
 });

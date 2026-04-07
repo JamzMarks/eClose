@@ -10,7 +10,7 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
  * Tab Mapa — `react-native-maps` foi removido por instabilidade; mapa interactivo volta quando
  * reinstalarmos a lib (ou alternativa). O bloco comentado em baixo é referência do layout anterior.
  */
-export function ExploreMapTabScreen() {
+export function ExploreTabScreen() {
   const { t } = useTranslation("discover");
   const scheme = useColorScheme() ?? "light";
   const c = getSchemeColors(scheme);

@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useEffect, useMemo, useState } from "react";
+import { Modal, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -16,8 +16,16 @@ export type DiscoverQuickCategoriesRowProps = {
   onSelect: (cat: DiscoverQuickCategory | null) => void;
 };
 
-const CARD_W = 76;
-const CARD_H = 86;
+const CARD_MIN_H = 92;
+
+function useCategoryRowLayout(listLength: number) {
+  const { width } = useWindowDimensions();
+  /** Número de células na fila (tipicamente 4; ecrãs estreitos 3). */
+  const slotCount = width < 360 ? 3 : 4;
+  const needsMoreTile = listLength > slotCount;
+  const categorySlots = needsMoreTile ? Math.max(1, slotCount - 1) : Math.min(slotCount, listLength);
+  return { slotCount, needsMoreTile, categorySlots };
+}
 
 export function DiscoverQuickCategoriesRow({ selectedId, onSelect }: DiscoverQuickCategoriesRowProps) {
   const { t } = useTranslation("discover");
@@ -31,22 +39,20 @@ export function DiscoverQuickCategoriesRow({ selectedId, onSelect }: DiscoverQui
     void getDiscoverQuickCategories().then(setItems);
   }, []);
 
-  const visible = items.slice(0, 5);
+  const { needsMoreTile, categorySlots } = useCategoryRowLayout(items.length);
+
+  const visibleCategories = useMemo(
+    () => items.slice(0, needsMoreTile ? categorySlots : items.length),
+    [items, needsMoreTile, categorySlots],
+  );
 
   return (
     <>
       <View style={styles.headerRow}>
         <Text style={[styles.sectionTitle, { color: c.text }]}>{t("quickCategoriesTitle")}</Text>
-        <Pressable onPress={() => setSeeAllOpen(true)} hitSlop={8} accessibilityRole="button">
-          <Text style={[styles.seeAll, { color: AppPalette.primary }]}>{t("quickCategoriesSeeAll")}</Text>
-        </Pressable>
       </View>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled">
-        {visible.map((cat) => {
+      <View style={styles.row}>
+        {visibleCategories.map((cat) => {
           const selected = selectedId === cat.id;
           return (
             <Pressable
@@ -54,9 +60,9 @@ export function DiscoverQuickCategoriesRow({ selectedId, onSelect }: DiscoverQui
               onPress={() => onSelect(selected ? null : cat)}
               style={({ pressed }) => [
                 styles.card,
+                styles.cardFlex,
                 {
-                  width: CARD_W,
-                  height: CARD_H,
+                  minHeight: CARD_MIN_H,
                   backgroundColor: selected ? AppPalette.primaryMuted : c.surface,
                   borderColor: selected ? AppPalette.primary : c.border,
                   opacity: pressed ? 0.9 : 1,
@@ -72,7 +78,29 @@ export function DiscoverQuickCategoriesRow({ selectedId, onSelect }: DiscoverQui
             </Pressable>
           );
         })}
-      </ScrollView>
+        {needsMoreTile ? (
+          <Pressable
+            onPress={() => setSeeAllOpen(true)}
+            style={({ pressed }) => [
+              styles.card,
+              styles.cardFlex,
+              styles.moreCard,
+              {
+                minHeight: CARD_MIN_H,
+                backgroundColor: scheme === "dark" ? c.surfaceElevated : c.surface,
+                borderColor: c.border,
+                opacity: pressed ? 0.9 : 1,
+              },
+            ]}
+            accessibilityRole="button"
+            accessibilityLabel={t("quickCategoriesMoreA11y")}>
+            <Text style={[styles.moreGlyph, { color: AppPalette.primary }]}>+</Text>
+            <Text style={[styles.cardLabel, { color: c.text }]} numberOfLines={2}>
+              {t("quickCategoriesMore")}
+            </Text>
+          </Pressable>
+        ) : null}
+      </View>
 
       <Modal visible={seeAllOpen} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setSeeAllOpen(false)}>
         <View style={[styles.modalRoot, { backgroundColor: c.background, paddingTop: insets.top + 8 }]}>
@@ -118,31 +146,37 @@ export function DiscoverQuickCategoriesRow({ selectedId, onSelect }: DiscoverQui
 
 const styles = StyleSheet.create({
   headerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 10,
+    marginBottom: 14,
   },
   sectionTitle: {
     fontSize: 17,
     fontWeight: "700",
   },
-  seeAll: {
-    fontSize: 15,
-    fontWeight: "600",
+  row: {
+    flexDirection: "row",
+    gap: 12,
+    marginBottom: 8,
   },
-  scrollContent: {
-    gap: 10,
-    paddingBottom: 6,
+  cardFlex: {
+    flex: 1,
+    minWidth: 0,
   },
   card: {
     borderRadius: Radius.medium,
     borderWidth: StyleSheet.hairlineWidth,
-    paddingVertical: 10,
-    paddingHorizontal: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 6,
     alignItems: "center",
     justifyContent: "center",
-    gap: 4,
+    gap: 6,
+  },
+  moreCard: {
+    borderStyle: "dashed",
+  },
+  moreGlyph: {
+    fontSize: 28,
+    fontWeight: "300",
+    lineHeight: 32,
   },
   emoji: {
     fontSize: 26,

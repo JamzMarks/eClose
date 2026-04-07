@@ -16,7 +16,7 @@ export function isProfileLegalModalKind(value: string | undefined): value is Pro
  * Configuração dos modais legais do perfil.
  * URLs vêm de `getLegalUrls()` (app.json / extra / fallbacks em `legal-urls.ts`).
  *
- * - `isExternalLink`: ícone de link externo no cabeçalho.
+ * - `isExternalLink`: reservado; o conteúdo abre na app (WebView ou ecrã próprio), sem ícone de link no cabeçalho.
  * - `requiresWebView`: se true, `url` deve ser https e é mostrada no WebView; se false, `url` abre com Linking (ex.: mailto).
  */
 export type ProfileLegalModalResolvedConfig = {
@@ -33,21 +33,21 @@ export function getProfileLegalModalConfig(kind: ProfileLegalModalKind): Profile
       return {
         titleI18nKey: "privacyPolicy",
         url: legal.privacyPolicyUrl,
-        isExternalLink: true,
+        isExternalLink: false,
         requiresWebView: true,
       };
     case "terms":
       return {
         titleI18nKey: "termsOfService",
         url: legal.termsOfServiceUrl,
-        isExternalLink: true,
+        isExternalLink: false,
         requiresWebView: true,
       };
     case "help":
       return {
         titleI18nKey: "helpContact",
         url: legal.helpMailto,
-        isExternalLink: true,
+        isExternalLink: false,
         requiresWebView: false,
       };
   }

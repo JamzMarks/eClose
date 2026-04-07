@@ -3,19 +3,19 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-nati
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
-import { DiscoverFiltersSheet } from "@/components/discover/DiscoverFiltersSheet";
-import { DiscoverListToolbar } from "@/components/discover/DiscoverListToolbar";
-import { DiscoverPaginatedFlatList } from "@/components/discover/DiscoverPaginatedFlatList";
-import type { DiscoverListKind } from "@/components/discover/discover-segmented-kind";
-import { DiscoverQuickCategoriesRow } from "@/components/discover/DiscoverQuickCategoriesRow";
-import type { DiscoverQuickFilterId } from "@/components/discover/DiscoverQuickFilterChips";
-import { DiscoverQuickFilterChips } from "@/components/discover/DiscoverQuickFilterChips";
-import { DiscoverSearchBar } from "@/components/discover/DiscoverSearchBar";
-import { EventListingCard } from "@/components/listing/event-listing-card";
-import { VenueListingCard } from "@/components/listing/venue-listing-card";
 import { Screen } from "@/components/layout/screen";
-import { useExploreVenues } from "@/components/tabs/explore/use-explore-venues";
-import { useHomePublishedEvents } from "@/components/tabs/home/use-home-published-events";
+import { DiscoverPaginatedFlatList } from "@/components/shared/discover/DiscoverPaginatedFlatList";
+import { EventListingCard } from "@/components/shared/listing/event-listing-card";
+import { VenueListingCard } from "@/components/shared/listing/venue-listing-card";
+import { useHomePublishedEvents } from "@/components/tabs/home/hooks/use-home-published-events";
+import { DiscoverFiltersSheet } from "./components/DiscoverFiltersSheet";
+import { DiscoverListToolbar } from "./components/DiscoverListToolbar";
+import type { DiscoverListKind } from "./components/discover-segmented-kind";
+import { DiscoverQuickCategoriesRow } from "./components/DiscoverQuickCategoriesRow";
+import type { DiscoverQuickFilterId } from "./components/DiscoverQuickFilterChips";
+import { DiscoverQuickFilterChips } from "./components/DiscoverQuickFilterChips";
+import { DiscoverSearchBar } from "./components/DiscoverSearchBar";
+import { useExploreVenues } from "./hooks/use-explore-venues";
 import { AppPalette, getSchemeColors } from "@/constants/palette";
 import { useDiscoverGrid } from "@/hooks/use-discover-grid";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -157,10 +157,6 @@ export function DiscoverListTabScreen() {
     border: c.border,
     title: c.text,
     filterIcon: c.text,
-    segmentTrack: scheme === "dark" ? c.surfaceElevated : c.border,
-    segmentActiveBg: AppPalette.primary,
-    segmentActiveText: AppPalette.white,
-    segmentInactiveText: c.textSecondary,
   };
 
   const filterLabels = {
@@ -175,15 +171,15 @@ export function DiscoverListTabScreen() {
     locationModeOnline: t("filtersLocationOnline"),
     openToInquiries: t("filtersOpenToInquiries"),
     locationModeSection: t("filtersLocationModeSection"),
+    listKindSection: t("filtersListKindSection"),
+    segmentEvents: t("segmentEvents"),
+    segmentVenues: t("segmentVenues"),
   };
 
   const listHeader = (
-    <View style={{ paddingBottom: 4 }}>
+    <View style={{ paddingBottom: 8 }}>
       <DiscoverListToolbar
         title={t("programacaoTitle")}
-        listKind={listKind}
-        onListKindChange={setListKind}
-        segmentLabels={{ events: t("segmentEvents"), venues: t("segmentVenues") }}
         onFilterPress={() => setFiltersOpen(true)}
         filterAccessibilityLabel={t("filtersTitle")}
         colors={toolbarColors}
@@ -216,6 +212,7 @@ export function DiscoverListTabScreen() {
       visible={filtersOpen}
       onClose={() => setFiltersOpen(false)}
       listKind={listKind}
+      onListKindChange={setListKind}
       eventFilters={eventFilters}
       venueFilters={venueFilters}
       onApplyEvents={setEventFilters}

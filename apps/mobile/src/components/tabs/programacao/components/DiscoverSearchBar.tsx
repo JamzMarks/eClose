@@ -36,11 +36,12 @@ const styles = StyleSheet.create({
   wrap: {
     borderWidth: StyleSheet.hairlineWidth,
     borderRadius: Radius.medium,
-    marginBottom: 14,
+    marginTop: 6,
+    marginBottom: 20,
   },
   input: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: 18,
+    paddingVertical: 14,
     fontSize: 16,
   },
 });

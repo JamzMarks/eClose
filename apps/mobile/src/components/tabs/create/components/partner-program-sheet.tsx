@@ -7,7 +7,7 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import { useTranslation } from "react-i18next";
 
-import { AppButton } from "@/components/ui/button";
+import { AppButton } from "@/components/ui/Button";
 import { getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 

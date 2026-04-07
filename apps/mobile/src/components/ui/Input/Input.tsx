@@ -7,6 +7,7 @@ import {
 } from "react-native";
 
 import { AppPalette, getSchemeColors } from "@/constants/palette";
+import { Radius } from "@/constants/radius";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
 export type AppTextFieldProps = TextInputProps & {
@@ -43,9 +44,7 @@ export function AppTextField({
         editable={editable}
         {...rest}
       />
-      {hasError ? (
-        <Text style={styles.errorText}>{error}</Text>
-      ) : null}
+      {hasError ? <Text style={styles.errorText}>{error}</Text> : null}
     </View>
   );
 }
@@ -62,7 +61,7 @@ const styles = StyleSheet.create({
     minHeight: 48,
     paddingHorizontal: 14,
     paddingVertical: 10,
-    borderRadius: 12,
+    borderRadius: Radius.medium,
     borderWidth: StyleSheet.hairlineWidth * 2,
     fontSize: 16,
   },

@@ -8,6 +8,8 @@ import "react-native-reanimated";
 import "@/i18n";
 
 import { AuthProvider } from "@/contexts/auth-context";
+import { LocationProvider } from "@/contexts/location-context";
+import { OnboardingProvider } from "@/contexts/onboarding-context";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { AppPalette, getSchemeColors } from "@/constants/palette";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -39,10 +41,13 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <AuthProvider>
-          <NavigationThemeBridge>
-            <Stack>
+        <LocationProvider>
+          <OnboardingProvider>
+            <AuthProvider>
+              <NavigationThemeBridge>
+                <Stack>
               <Stack.Screen name="index" options={{ headerShown: false }} />
+              <Stack.Screen name="onboarding" options={{ headerShown: false }} />
               <Stack.Screen name="login" options={{ headerShown: false }} />
               <Stack.Screen name="signup" options={{ headerShown: false }} />
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -78,10 +83,12 @@ export default function RootLayout() {
                 name="modal"
                 options={{ presentation: "modal", title: "Modal" }}
               />
-            </Stack>
-            <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
-          </NavigationThemeBridge>
-        </AuthProvider>
+                </Stack>
+                <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
+              </NavigationThemeBridge>
+            </AuthProvider>
+          </OnboardingProvider>
+        </LocationProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

@@ -1,5 +1,5 @@
-import { ExploreMapTabScreen } from "@/components/tabs/explore-map/explore-map-tab.screen";
+import { ExploreTabScreen } from "@/components/tabs/explore/explore-tab.screen";
 
 export default function ExploreRoute() {
-  return <ExploreMapTabScreen />;
+  return <ExploreTabScreen />;
 }

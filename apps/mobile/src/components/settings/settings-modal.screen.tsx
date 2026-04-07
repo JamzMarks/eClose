@@ -1,8 +1,10 @@
+import { useMemo } from "react";
 import { Alert, ScrollView, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { SettingsGroupedCard } from "@/components/settings/components/SettingsGroupedCard";
 import { SettingsNavigationRow } from "@/components/settings/components/SettingsNavigationRow";
 import { SettingsSectionHeader } from "@/components/settings/components/SettingsSectionHeader";
 import { SettingsValueRow } from "@/components/settings/components/SettingsValueRow";
@@ -24,6 +26,16 @@ export function SettingsModalScreen() {
   const c = getSchemeColors(scheme);
   const { user, signOut } = useAuth();
   const { openNotificationPreferencesSetup } = useOnboardingSetup();
+
+  const legalItems = useMemo(
+    () =>
+      [
+        { kind: "privacy" as const, titleKey: "privacyPolicy" as const },
+        { kind: "terms" as const, titleKey: "termsOfService" as const },
+        { kind: "help" as const, titleKey: "helpContact" as const },
+      ] as const,
+    [],
+  );
 
   async function handleSignOut() {
     await signOut();
@@ -98,42 +110,35 @@ export function SettingsModalScreen() {
         />
 
         <SettingsSectionHeader title={t("sectionLegal")} color={c.textMuted} />
-        <SettingsNavigationRow
-          title={tProfile("privacyPolicy")}
-          onPress={() => router.push({ pathname: "/profile-legal", params: { kind: "privacy" } })}
-          textColor={c.text}
-          subtitleColor={c.textMuted}
-          borderColor={c.border}
-          backgroundColor={c.surface}
-        />
-        <SettingsNavigationRow
-          title={tProfile("termsOfService")}
-          onPress={() => router.push({ pathname: "/profile-legal", params: { kind: "terms" } })}
-          textColor={c.text}
-          subtitleColor={c.textMuted}
-          borderColor={c.border}
-          backgroundColor={c.surface}
-        />
-        <SettingsNavigationRow
-          title={tProfile("helpContact")}
-          onPress={() => router.push({ pathname: "/profile-legal", params: { kind: "help" } })}
-          textColor={c.text}
-          subtitleColor={c.textMuted}
-          borderColor={c.border}
-          backgroundColor={c.surface}
-        />
+        <SettingsGroupedCard borderColor={c.border} backgroundColor={c.surface}>
+          {legalItems.map((item, index) => (
+            <SettingsNavigationRow
+              key={item.kind}
+              title={tProfile(item.titleKey)}
+              onPress={() => router.push({ pathname: "/profile-legal", params: { kind: item.kind } })}
+              textColor={c.text}
+              subtitleColor={c.textMuted}
+              borderColor={c.border}
+              backgroundColor={c.surface}
+              showDividerBelow={index < legalItems.length - 1}
+            />
+          ))}
+        </SettingsGroupedCard>
 
         <SettingsSectionHeader title={t("sectionSession")} color={c.textMuted} />
-        <SettingsNavigationRow
-          title={t("signOut")}
-          onPress={confirmSignOut}
-          textColor={c.text}
-          subtitleColor={c.textMuted}
-          borderColor={c.border}
-          backgroundColor={c.surface}
-          destructive
-          showChevron={false}
-        />
+        <SettingsGroupedCard borderColor={c.border} backgroundColor={c.surface}>
+          <SettingsNavigationRow
+            title={t("signOut")}
+            onPress={confirmSignOut}
+            textColor={c.text}
+            subtitleColor={c.textMuted}
+            borderColor={c.border}
+            backgroundColor={c.surface}
+            destructive
+            showChevron={false}
+            showDividerBelow={false}
+          />
+        </SettingsGroupedCard>
       </ScrollView>
     </View>
   );

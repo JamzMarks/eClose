@@ -12,9 +12,8 @@ import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { WebView } from "react-native-webview";
-import { ExternalLink } from "lucide-react-native";
 
-import { AppButton } from "@/components/ui/button";
+import { PrimaryButton } from "@/components/ui";
 import {
   getClientPrivacyVersion,
   getClientTermsVersion,
@@ -43,7 +42,11 @@ export function ProfileLegalModalScreen({ kind }: ProfileLegalModalScreenProps) 
   const config = validKind ? getProfileLegalModalConfig(validKind) : null;
 
   const close = useCallback(() => {
-    router.back();
+    if (router.canGoBack()) {
+      router.back();
+      return;
+    }
+    router.replace("/(tabs)");
   }, [router]);
 
   useEffect(() => {
@@ -91,17 +94,7 @@ export function ProfileLegalModalScreen({ kind }: ProfileLegalModalScreenProps) 
             </Text>
           ) : null}
         </View>
-        <View style={[styles.headerSide, styles.headerSideRight]}>
-          {config.isExternalLink ? (
-            <View
-              accessible
-              accessibilityRole="image"
-              accessibilityLabel={t("legalExternalLinkA11y")}
-              style={styles.externalIconWrap}>
-              <ExternalLink size={22} color={c.text} />
-            </View>
-          ) : null}
-        </View>
+        <View style={[styles.headerSide, styles.headerSideRight]} />
       </View>
 
       {config.requiresWebView ? (
@@ -126,7 +119,7 @@ export function ProfileLegalModalScreen({ kind }: ProfileLegalModalScreenProps) 
           ]}
           keyboardShouldPersistTaps="handled">
           <Text style={[styles.mailCopy, { color: c.textSecondary }]}>{t("legalHelpBody")}</Text>
-          <AppButton
+          <PrimaryButton
             title={t("legalHelpOpenExternal")}
             onPress={() => void openExternalUrl()}
             fullWidth
@@ -156,10 +149,6 @@ const styles = StyleSheet.create({
   },
   headerSideRight: {
     alignItems: "flex-end",
-  },
-  externalIconWrap: {
-    paddingVertical: 4,
-    paddingLeft: 8,
   },
   backLabel: {
     fontSize: 17,

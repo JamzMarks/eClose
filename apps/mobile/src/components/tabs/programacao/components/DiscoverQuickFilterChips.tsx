@@ -73,19 +73,19 @@ export function DiscoverQuickFilterChips({ value, onChange, onMorePress }: Disco
 const styles = StyleSheet.create({
   track: {
     marginHorizontal: 0,
-    marginTop: 4,
-    marginBottom: 14,
-    paddingVertical: 10,
+    marginTop: 10,
+    marginBottom: 22,
+    paddingVertical: 12,
     borderRadius: Radius.medium,
   },
   scroll: {
-    paddingHorizontal: 12,
-    gap: 8,
+    paddingHorizontal: 14,
+    gap: 10,
     alignItems: "center",
   },
   chip: {
     paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingVertical: 10,
     borderRadius: Radius.full,
     borderWidth: StyleSheet.hairlineWidth,
   },

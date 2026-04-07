@@ -10,6 +10,8 @@ export type DiscoverSegmentedKindProps = {
   activeText: string;
   inactiveText: string;
   trackBackground: string;
+  /** Dentro de folhas já com padding — sem margem horizontal extra. */
+  embedded?: boolean;
 };
 
 export function DiscoverSegmentedKind({
@@ -20,9 +22,15 @@ export function DiscoverSegmentedKind({
   activeText,
   inactiveText,
   trackBackground,
+  embedded,
 }: DiscoverSegmentedKindProps) {
   return (
-    <View style={[styles.track, { backgroundColor: trackBackground }]}>
+    <View
+      style={[
+        styles.track,
+        { backgroundColor: trackBackground },
+        embedded ? styles.trackEmbedded : null,
+      ]}>
       <Pressable
         onPress={() => onChange("events")}
         style={[styles.segment, value === "events" && { backgroundColor: activeBackground }]}
@@ -52,6 +60,10 @@ const styles = StyleSheet.create({
     padding: 4,
     marginHorizontal: 20,
     marginBottom: 12,
+  },
+  trackEmbedded: {
+    marginHorizontal: 0,
+    marginBottom: 16,
   },
   segment: {
     flex: 1,

@@ -81,10 +81,10 @@ export function DiscoverPaginatedFlatList<T>({
 
 const styles = StyleSheet.create({
   listContent: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
     paddingBottom: 32,
     flexGrow: 1,
-    paddingTop: 4,
+    paddingTop: 10,
   },
   footer: {
     paddingVertical: 16,

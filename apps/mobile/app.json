@@ -49,6 +49,12 @@
         }
       ],
       "expo-localization",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "A eClose pode usar a tua localização para mostrar eventos e espaços por perto."
+        }
+      ],
       "expo-notifications"
     ],
     "experiments": {

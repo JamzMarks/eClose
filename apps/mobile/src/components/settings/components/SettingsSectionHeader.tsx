@@ -15,8 +15,8 @@ export function SettingsSectionHeader({ title, color }: SettingsSectionHeaderPro
 
 const styles = StyleSheet.create({
   wrap: {
-    paddingHorizontal: 20,
-    paddingTop: 24,
+    paddingHorizontal: 16,
+    paddingTop: 22,
     paddingBottom: 8,
   },
   text: {

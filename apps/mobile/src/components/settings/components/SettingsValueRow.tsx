@@ -29,7 +29,7 @@ export function SettingsValueRow({
 
 const styles = StyleSheet.create({
   row: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: StyleSheet.hairlineWidth,
   },

@@ -33,5 +33,16 @@
   "emailVerifyConfirmError": "Token inválido ou expirado.",
   "emailVerifyRefreshed": "Já confirmei (atualizar)",
   "emailVerifyRefreshError": "Não foi possível atualizar o perfil.",
-  "emailVerifyLater": "Agora não"
+  "emailVerifyLater": "Agora não",
+  "appIntroSkip": "Saltar",
+  "appIntroNext": "Seguinte",
+  "appIntroDone": "Começar",
+  "appIntroSlide1Title": "Bem-vindo à eClose",
+  "appIntroSlide1Body": "Descobre eventos e espaços num só sítio — pensado para quem vive música ao vivo.",
+  "appIntroSlide2Title": "Programação",
+  "appIntroSlide2Body": "Pesquisa, filtra por tipo e guarda o que te interessa para mais tarde.",
+  "appIntroSlide3Title": "Confiança",
+  "appIntroSlide3Body": "Vês indicadores de verificação para espaços e conteúdos listados com mais contexto.",
+  "appIntroSlide4Title": "Pronto quando tu estiveres",
+  "appIntroSlide4Body": "Explora à tua velocidade. Podes ajustar notificações e privacidade no perfil."
 }

@@ -5,14 +5,15 @@ import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Screen } from "@/components/layout/screen";
+import { SettingsGroupedCard } from "@/components/settings/components/SettingsGroupedCard";
+import { SettingsNavigationRow } from "@/components/settings/components/SettingsNavigationRow";
+import { SettingsSectionHeader } from "@/components/settings/components/SettingsSectionHeader";
 import { ProfileIdentityBlock } from "@/components/tabs/profile/components/ProfileIdentityBlock";
 import { ProfileTopBar } from "@/components/tabs/profile/components/ProfileTopBar";
 import {
   displayNameFromEmail,
   handleFromEmail,
 } from "@/components/tabs/profile/utils/email-handle";
-import { SettingsNavigationRow } from "@/components/settings/components/SettingsNavigationRow";
-import { SettingsSectionHeader } from "@/components/settings/components/SettingsSectionHeader";
 import { getSchemeColors } from "@/constants/palette";
 import { useAuth } from "@/contexts/auth-context";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -34,6 +35,16 @@ export function ProfileTabScreen() {
     if (u) return u;
     return displayNameFromEmail(user?.email, t("nameFallback"));
   }, [user?.username, user?.email, t]);
+
+  const legalItems = useMemo(
+    () =>
+      [
+        { kind: "privacy" as const, titleKey: "privacyPolicy" as const },
+        { kind: "terms" as const, titleKey: "termsOfService" as const },
+        { kind: "help" as const, titleKey: "helpContact" as const },
+      ] as const,
+    [],
+  );
 
   async function handleSignOut() {
     await signOut();
@@ -79,64 +90,63 @@ export function ProfileTabScreen() {
         />
 
         <SettingsSectionHeader title={t("sectionLists")} color={c.textMuted} />
-        <SettingsNavigationRow
-          title={t("wishlistsMenuTitle")}
-          subtitle={t("wishlistsMenuHint")}
-          onPress={() => router.push("/wishlists")}
-          textColor={c.text}
-          subtitleColor={c.textMuted}
-          borderColor={c.border}
-          backgroundColor={c.surface}
-        />
+        <SettingsGroupedCard borderColor={c.border} backgroundColor={c.surface}>
+          <SettingsNavigationRow
+            title={t("wishlistsMenuTitle")}
+            subtitle={t("wishlistsMenuHint")}
+            onPress={() => router.push("/wishlists")}
+            textColor={c.text}
+            subtitleColor={c.textMuted}
+            borderColor={c.border}
+            backgroundColor={c.surface}
+            showDividerBelow={false}
+          />
+        </SettingsGroupedCard>
 
         <SettingsSectionHeader title={t("sectionAccount")} color={c.textMuted} />
-        <SettingsNavigationRow
-          title={tSettings("title")}
-          subtitle={t("openSettingsHint")}
-          onPress={() => router.push("/settings")}
-          textColor={c.text}
-          subtitleColor={c.textMuted}
-          borderColor={c.border}
-          backgroundColor={c.surface}
-        />
+        <SettingsGroupedCard borderColor={c.border} backgroundColor={c.surface}>
+          <SettingsNavigationRow
+            title={tSettings("title")}
+            subtitle={t("openSettingsHint")}
+            onPress={() => router.push("/settings")}
+            textColor={c.text}
+            subtitleColor={c.textMuted}
+            borderColor={c.border}
+            backgroundColor={c.surface}
+            showDividerBelow={false}
+          />
+        </SettingsGroupedCard>
 
         <SettingsSectionHeader title={t("sectionLegal")} color={c.textMuted} />
-        <SettingsNavigationRow
-          title={t("privacyPolicy")}
-          onPress={() => router.push({ pathname: "/profile-legal", params: { kind: "privacy" } })}
-          textColor={c.text}
-          subtitleColor={c.textMuted}
-          borderColor={c.border}
-          backgroundColor={c.surface}
-        />
-        <SettingsNavigationRow
-          title={t("termsOfService")}
-          onPress={() => router.push({ pathname: "/profile-legal", params: { kind: "terms" } })}
-          textColor={c.text}
-          subtitleColor={c.textMuted}
-          borderColor={c.border}
-          backgroundColor={c.surface}
-        />
-        <SettingsNavigationRow
-          title={t("helpContact")}
-          onPress={() => router.push({ pathname: "/profile-legal", params: { kind: "help" } })}
-          textColor={c.text}
-          subtitleColor={c.textMuted}
-          borderColor={c.border}
-          backgroundColor={c.surface}
-        />
+        <SettingsGroupedCard borderColor={c.border} backgroundColor={c.surface}>
+          {legalItems.map((item, index) => (
+            <SettingsNavigationRow
+              key={item.kind}
+              title={t(item.titleKey)}
+              onPress={() => router.push({ pathname: "/profile-legal", params: { kind: item.kind } })}
+              textColor={c.text}
+              subtitleColor={c.textMuted}
+              borderColor={c.border}
+              backgroundColor={c.surface}
+              showDividerBelow={index < legalItems.length - 1}
+            />
+          ))}
+        </SettingsGroupedCard>
 
         <SettingsSectionHeader title={tSettings("sectionSession")} color={c.textMuted} />
-        <SettingsNavigationRow
-          title={tSettings("signOut")}
-          onPress={confirmSignOut}
-          textColor={c.text}
-          subtitleColor={c.textMuted}
-          borderColor={c.border}
-          backgroundColor={c.surface}
-          destructive
-          showChevron={false}
-        />
+        <SettingsGroupedCard borderColor={c.border} backgroundColor={c.surface}>
+          <SettingsNavigationRow
+            title={tSettings("signOut")}
+            onPress={confirmSignOut}
+            textColor={c.text}
+            subtitleColor={c.textMuted}
+            borderColor={c.border}
+            backgroundColor={c.surface}
+            destructive
+            showChevron={false}
+            showDividerBelow={false}
+          />
+        </SettingsGroupedCard>
       </ScrollView>
     </Screen>
   );

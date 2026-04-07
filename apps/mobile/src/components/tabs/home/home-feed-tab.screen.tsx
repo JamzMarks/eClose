@@ -3,13 +3,13 @@ import { StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
-import { DiscoverPaginatedFlatList } from "@/components/discover/DiscoverPaginatedFlatList";
-import { EventListingCard } from "@/components/listing/event-listing-card";
+import { DiscoverPaginatedFlatList } from "@/components/shared/discover/DiscoverPaginatedFlatList";
+import { EventListingCard } from "@/components/shared/listing/event-listing-card";
 import { Screen } from "@/components/layout/screen";
 import { AppTabScreenHeader } from "@/components/shared/tab-screen/AppTabScreenHeader";
 import { TabScreenCenterError } from "@/components/shared/tab-screen/TabScreenCenterError";
 import { TabScreenCenterLoading } from "@/components/shared/tab-screen/TabScreenCenterLoading";
-import { useHomePublishedEvents } from "@/components/tabs/home/use-home-published-events";
+import { useHomePublishedEvents } from "@/components/tabs/home/hooks/use-home-published-events";
 import { AppPalette, getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { defaultDiscoverEventFilters } from "@/services/discover/discover-list-filters.types";

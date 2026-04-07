@@ -6,7 +6,10 @@ import BottomSheet, {
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
 
-import type { DiscoverListKind } from "@/components/discover/discover-segmented-kind";
+import {
+  DiscoverSegmentedKind,
+  type DiscoverListKind,
+} from "./discover-segmented-kind";
 import { AppPalette, getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import type { DiscoverEventListFilters, DiscoverVenueListFilters } from "@/services/discover/discover-list-filters.types";
@@ -24,12 +27,16 @@ export type DiscoverFiltersSheetLabels = {
   locationModeOnline: string;
   openToInquiries: string;
   locationModeSection: string;
+  listKindSection: string;
+  segmentEvents: string;
+  segmentVenues: string;
 };
 
 export type DiscoverFiltersSheetProps = {
   visible: boolean;
   onClose: () => void;
   listKind: DiscoverListKind;
+  onListKindChange: (kind: DiscoverListKind) => void;
   eventFilters: DiscoverEventListFilters;
   venueFilters: DiscoverVenueListFilters;
   onApplyEvents: (f: DiscoverEventListFilters) => void;
@@ -41,6 +48,7 @@ export function DiscoverFiltersSheet({
   visible,
   onClose,
   listKind,
+  onListKindChange,
   eventFilters,
   venueFilters,
   onApplyEvents,
@@ -134,6 +142,18 @@ export function DiscoverFiltersSheet({
         contentContainerStyle={[styles.scrollContent, { paddingBottom: 28 }]}
         keyboardShouldPersistTaps="handled">
         <Text style={[styles.sheetTitle, { color: c.text }]}>{labels.title}</Text>
+
+        <FieldLabel color={c.textSecondary} text={labels.listKindSection} />
+        <DiscoverSegmentedKind
+          embedded
+          value={listKind}
+          onChange={onListKindChange}
+          labels={{ events: labels.segmentEvents, venues: labels.segmentVenues }}
+          activeBackground={AppPalette.primary}
+          activeText={AppPalette.white}
+          inactiveText={c.textSecondary}
+          trackBackground={scheme === "dark" ? c.surfaceElevated : c.border}
+        />
 
         {listKind === "events" ? (
           <>

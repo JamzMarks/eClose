@@ -10,6 +10,7 @@ import {
 } from "react-native";
 
 import { AppPalette, getSchemeColors } from "@/constants/palette";
+import { Radius } from "@/constants/radius";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
 export type AppButtonVariant = "primary" | "secondary" | "outline" | "ghost";
@@ -49,15 +50,9 @@ export function AppButton({
       {...rest}
     >
       {loading ? (
-        <ActivityIndicator
-          color={variantStyles.spinnerColor}
-          size="small"
-        />
+        <ActivityIndicator color={variantStyles.spinnerColor} size="small" />
       ) : (
-        <Text
-          style={[styles.label, variantStyles.label]}
-          numberOfLines={1}
-        >
+        <Text style={[styles.label, variantStyles.label]} numberOfLines={1}>
           {title}
         </Text>
       )}
@@ -126,7 +121,7 @@ const styles = StyleSheet.create({
     minHeight: 48,
     paddingHorizontal: 20,
     paddingVertical: 12,
-    borderRadius: 12,
+    borderRadius: Radius.medium,
     alignItems: "center",
     justifyContent: "center",
   },
