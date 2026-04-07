@@ -121,7 +121,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
     marginBottom: 10,
   },
   sectionTitle: {
@@ -133,7 +132,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   scrollContent: {
-    paddingHorizontal: 16,
     gap: 10,
     paddingBottom: 6,
   },

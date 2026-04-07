@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Text, View } from "react-native";
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
@@ -14,8 +14,6 @@ import { DiscoverSearchBar } from "@/components/discover/DiscoverSearchBar";
 import { EventListingCard } from "@/components/listing/event-listing-card";
 import { VenueListingCard } from "@/components/listing/venue-listing-card";
 import { Screen } from "@/components/layout/screen";
-import { TabScreenCenterError } from "@/components/shared/tab-screen/TabScreenCenterError";
-import { TabScreenCenterLoading } from "@/components/shared/tab-screen/TabScreenCenterLoading";
 import { useExploreVenues } from "@/components/tabs/explore/use-explore-venues";
 import { useHomePublishedEvents } from "@/components/tabs/home/use-home-published-events";
 import { AppPalette, getSchemeColors } from "@/constants/palette";
@@ -80,6 +78,34 @@ function filterEventItems<
     );
   }
   return list;
+}
+
+function ListEmptyLoading({ message, subtitleColor }: { message: string; subtitleColor: string }) {
+  return (
+    <View style={styles.listEmptyBlock}>
+      <ActivityIndicator color={AppPalette.primary} size="large" />
+      <Text style={[styles.listEmptyText, { color: subtitleColor }]}>{message}</Text>
+    </View>
+  );
+}
+
+function ListEmptyError({
+  message,
+  retryLabel,
+  onRetry,
+}: {
+  message: string;
+  retryLabel: string;
+  onRetry: () => void;
+}) {
+  return (
+    <View style={styles.listEmptyBlock}>
+      <Text style={[styles.listEmptyErrorText, { color: AppPalette.error }]}>{message}</Text>
+      <Pressable onPress={onRetry} style={styles.listEmptyRetry} accessibilityRole="button">
+        <Text style={styles.listEmptyRetryText}>{retryLabel}</Text>
+      </Pressable>
+    </View>
+  );
 }
 
 export function DiscoverListTabScreen() {
@@ -152,7 +178,16 @@ export function DiscoverListTabScreen() {
   };
 
   const listHeader = (
-    <View>
+    <View style={{ paddingBottom: 4 }}>
+      <DiscoverListToolbar
+        title={t("programacaoTitle")}
+        listKind={listKind}
+        onListKindChange={setListKind}
+        segmentLabels={{ events: t("segmentEvents"), venues: t("segmentVenues") }}
+        onFilterPress={() => setFiltersOpen(true)}
+        filterAccessibilityLabel={t("filtersTitle")}
+        colors={toolbarColors}
+      />
       <DiscoverSearchBar value={searchDraft} onChangeText={setSearchDraft} />
       <DiscoverQuickCategoriesRow
         selectedId={selectedCategory?.id ?? null}
@@ -189,18 +224,6 @@ export function DiscoverListTabScreen() {
     />
   );
 
-  const header = (
-    <DiscoverListToolbar
-      title={t("programacaoTitle")}
-      listKind={listKind}
-      onListKindChange={setListKind}
-      segmentLabels={{ events: t("segmentEvents"), venues: t("segmentVenues") }}
-      onFilterPress={() => setFiltersOpen(true)}
-      filterAccessibilityLabel={t("filtersTitle")}
-      colors={toolbarColors}
-    />
-  );
-
   const columnWrap = {
     gap: columnGap,
     marginBottom: 4,
@@ -208,35 +231,22 @@ export function DiscoverListTabScreen() {
 
   const gridMode = numColumns > 1;
 
-  if (active.loading && active.items.length === 0) {
-    return (
-      <Screen>
-        {header}
-        {listHeader}
-        <TabScreenCenterLoading message={t("loading")} subtitleColor={c.textSecondary} />
-        {filtersSheet}
-      </Screen>
-    );
-  }
+  const eventsEmptyExtra =
+    events.loading && events.items.length === 0 ? (
+      <ListEmptyLoading message={t("loading")} subtitleColor={c.textSecondary} />
+    ) : events.error && events.items.length === 0 ? (
+      <ListEmptyError message={events.error} retryLabel={t("retry")} onRetry={events.loadInitial} />
+    ) : undefined;
 
-  if (active.error && active.items.length === 0) {
-    return (
-      <Screen>
-        {header}
-        {listHeader}
-        <TabScreenCenterError
-          message={active.error}
-          retryLabel={t("retry")}
-          onRetry={active.loadInitial}
-        />
-        {filtersSheet}
-      </Screen>
-    );
-  }
+  const venuesEmptyExtra =
+    venues.loading && venues.items.length === 0 ? (
+      <ListEmptyLoading message={t("loading")} subtitleColor={c.textSecondary} />
+    ) : venues.error && venues.items.length === 0 ? (
+      <ListEmptyError message={venues.error} retryLabel={t("retry")} onRetry={venues.loadInitial} />
+    ) : undefined;
 
   return (
     <Screen>
-      {header}
       {listKind === "events" ? (
         <DiscoverPaginatedFlatList
           data={displayEvents}
@@ -244,6 +254,7 @@ export function DiscoverListTabScreen() {
           emptyMessage={t("emptyEvents")}
           emptyHintColor={c.textSecondary}
           listHeaderComponent={listHeader}
+          listEmptyComponent={eventsEmptyExtra}
           refreshing={events.refreshing}
           onRefresh={events.onRefresh}
           onEndReached={events.onEndReached}
@@ -276,6 +287,7 @@ export function DiscoverListTabScreen() {
           emptyMessage={t("emptyVenues")}
           emptyHintColor={c.textSecondary}
           listHeaderComponent={listHeader}
+          listEmptyComponent={venuesEmptyExtra}
           refreshing={venues.refreshing}
           onRefresh={venues.onRefresh}
           onEndReached={venues.onEndReached}
@@ -304,3 +316,32 @@ export function DiscoverListTabScreen() {
     </Screen>
   );
 }
+
+const styles = StyleSheet.create({
+  listEmptyBlock: {
+    minHeight: 200,
+    paddingVertical: 32,
+    paddingHorizontal: 16,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  listEmptyText: {
+    marginTop: 12,
+    fontSize: 15,
+  },
+  listEmptyErrorText: {
+    textAlign: "center",
+    fontSize: 15,
+    lineHeight: 22,
+    marginBottom: 12,
+  },
+  listEmptyRetry: {
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+  },
+  listEmptyRetryText: {
+    color: AppPalette.primary,
+    fontWeight: "600",
+    fontSize: 16,
+  },
+});

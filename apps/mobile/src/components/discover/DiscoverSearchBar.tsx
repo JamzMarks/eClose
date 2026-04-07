@@ -36,7 +36,6 @@ const styles = StyleSheet.create({
   wrap: {
     borderWidth: StyleSheet.hairlineWidth,
     borderRadius: Radius.medium,
-    marginHorizontal: 16,
     marginBottom: 14,
   },
   input: {

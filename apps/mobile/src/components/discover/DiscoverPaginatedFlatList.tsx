@@ -17,6 +17,8 @@ export type DiscoverPaginatedFlatListProps<T> = {
   loadingMore: boolean;
   canLoadMore: boolean;
   listHeaderComponent?: ReactElement | null;
+  /** Se definido, substitui o hint vazio por defeito (ex.: loading / erro inicial). */
+  listEmptyComponent?: ReactElement | null;
   numColumns?: number;
   columnWrapperStyle?: StyleProp<ViewStyle>;
 };
@@ -36,10 +38,17 @@ export function DiscoverPaginatedFlatList<T>({
   loadingMore,
   canLoadMore,
   listHeaderComponent,
+  listEmptyComponent,
   numColumns = 1,
   columnWrapperStyle,
 }: DiscoverPaginatedFlatListProps<T>) {
   const cols = numColumns > 1 ? numColumns : 1;
+  const empty =
+    listEmptyComponent !== undefined ? (
+      listEmptyComponent
+    ) : (
+      <TabScreenEmptyHint message={emptyMessage} color={emptyHintColor} />
+    );
   return (
     <FlatList
       data={data}
@@ -57,9 +66,7 @@ export function DiscoverPaginatedFlatList<T>({
       onEndReached={onEndReached}
       onEndReachedThreshold={0.35}
       contentContainerStyle={styles.listContent}
-      ListEmptyComponent={
-        <TabScreenEmptyHint message={emptyMessage} color={emptyHintColor} />
-      }
+      ListEmptyComponent={empty}
       ListFooterComponent={
         loadingMore && canLoadMore ? (
           <View style={styles.footer}>
