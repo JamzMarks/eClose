@@ -1,14 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  Pressable,
-  RefreshControl,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { FlatList, Pressable, RefreshControl, StyleSheet, Text, TextInput, View } from "react-native";
 import BottomSheet, {
   BottomSheetBackdrop,
   type BottomSheetBackdropProps,
@@ -20,6 +11,8 @@ import { useTranslation } from "react-i18next";
 import { Screen } from "@/components/layout/screen";
 import { AppTabScreenHeader } from "@/components/shared/tab-screen/AppTabScreenHeader";
 import { TabScreenCenterError } from "@/components/shared/tab-screen/TabScreenCenterError";
+import { TabScreenCenterLoading } from "@/components/shared/tab-screen/TabScreenCenterLoading";
+import { TabScreenEmptyHint } from "@/components/shared/tab-screen/TabScreenEmptyHint";
 import { AppPalette, getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { normalizeHttpError } from "@/infrastructure/http/error-handler";
@@ -47,6 +40,19 @@ export function WishlistsIndexScreen() {
     const data = await svc.listMine();
     setItems(data);
   }, []);
+
+  const retryInitial = useCallback(() => {
+    setLoading(true);
+    void (async () => {
+      try {
+        await load();
+      } catch (e) {
+        setError(normalizeHttpError(e, t("error")).message);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [load, t]);
 
   useFocusEffect(
     useCallback(() => {
@@ -118,10 +124,7 @@ export function WishlistsIndexScreen() {
     return (
       <Screen>
         {header}
-        <View style={[styles.centered, { backgroundColor: c.background }]}>
-          <ActivityIndicator color={AppPalette.primary} size="large" />
-          <Text style={[styles.hint, { color: c.textSecondary }]}>{t("loading")}</Text>
-        </View>
+        <TabScreenCenterLoading message={t("loading")} subtitleColor={c.textSecondary} />
       </Screen>
     );
   }
@@ -130,7 +133,7 @@ export function WishlistsIndexScreen() {
     return (
       <Screen>
         {header}
-        <TabScreenCenterError message={error} retryLabel={t("retry")} onRetry={() => void load()} />
+        <TabScreenCenterError message={error} retryLabel={t("retry")} onRetry={retryInitial} />
       </Screen>
     );
   }
@@ -153,7 +156,7 @@ export function WishlistsIndexScreen() {
           </Pressable>
         }
         ListEmptyComponent={
-          <Text style={[styles.empty, { color: c.textSecondary }]}>{t("empty")}</Text>
+          <TabScreenEmptyHint message={t("empty")} color={c.textSecondary} minHeight={220} />
         }
         renderItem={({ item }) => (
           <Pressable
@@ -216,8 +219,6 @@ export function WishlistsIndexScreen() {
 }
 
 const styles = StyleSheet.create({
-  centered: { flex: 1, justifyContent: "center", alignItems: "center" },
-  hint: { marginTop: 12, fontSize: 15 },
   list: { paddingHorizontal: 16, paddingBottom: 32, flexGrow: 1 },
   newRow: {
     padding: 16,
@@ -236,7 +237,6 @@ const styles = StyleSheet.create({
   cardTitle: { fontSize: 17, fontWeight: "600" },
   cardMeta: { fontSize: 14, marginTop: 6 },
   cardRole: { fontSize: 12, marginTop: 4, textTransform: "uppercase" },
-  empty: { textAlign: "center", marginTop: 40, fontSize: 15, paddingHorizontal: 24 },
   sheetLabel: { fontSize: 18, fontWeight: "700", marginBottom: 12, marginTop: 8 },
   input: {
     borderWidth: StyleSheet.hairlineWidth,

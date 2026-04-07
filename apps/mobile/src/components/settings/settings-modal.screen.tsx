@@ -1,5 +1,12 @@
 import { useMemo } from "react";
-import { Alert, ScrollView, StyleSheet, View } from "react-native";
+import {
+  ActionSheetIOS,
+  Alert,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -10,7 +17,9 @@ import { SettingsSectionHeader } from "@/components/settings/components/Settings
 import { SettingsValueRow } from "@/components/settings/components/SettingsValueRow";
 import { getSchemeColors } from "@/constants/palette";
 import { useAuth } from "@/contexts/auth-context";
-import { useOnboardingSetup } from "@/contexts/onboarding-setup-context";
+import { useLocalePreference, type AppLocale } from "@/contexts/locale-preference-context";
+import { useThemePreference, type ThemePreference } from "@/contexts/theme-preference-context";
+import { useAccountSetup } from "@/features/account-setup";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
 /**
@@ -25,7 +34,99 @@ export function SettingsModalScreen() {
   const scheme = useColorScheme() ?? "light";
   const c = getSchemeColors(scheme);
   const { user, signOut } = useAuth();
-  const { openNotificationPreferencesSetup } = useOnboardingSetup();
+  const { openNotificationPreferencesSetup } = useAccountSetup();
+  const { preference, setPreference } = useThemePreference();
+  const { locale, setLocale } = useLocalePreference();
+
+  const appearanceSubtitleKey = useMemo(() => {
+    const map: Record<ThemePreference, string> = {
+      system: "appearanceValueSystem",
+      light: "appearanceValueLight",
+      dark: "appearanceValueDark",
+    };
+    return map[preference];
+  }, [preference]);
+
+  function openAppearancePicker() {
+    const options: { key: ThemePreference; labelKey: string }[] = [
+      { key: "system", labelKey: "appearanceOptionSystem" },
+      { key: "light", labelKey: "appearanceOptionLight" },
+      { key: "dark", labelKey: "appearanceOptionDark" },
+    ];
+
+    if (Platform.OS === "ios") {
+      ActionSheetIOS.showActionSheetWithOptions(
+        {
+          options: [t("cancel"), ...options.map((o) => t(o.labelKey))],
+          cancelButtonIndex: 0,
+          title: t("appearance"),
+        },
+        (index) => {
+          if (index === 0) return;
+          const opt = options[index - 1];
+          if (opt) void setPreference(opt.key);
+        },
+      );
+      return;
+    }
+
+    Alert.alert(
+      t("appearance"),
+      undefined,
+      [
+        ...options.map((o) => ({
+          text: t(o.labelKey),
+          onPress: () => void setPreference(o.key),
+        })),
+        { text: t("cancel"), style: "cancel" as const },
+      ],
+      { cancelable: true },
+    );
+  }
+
+  const languageSubtitleKey = useMemo(() => {
+    const map: Record<AppLocale, string> = {
+      pt: "languageValuePt",
+      en: "languageValueEn",
+    };
+    return map[locale];
+  }, [locale]);
+
+  function openLanguagePicker() {
+    const options: { key: AppLocale; labelKey: string }[] = [
+      { key: "pt", labelKey: "languageOptionPt" },
+      { key: "en", labelKey: "languageOptionEn" },
+    ];
+
+    if (Platform.OS === "ios") {
+      ActionSheetIOS.showActionSheetWithOptions(
+        {
+          options: [t("cancel"), ...options.map((o) => t(o.labelKey))],
+          cancelButtonIndex: 0,
+          title: t("language"),
+        },
+        (index) => {
+          if (index === 0) return;
+          const opt = options[index - 1];
+          if (opt) void setLocale(opt.key);
+        },
+      );
+      return;
+    }
+
+    Alert.alert(
+      t("language"),
+      undefined,
+      [
+        ...options.map((o) => ({
+          text: t(o.labelKey),
+          onPress: () => void setLocale(o.key),
+        })),
+        { text: t("cancel"), style: "cancel" as const },
+      ],
+      { cancelable: true },
+    );
+  }
 
   const legalItems = useMemo(
     () =>
@@ -83,8 +184,8 @@ export function SettingsModalScreen() {
         />
         <SettingsNavigationRow
           title={t("appearance")}
-          subtitle={t("appearanceHint")}
-          onPress={() => {}}
+          subtitle={t(appearanceSubtitleKey)}
+          onPress={openAppearancePicker}
           textColor={c.textSecondary}
           subtitleColor={c.textMuted}
           borderColor={c.border}
@@ -92,8 +193,8 @@ export function SettingsModalScreen() {
         />
         <SettingsNavigationRow
           title={t("language")}
-          subtitle={t("languageHint")}
-          onPress={() => {}}
+          subtitle={t(languageSubtitleKey)}
+          onPress={openLanguagePicker}
           textColor={c.textSecondary}
           subtitleColor={c.textMuted}
           borderColor={c.border}
@@ -101,8 +202,7 @@ export function SettingsModalScreen() {
         />
         <SettingsNavigationRow
           title={t("about")}
-          subtitle={t("aboutHint")}
-          onPress={() => {}}
+          onPress={() => router.push("/settings/about")}
           textColor={c.textSecondary}
           subtitleColor={c.textMuted}
           borderColor={c.border}

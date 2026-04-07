@@ -1,5 +1,5 @@
 import { useMemo, useState, type ReactElement } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text } from "react-native";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
@@ -9,8 +9,9 @@ import { Screen } from "@/components/layout/screen";
 import { AppTabScreenHeader } from "@/components/shared/tab-screen/AppTabScreenHeader";
 import { TabScreenCenterError } from "@/components/shared/tab-screen/TabScreenCenterError";
 import { TabScreenCenterLoading } from "@/components/shared/tab-screen/TabScreenCenterLoading";
-import { useHomePublishedEvents } from "@/components/tabs/home/hooks/use-home-published-events";
-import { AppPalette, getSchemeColors } from "@/constants/palette";
+import { ListingInlineErrorBanner } from "@/components/shared/tab-screen/ListingInlineErrorBanner";
+import { useHomePublishedEvents } from "@/hooks/use-home-published-events";
+import { getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { defaultDiscoverEventFilters } from "@/services/discover/discover-list-filters.types";
 
@@ -27,11 +28,7 @@ export function HomeFeedTabScreen() {
 
   const errorBanner: ReactElement | undefined = useMemo(() => {
     if (!events.error || events.items.length === 0) return undefined;
-    return (
-      <View style={{ paddingBottom: 10, paddingHorizontal: 4 }}>
-        <Text style={{ color: AppPalette.error, fontSize: 14, lineHeight: 20 }}>{events.error}</Text>
-      </View>
-    );
+    return <ListingInlineErrorBanner message={events.error} />;
   }, [events.error, events.items]);
 
   if (events.loading && events.items.length === 0) {

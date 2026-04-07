@@ -4,7 +4,9 @@ import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { AuthRequiredPlaceholder } from "@/components/auth";
 import { Screen } from "@/components/layout/screen";
+import { AppTabScreenHeader } from "@/components/shared/tab-screen/AppTabScreenHeader";
 import { SettingsGroupedCard } from "@/components/settings/components/SettingsGroupedCard";
 import { SettingsNavigationRow } from "@/components/settings/components/SettingsNavigationRow";
 import { SettingsSectionHeader } from "@/components/settings/components/SettingsSectionHeader";
@@ -24,11 +26,13 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 export function ProfileTabScreen() {
   const { t } = useTranslation("profile");
   const { t: tSettings } = useTranslation("settings");
+  const { t: tAuth } = useTranslation("auth");
+  const { t: tTabs } = useTranslation("tabs");
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const scheme = useColorScheme() ?? "light";
   const c = getSchemeColors(scheme);
-  const { user, signOut } = useAuth();
+  const { isReady, isSignedIn, user, signOut } = useAuth();
   const handle = useMemo(() => handleFromEmail(user?.email), [user?.email]);
   const profileUsername = useMemo(() => {
     const u = user?.username?.trim();
@@ -60,6 +64,19 @@ export function ProfileTabScreen() {
         onPress: () => void handleSignOut(),
       },
     ]);
+  }
+
+  if (!isReady) {
+    return null;
+  }
+
+  if (!isSignedIn) {
+    return (
+      <Screen>
+        <AppTabScreenHeader title={tTabs("profile")} borderColor={c.border} titleColor={c.text} />
+        <AuthRequiredPlaceholder message={tAuth("authRequiredProfileBody")} />
+      </Screen>
+    );
   }
 
   return (

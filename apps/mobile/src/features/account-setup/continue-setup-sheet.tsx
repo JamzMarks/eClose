@@ -21,7 +21,8 @@ import { NotificationPreferencesService } from "@/services/user/notification-pre
 import type { NotificationPreferencesDto } from "@/services/types/notification-preferences.types";
 import { normalizeHttpError } from "@/infrastructure/http/error-handler";
 
-export type ContinueSetupSheetMode = "onboarding" | "manual";
+/** `account_flow`: após registo; permite saltar e grava estado local. `manual`: aberto pelas definições. */
+export type ContinueSetupSheetMode = "account_flow" | "manual";
 
 export type ContinueSetupSheetProps = {
   visible: boolean;
@@ -103,7 +104,7 @@ export function ContinueSetupSheet({
   }
 
   function handleBackdropClose() {
-    if (mode === "onboarding") {
+    if (mode === "account_flow") {
       onDismiss("skip");
     } else {
       onDismiss("close");
@@ -172,7 +173,7 @@ export function ContinueSetupSheet({
               disabled={loading}
               fullWidth
             />
-            {mode === "onboarding" ? (
+            {mode === "account_flow" ? (
               <AppButton
                 title={t("skip")}
                 variant="ghost"

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
+import { View } from "react-native";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
@@ -7,7 +7,7 @@ import { Screen } from "@/components/layout/screen";
 import { DiscoverPaginatedFlatList } from "@/components/shared/discover/DiscoverPaginatedFlatList";
 import { EventListingCard } from "@/components/shared/listing/event-listing-card";
 import { VenueListingCard } from "@/components/shared/listing/venue-listing-card";
-import { useHomePublishedEvents } from "@/components/tabs/home/hooks/use-home-published-events";
+import { useHomePublishedEvents } from "@/hooks/use-home-published-events";
 import { DiscoverFiltersSheet } from "./components/DiscoverFiltersSheet";
 import { DiscoverListToolbar } from "./components/DiscoverListToolbar";
 import type { DiscoverListKind } from "./components/discover-segmented-kind";
@@ -15,8 +15,11 @@ import { DiscoverQuickCategoriesRow } from "./components/DiscoverQuickCategories
 import type { DiscoverQuickFilterId } from "./components/DiscoverQuickFilterChips";
 import { DiscoverQuickFilterChips } from "./components/DiscoverQuickFilterChips";
 import { DiscoverSearchBar } from "./components/DiscoverSearchBar";
-import { useExploreVenues } from "./hooks/use-explore-venues";
-import { AppPalette, getSchemeColors } from "@/constants/palette";
+import { useExploreVenues } from "@/hooks/use-explore-venues";
+import { TabScreenCenterError } from "@/components/shared/tab-screen/TabScreenCenterError";
+import { TabScreenCenterLoading } from "@/components/shared/tab-screen/TabScreenCenterLoading";
+import { ListingInlineErrorBanner } from "@/components/shared/tab-screen/ListingInlineErrorBanner";
+import { getSchemeColors } from "@/constants/palette";
 import { useDiscoverGrid } from "@/hooks/use-discover-grid";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import type { DiscoverQuickCategory } from "@/services/discover/discover-quick-categories.mock";
@@ -80,34 +83,6 @@ function filterEventItems<
   return list;
 }
 
-function ListEmptyLoading({ message, subtitleColor }: { message: string; subtitleColor: string }) {
-  return (
-    <View style={styles.listEmptyBlock}>
-      <ActivityIndicator color={AppPalette.primary} size="large" />
-      <Text style={[styles.listEmptyText, { color: subtitleColor }]}>{message}</Text>
-    </View>
-  );
-}
-
-function ListEmptyError({
-  message,
-  retryLabel,
-  onRetry,
-}: {
-  message: string;
-  retryLabel: string;
-  onRetry: () => void;
-}) {
-  return (
-    <View style={styles.listEmptyBlock}>
-      <Text style={[styles.listEmptyErrorText, { color: AppPalette.error }]}>{message}</Text>
-      <Pressable onPress={onRetry} style={styles.listEmptyRetry} accessibilityRole="button">
-        <Text style={styles.listEmptyRetryText}>{retryLabel}</Text>
-      </Pressable>
-    </View>
-  );
-}
-
 export function DiscoverListTabScreen() {
   const { t } = useTranslation("discover");
   const router = useRouter();
@@ -141,7 +116,6 @@ export function DiscoverListTabScreen() {
 
   const events = useHomePublishedEvents(t, eventFilters, listKind === "events");
   const venues = useExploreVenues(t, venueFiltersForApi, listKind === "venues");
-  const active = listKind === "events" ? events : venues;
 
   const displayEvents = useMemo(
     () => filterEventItems(events.items, selectedCategory, quickFilter),
@@ -195,14 +169,10 @@ export function DiscoverListTabScreen() {
         onMorePress={() => setFiltersOpen(true)}
       />
       {listKind === "events" && events.error && events.items.length > 0 ? (
-        <View style={{ paddingBottom: 10, paddingHorizontal: 4 }}>
-          <Text style={{ color: AppPalette.error, fontSize: 14, lineHeight: 20 }}>{events.error}</Text>
-        </View>
+        <ListingInlineErrorBanner message={events.error} />
       ) : null}
       {listKind === "venues" && venues.error && venues.items.length > 0 ? (
-        <View style={{ paddingBottom: 10, paddingHorizontal: 4 }}>
-          <Text style={{ color: AppPalette.error, fontSize: 14, lineHeight: 20 }}>{venues.error}</Text>
-        </View>
+        <ListingInlineErrorBanner message={venues.error} />
       ) : null}
     </View>
   );
@@ -230,16 +200,34 @@ export function DiscoverListTabScreen() {
 
   const eventsEmptyExtra =
     events.loading && events.items.length === 0 ? (
-      <ListEmptyLoading message={t("loading")} subtitleColor={c.textSecondary} />
+      <TabScreenCenterLoading
+        message={t("loading")}
+        subtitleColor={c.textSecondary}
+        variant="embedded"
+      />
     ) : events.error && events.items.length === 0 ? (
-      <ListEmptyError message={events.error} retryLabel={t("retry")} onRetry={events.loadInitial} />
+      <TabScreenCenterError
+        message={events.error}
+        retryLabel={t("retry")}
+        onRetry={events.loadInitial}
+        variant="embedded"
+      />
     ) : undefined;
 
   const venuesEmptyExtra =
     venues.loading && venues.items.length === 0 ? (
-      <ListEmptyLoading message={t("loading")} subtitleColor={c.textSecondary} />
+      <TabScreenCenterLoading
+        message={t("loading")}
+        subtitleColor={c.textSecondary}
+        variant="embedded"
+      />
     ) : venues.error && venues.items.length === 0 ? (
-      <ListEmptyError message={venues.error} retryLabel={t("retry")} onRetry={venues.loadInitial} />
+      <TabScreenCenterError
+        message={venues.error}
+        retryLabel={t("retry")}
+        onRetry={venues.loadInitial}
+        variant="embedded"
+      />
     ) : undefined;
 
   return (
@@ -313,32 +301,3 @@ export function DiscoverListTabScreen() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  listEmptyBlock: {
-    minHeight: 200,
-    paddingVertical: 32,
-    paddingHorizontal: 16,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  listEmptyText: {
-    marginTop: 12,
-    fontSize: 15,
-  },
-  listEmptyErrorText: {
-    textAlign: "center",
-    fontSize: 15,
-    lineHeight: 22,
-    marginBottom: 12,
-  },
-  listEmptyRetry: {
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-  },
-  listEmptyRetryText: {
-    color: AppPalette.primary,
-    fontWeight: "600",
-    fontSize: 16,
-  },
-});

@@ -1,7 +1,7 @@
 import { Tabs } from "expo-router";
 import { useTranslation } from "react-i18next";
 
-import { OnboardingSetupProvider } from "@/contexts/onboarding-setup-context";
+import { AccountSetupProvider } from "@/features/account-setup";
 import { Icon } from "@/components/ui/icon/icon";
 import { AppIcon } from "@/components/ui/icon/icon.types";
 import { Colors } from "@/constants/theme";
@@ -12,7 +12,7 @@ export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <OnboardingSetupProvider>
+    <AccountSetupProvider>
       <Tabs
         screenOptions={{
           tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
@@ -100,6 +100,6 @@ export default function TabLayout() {
           }}
         />
       </Tabs>
-    </OnboardingSetupProvider>
+    </AccountSetupProvider>
   );
 }

@@ -7,9 +7,12 @@ import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 import "@/i18n";
 
+import { AppIntroProvider } from "@/features/app-intro";
 import { AuthProvider } from "@/contexts/auth-context";
+import { LocalePreferenceProvider } from "@/contexts/locale-preference-context";
 import { LocationProvider } from "@/contexts/location-context";
-import { OnboardingProvider } from "@/contexts/onboarding-context";
+import { ThemePreferenceProvider } from "@/contexts/theme-preference-context";
+import { SplashScreenGate } from "@/components/splash/splash-screen-gate";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { AppPalette, getSchemeColors } from "@/constants/palette";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -32,64 +35,72 @@ function NavigationThemeBridge({ children }: { children: ReactNode }) {
     },
   };
 
-  return <ThemeProvider value={theme}>{children}</ThemeProvider>;
+  return (
+    <ThemeProvider value={theme}>
+      {children}
+      <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
+    </ThemeProvider>
+  );
 }
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaProvider>
-        <LocationProvider>
-          <OnboardingProvider>
-            <AuthProvider>
-              <NavigationThemeBridge>
-                <Stack>
-              <Stack.Screen name="index" options={{ headerShown: false }} />
-              <Stack.Screen name="onboarding" options={{ headerShown: false }} />
-              <Stack.Screen name="login" options={{ headerShown: false }} />
-              <Stack.Screen name="signup" options={{ headerShown: false }} />
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen
-                name="event/[id]"
-                options={{ headerShown: true, headerBackTitle: "Voltar" }}
-              />
-              <Stack.Screen
-                name="venue/[id]"
-                options={{ headerShown: true, headerBackTitle: "Voltar" }}
-              />
-              <Stack.Screen
-                name="wishlists"
-                options={{ headerShown: false, presentation: "modal" }}
-              />
-              <Stack.Screen name="create" options={{ headerShown: false }} />
-              <Stack.Screen
-                name="settings"
-                options={{
-                  presentation: "modal",
-                  headerShown: true,
-                }}
-              />
-              <Stack.Screen
-                name="profile-legal"
-                options={{
-                  presentation: "fullScreenModal",
-                  headerShown: false,
-                  animation: "slide_from_right",
-                }}
-              />
-              <Stack.Screen
-                name="modal"
-                options={{ presentation: "modal", title: "Modal" }}
-              />
-                </Stack>
-                <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
-              </NavigationThemeBridge>
-            </AuthProvider>
-          </OnboardingProvider>
-        </LocationProvider>
-      </SafeAreaProvider>
+      <ThemePreferenceProvider>
+        <LocalePreferenceProvider>
+          <SafeAreaProvider>
+            <LocationProvider>
+              <AppIntroProvider>
+                <AuthProvider>
+                  <SplashScreenGate>
+                    <NavigationThemeBridge>
+                      <Stack>
+                        <Stack.Screen name="index" options={{ headerShown: false }} />
+                        <Stack.Screen name="app-intro" options={{ headerShown: false }} />
+                        <Stack.Screen name="login" options={{ headerShown: false }} />
+                        <Stack.Screen name="signup" options={{ headerShown: false }} />
+                        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                        <Stack.Screen
+                          name="event/[id]"
+                          options={{ headerShown: true, headerBackTitle: "Voltar" }}
+                        />
+                        <Stack.Screen
+                          name="venue/[id]"
+                          options={{ headerShown: true, headerBackTitle: "Voltar" }}
+                        />
+                        <Stack.Screen
+                          name="wishlists"
+                          options={{ headerShown: false, presentation: "modal" }}
+                        />
+                        <Stack.Screen name="create" options={{ headerShown: false }} />
+                        <Stack.Screen
+                          name="settings"
+                          options={{
+                            presentation: "modal",
+                            headerShown: false,
+                          }}
+                        />
+                        <Stack.Screen
+                          name="profile-legal"
+                          options={{
+                            presentation: "fullScreenModal",
+                            headerShown: false,
+                            animation: "slide_from_right",
+                          }}
+                        />
+                        <Stack.Screen
+                          name="modal"
+                          options={{ presentation: "modal", title: "Modal" }}
+                        />
+                      </Stack>
+                    </NavigationThemeBridge>
+                  </SplashScreenGate>
+                </AuthProvider>
+              </AppIntroProvider>
+            </LocationProvider>
+          </SafeAreaProvider>
+        </LocalePreferenceProvider>
+      </ThemePreferenceProvider>
     </GestureHandlerRootView>
   );
 }

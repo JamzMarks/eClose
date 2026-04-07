@@ -8,13 +8,13 @@ import {
   type ReactNode,
 } from "react";
 
-import type { AppCapability } from "@/onboarding/app-capability";
-import { getCapabilitiesForOnboardingOutcome } from "@/onboarding/onboarding-policy.mock";
-import { loadPersistedOnboarding, persistOnboarding } from "@/onboarding/onboarding-storage";
+import type { AppCapability } from "./app-capability";
+import { getCapabilitiesForAppIntroOutcome } from "./app-intro-policy.mock";
+import { loadPersistedAppIntro, persistAppIntro } from "./app-intro-storage";
 
-type OnboardingContextValue = {
+type AppIntroContextValue = {
   hydrated: boolean;
-  /** Utilizador ainda não concluiu nem saltou o intro (persistido). */
+  /** Intro de boas-vindas ainda não concluído nem saltado (persistido em disco). */
   introPending: boolean;
   capabilities: ReadonlySet<AppCapability>;
   completeIntro: () => Promise<void>;
@@ -22,9 +22,9 @@ type OnboardingContextValue = {
   canAccess: (cap: AppCapability) => boolean;
 };
 
-const OnboardingContext = createContext<OnboardingContextValue | null>(null);
+const AppIntroContext = createContext<AppIntroContextValue | null>(null);
 
-export function OnboardingProvider({ children }: { children: ReactNode }) {
+export function AppIntroProvider({ children }: { children: ReactNode }) {
   const [hydrated, setHydrated] = useState(false);
   const [introPending, setIntroPending] = useState(true);
   const [capabilities, setCapabilities] = useState<ReadonlySet<AppCapability>>(() => new Set());
@@ -32,7 +32,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let cancelled = false;
     void (async () => {
-      const stored = await loadPersistedOnboarding();
+      const stored = await loadPersistedAppIntro();
       if (cancelled) return;
       if (stored) {
         setIntroPending(false);
@@ -49,10 +49,10 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const finish = useCallback(async (mode: "completed" | "skipped") => {
-    const next = getCapabilitiesForOnboardingOutcome(mode);
+    const next = getCapabilitiesForAppIntroOutcome(mode);
     setCapabilities(next);
     setIntroPending(false);
-    await persistOnboarding({
+    await persistAppIntro({
       finished: true,
       mode,
       capabilities: [...next],
@@ -67,7 +67,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
     [capabilities],
   );
 
-  const value = useMemo<OnboardingContextValue>(
+  const value = useMemo<AppIntroContextValue>(
     () => ({
       hydrated,
       introPending,
@@ -79,13 +79,13 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
     [hydrated, introPending, capabilities, completeIntro, skipIntro, canAccess],
   );
 
-  return <OnboardingContext.Provider value={value}>{children}</OnboardingContext.Provider>;
+  return <AppIntroContext.Provider value={value}>{children}</AppIntroContext.Provider>;
 }
 
-export function useOnboarding() {
-  const ctx = useContext(OnboardingContext);
+export function useAppIntro() {
+  const ctx = useContext(AppIntroContext);
   if (!ctx) {
-    throw new Error("useOnboarding must be used within OnboardingProvider");
+    throw new Error("useAppIntro must be used within AppIntroProvider");
   }
   return ctx;
 }

@@ -9,33 +9,32 @@ import {
   type ReactNode,
 } from "react";
 
-import { ContinueSetupSheet } from "@/components/onboarding/continue-setup-sheet";
-import { EmailVerificationSetupSheet } from "@/components/onboarding/email-verification-setup-sheet";
-import { ProfileNamesSetupSheet } from "@/components/onboarding/profile-names-setup-sheet";
 import { useAuth } from "@/contexts/auth-context";
+
+import { ContinueSetupSheet } from "./continue-setup-sheet";
+import { EmailVerificationSetupSheet } from "./email-verification-setup-sheet";
+import { ProfileNamesSetupSheet } from "./profile-names-setup-sheet";
 import {
-  loadPrefsOnboardingState,
-  savePrefsOnboardingCompleted,
-  savePrefsOnboardingSkipped,
-} from "@/lib/session/onboarding-storage";
+  loadAccountSetupNotificationPrefs,
+  saveAccountSetupNotificationPrefsCompleted,
+  saveAccountSetupNotificationPrefsSkipped,
+} from "./account-setup-prefs-storage";
 
-type OpenReason = "onboarding" | "manual" | null;
+type OpenReason = "post_signup" | "manual" | null;
 
-type OnboardingSetupContextValue = {
-  /** Abre o sheet (ex.: a partir do perfil) para rever preferências. */
+type AccountSetupContextValue = {
+  /** Abre o sheet de notificações (ex.: a partir de Definições). */
   openNotificationPreferencesSetup: () => void;
 };
 
-const OnboardingSetupContext =
-  createContext<OnboardingSetupContextValue | null>(null);
+const AccountSetupContext = createContext<AccountSetupContextValue | null>(null);
 
-export function OnboardingSetupProvider({ children }: { children: ReactNode }) {
+export function AccountSetupProvider({ children }: { children: ReactNode }) {
   const { user, isSignedIn, refreshUser } = useAuth();
   const [openReason, setOpenReason] = useState<OpenReason>(null);
   const [namesSheetOpen, setNamesSheetOpen] = useState(false);
   const [emailSheetOpen, setEmailSheetOpen] = useState(false);
   const lastCheckedUserId = useRef<string | null>(null);
-  /** Utilizador escolheu "Agora não" no sheet de nomes; não reabrir até mudar de conta ou concluir. */
   const namesDeferredRef = useRef(false);
   const emailDeferredRef = useRef(false);
 
@@ -80,22 +79,17 @@ export function OnboardingSetupProvider({ children }: { children: ReactNode }) {
 
     let cancelled = false;
     void (async () => {
-      const state = await loadPrefsOnboardingState(user.id);
+      const state = await loadAccountSetupNotificationPrefs(user.id);
       if (cancelled) return;
       if (!state.completed && !state.skipped) {
-        setOpenReason("onboarding");
+        setOpenReason("post_signup");
       }
     })();
 
     return () => {
       cancelled = true;
     };
-  }, [
-    isSignedIn,
-    user?.id,
-    user?.needsEmailVerification,
-    user?.needsProfileNames,
-  ]);
+  }, [isSignedIn, user?.id, user?.needsEmailVerification, user?.needsProfileNames]);
 
   const openNotificationPreferencesSetup = useCallback(() => {
     setOpenReason("manual");
@@ -106,9 +100,9 @@ export function OnboardingSetupProvider({ children }: { children: ReactNode }) {
       const uid = user?.id;
       if (uid) {
         if (reason === "save") {
-          await savePrefsOnboardingCompleted(uid);
+          await saveAccountSetupNotificationPrefsCompleted(uid);
         } else if (reason === "skip") {
-          await savePrefsOnboardingSkipped(uid);
+          await saveAccountSetupNotificationPrefsSkipped(uid);
         }
       }
       setOpenReason(null);
@@ -120,7 +114,7 @@ export function OnboardingSetupProvider({ children }: { children: ReactNode }) {
     openReason !== null &&
     !user?.needsEmailVerification &&
     !user?.needsProfileNames;
-  const mode = openReason === "manual" ? "manual" : "onboarding";
+  const notifMode = openReason === "manual" ? "manual" : "account_flow";
 
   const handleNamesDismiss = useCallback(
     async (reason: "saved" | "later") => {
@@ -135,15 +129,12 @@ export function OnboardingSetupProvider({ children }: { children: ReactNode }) {
     [refreshUser],
   );
 
-  const handleEmailDismiss = useCallback(
-    (reason: "verified" | "later") => {
-      if (reason === "later") {
-        emailDeferredRef.current = true;
-      }
-      setEmailSheetOpen(false);
-    },
-    [],
-  );
+  const handleEmailDismiss = useCallback((reason: "verified" | "later") => {
+    if (reason === "later") {
+      emailDeferredRef.current = true;
+    }
+    setEmailSheetOpen(false);
+  }, []);
 
   const value = useMemo(
     () => ({ openNotificationPreferencesSetup }),
@@ -151,7 +142,7 @@ export function OnboardingSetupProvider({ children }: { children: ReactNode }) {
   );
 
   return (
-    <OnboardingSetupContext.Provider value={value}>
+    <AccountSetupContext.Provider value={value}>
       {children}
       {user?.id && emailSheetOpen ? (
         <EmailVerificationSetupSheet
@@ -171,20 +162,18 @@ export function OnboardingSetupProvider({ children }: { children: ReactNode }) {
       {user?.id ? (
         <ContinueSetupSheet
           visible={notifVisible}
-          mode={mode}
+          mode={notifMode}
           onDismiss={handleDismiss}
         />
       ) : null}
-    </OnboardingSetupContext.Provider>
+    </AccountSetupContext.Provider>
   );
 }
 
-export function useOnboardingSetup(): OnboardingSetupContextValue {
-  const ctx = useContext(OnboardingSetupContext);
+export function useAccountSetup(): AccountSetupContextValue {
+  const ctx = useContext(AccountSetupContext);
   if (!ctx) {
-    throw new Error(
-      "useOnboardingSetup deve ser usado dentro de OnboardingSetupProvider",
-    );
+    throw new Error("useAccountSetup deve ser usado dentro de AccountSetupProvider");
   }
   return ctx;
 }

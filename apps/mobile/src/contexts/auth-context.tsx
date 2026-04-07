@@ -87,7 +87,6 @@ export function AuthProvider({
       await setMockSessionActive(false);
     } finally {
       setIsReady(true);
-      await SplashScreen.hideAsync();
     }
   }, [authService]);
 

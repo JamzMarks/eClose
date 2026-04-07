@@ -2,6 +2,11 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
+import enCommon from './locales/en/common.json';
+import enDiscover from './locales/en/discover.json';
+import enSettings from './locales/en/settings.json';
+import enTabs from './locales/en/tabs.json';
+import enWishlists from './locales/en/wishlists.json';
 import ptAuth from './locales/pt/auth.json';
 import ptCommon from './locales/pt/common.json';
 import ptDiscover from './locales/pt/discover.json';
@@ -15,6 +20,7 @@ i18n.use(initReactI18next)
   .init({
     lng: 'pt',
     fallbackLng: 'pt',
+    supportedLngs: ['pt', 'en'],
 
     resources: {
       pt: {
@@ -26,6 +32,13 @@ i18n.use(initReactI18next)
         settings: ptSettings,
         tabs: ptTabs,
         wishlists: ptWishlists,
+      },
+      en: {
+        common: enCommon,
+        discover: enDiscover,
+        settings: enSettings,
+        tabs: enTabs,
+        wishlists: enWishlists,
       },
     },
 

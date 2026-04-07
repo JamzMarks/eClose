@@ -1,21 +1,34 @@
-import { useEffect, useState } from 'react';
-import { useColorScheme as useRNColorScheme } from 'react-native';
+import { useEffect, useState } from "react";
+import { useColorScheme as useRNColorScheme } from "react-native";
+
+import { useOptionalThemePreference } from "@/contexts/theme-preference-context";
 
 /**
- * To support static rendering, this value needs to be re-calculated on the client side for web
+ * Web: valor estável no SSR; no cliente aplica preferência persistida (igual ao nativo).
  */
 export function useColorScheme() {
-  const [hasHydrated, setHasHydrated] = useState(false);
+  const [webHydrated, setWebHydrated] = useState(false);
+  const ctx = useOptionalThemePreference();
+  const system = useRNColorScheme();
 
   useEffect(() => {
-    setHasHydrated(true);
+    setWebHydrated(true);
   }, []);
 
-  const colorScheme = useRNColorScheme();
-
-  if (hasHydrated) {
-    return colorScheme;
+  if (!webHydrated) {
+    return "light";
   }
 
-  return 'light';
+  if (!ctx) {
+    return system;
+  }
+
+  const { preference, hydrated } = ctx;
+  if (!hydrated) {
+    return system;
+  }
+  if (preference === "system") {
+    return system;
+  }
+  return preference;
 }

@@ -15,5 +15,3 @@ export {
   type ButtonPresetProps,
 } from "./Button";
 export { AppTextField, type AppTextFieldProps } from "./Input";
-export { Collapsible } from "./Collapsible";
-export { IconSymbol } from "./IconSymbol";

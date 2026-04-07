@@ -6,10 +6,7 @@ import { AppTabScreenHeader } from "@/components/shared/tab-screen/AppTabScreenH
 import { getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
-/**
- * Tab Mapa — `react-native-maps` foi removido por instabilidade; mapa interactivo volta quando
- * reinstalarmos a lib (ou alternativa). O bloco comentado em baixo é referência do layout anterior.
- */
+/** Tab Mapa — `react-native-maps` foi removido por instabilidade; mapa interactivo volta quando reinstalarmos a lib (ou alternativa). */
 export function ExploreTabScreen() {
   const { t } = useTranslation("discover");
   const scheme = useColorScheme() ?? "light";
@@ -48,28 +45,3 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
-
-/*
- * --- Mock / referência para quando `react-native-maps` voltar a estar nas dependências ---
- *
- * import { useState } from "react";
- * import MapView, { Marker, type Region } from "react-native-maps";
- * import { ExploreMapResultsSheet } from "./ExploreMapResultsSheet";
- * import { PORTUGAL_INITIAL_REGION } from "./explore-map-region";
- * import { useExploreMapRegionResults } from "./use-explore-map-region-results";
- *
- * const [region, setRegion] = useState<Region>(PORTUGAL_INITIAL_REGION);
- * const [sheetOpen, setSheetOpen] = useState(false);
- * const { markers, rows } = useExploreMapRegionResults(region);
- *
- * <MapView
- *   style={{ flex: 1 }}
- *   region={region}
- *   onRegionChangeComplete={setRegion}>
- *   {markers.map((m) => (
- *     <Marker key={m.id} coordinate={m.coordinate} title={m.title} />
- *   ))}
- * </MapView>
- *
- * <ExploreMapResultsSheet visible={sheetOpen} onClose={() => setSheetOpen(false)} rows={rows} ... />
- */

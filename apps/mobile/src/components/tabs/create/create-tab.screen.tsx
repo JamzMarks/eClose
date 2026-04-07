@@ -3,23 +3,34 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
-import { PartnerProgramSheet } from "@/components/tabs/create/components/partner-program-sheet";
+import { AuthRequiredPlaceholder } from "@/components/auth";
 import { Screen } from "@/components/layout/screen";
 import { AppTabScreenHeader } from "@/components/shared/tab-screen/AppTabScreenHeader";
+import { PartnerProgramSheet } from "@/components/tabs/create/components/partner-program-sheet";
 import { AppButton } from "@/components/ui/Button";
 import { AppPalette, getSchemeColors } from "@/constants/palette";
+import { useAuth } from "@/contexts/auth-context";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
 export function CreateTabScreen() {
   const { t } = useTranslation("discover");
+  const { t: tAuth } = useTranslation("auth");
   const router = useRouter();
   const scheme = useColorScheme() ?? "light";
   const c = getSchemeColors(scheme);
+  const { isReady, isSignedIn } = useAuth();
   const [partnerOpen, setPartnerOpen] = useState(false);
+
+  if (!isReady) {
+    return null;
+  }
 
   return (
     <Screen>
       <AppTabScreenHeader title={t("createTitle")} borderColor={c.border} titleColor={c.text} />
+      {!isSignedIn ? (
+        <AuthRequiredPlaceholder message={tAuth("authRequiredCreateBody")} />
+      ) : (
       <View style={[styles.content, { backgroundColor: c.background }]}>
         <Pressable
           onPress={() => setPartnerOpen(true)}
@@ -58,6 +69,7 @@ export function CreateTabScreen() {
           <Text style={[styles.muted, { color: c.textSecondary }]}>{t("createEventHint")}</Text>
         </View>
       </View>
+      )}
       <PartnerProgramSheet visible={partnerOpen} onClose={() => setPartnerOpen(false)} />
     </Screen>
   );

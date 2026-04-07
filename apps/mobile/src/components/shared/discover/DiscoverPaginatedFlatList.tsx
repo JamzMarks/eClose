@@ -19,6 +19,8 @@ export type DiscoverPaginatedFlatListProps<T> = {
   listHeaderComponent?: ReactElement | null;
   /** Se definido, substitui o hint vazio por defeito (ex.: loading / erro inicial). */
   listEmptyComponent?: ReactElement | null;
+  /** Altura mínima do estado vazio (alinhada com loading/erro embebidos). */
+  emptyMinHeight?: number;
   numColumns?: number;
   columnWrapperStyle?: StyleProp<ViewStyle>;
 };
@@ -39,6 +41,7 @@ export function DiscoverPaginatedFlatList<T>({
   canLoadMore,
   listHeaderComponent,
   listEmptyComponent,
+  emptyMinHeight = 220,
   numColumns = 1,
   columnWrapperStyle,
 }: DiscoverPaginatedFlatListProps<T>) {
@@ -47,7 +50,7 @@ export function DiscoverPaginatedFlatList<T>({
     listEmptyComponent !== undefined ? (
       listEmptyComponent
     ) : (
-      <TabScreenEmptyHint message={emptyMessage} color={emptyHintColor} />
+      <TabScreenEmptyHint message={emptyMessage} color={emptyHintColor} minHeight={emptyMinHeight} />
     );
   return (
     <FlatList

@@ -1,1 +1,0 @@
-export { IconSymbol } from "./IconSymbol";
