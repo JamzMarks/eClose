@@ -3,7 +3,7 @@ import type { PublishedEventListItem } from "@/services/discover/discover-list.t
 import { paginateLocalPublishedEvents } from "@/services/discover/discover.stub-pagination";
 import { getApiClient } from "@/services/api-client";
 import type { IEventService } from "@/services/event/event.service.interface";
-import type { EventDto, ListPublishedEventsParams } from "@/services/types/event.types";
+import type { CreateEventRequest, EventDto, ListPublishedEventsParams } from "@/services/types/event.types";
 import type { PaginatedResponse } from "@/services/types/pagination.types";
 import { toQueryString } from "@/services/utils/query-string";
 
@@ -50,5 +50,9 @@ export class EventService implements IEventService {
 
   getPublicById(id: string): Promise<EventDto> {
     return this.client.get<EventDto>(`/events/${encodeURIComponent(id)}`);
+  }
+
+  create(body: CreateEventRequest): Promise<EventDto> {
+    return this.client.post<EventDto>("/events", body);
   }
 }

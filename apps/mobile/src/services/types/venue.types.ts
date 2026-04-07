@@ -45,9 +45,32 @@ export type VenueManageDto = VenueDto & {
   verificationAddressProofMediaAssetId: string | null;
   hasCnpjDocument: boolean;
   hasAddressProofDocument: boolean;
+  registryCheckedAt?: string | null;
 };
 
 export type MarketplaceVenueCardDto = {
   venue: VenueDto;
   primaryMediaUrl: string | null;
+};
+
+export type VenueOpeningSlotInput = {
+  weekday: number;
+  openLocal: string;
+  closeLocal: string;
+  closesNextDay?: boolean;
+};
+
+export type CreateVenueRequest = {
+  name: string;
+  slug: string;
+  description?: string;
+  ownerUserId?: string;
+  address: VenueAddressDto;
+  geoLat?: number;
+  geoLng?: number;
+  timezone: string;
+  openingHours: VenueOpeningSlotInput[];
+  taxonomyTermIds?: string[];
+  marketplaceListed?: boolean;
+  openToArtistInquiries?: boolean;
 };

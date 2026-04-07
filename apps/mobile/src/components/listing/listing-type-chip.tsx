@@ -1,5 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 
+import { Radius } from "@/constants/radius";
+
 export type ListingTypeChipProps = {
   label: string;
   textColor: string;
@@ -20,7 +22,7 @@ const styles = StyleSheet.create({
   chip: {
     paddingHorizontal: 10,
     paddingVertical: 5,
-    borderRadius: 8,
+    borderRadius: Radius.sm,
     alignSelf: "flex-start",
   },
   text: {

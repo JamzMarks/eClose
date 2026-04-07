@@ -18,6 +18,9 @@ export type EventListingCardProps = {
   chipTextColor?: string;
   chipBackgroundColor?: string;
   onPress: () => void;
+  /** Grelha 2 colunas: imagem mais baixa e cartão mais compacto. */
+  cardInnerWidth?: number;
+  gridMode?: boolean;
 };
 
 function eventLocationLine(event: EventDto, onlineLabel: string): string {
@@ -50,6 +53,8 @@ export function EventListingCard({
   chipTextColor = "#1C1917",
   chipBackgroundColor = "rgba(255,255,255,0.92)",
   onPress,
+  cardInnerWidth,
+  gridMode = false,
 }: EventListingCardProps) {
   const dateLine = formatEventRange(event.startsAt, event.endsAt);
   const placeLine = eventLocationLine(event, onlineLabel);
@@ -62,6 +67,9 @@ export function EventListingCard({
       subtitle={dateLine}
       meta={placeLine}
       onPress={onPress}
+      cardInnerWidth={cardInnerWidth}
+      carouselHeight={gridMode ? 104 : undefined}
+      marginBottom={gridMode ? 12 : 18}
       imageOverlay={
         categoryLabel ? (
           <ListingTypeChip

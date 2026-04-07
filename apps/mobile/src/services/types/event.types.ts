@@ -39,3 +39,21 @@ export type ListPublishedEventsParams = {
   /** Filtro da listagem (mock e cliente se a API não filtrar). */
   discoveryLocationMode?: DiscoveryLocationModeFilter;
 };
+
+export type CreateEventRequest = {
+  title: string;
+  slug: string;
+  description?: string;
+  locationMode: "PHYSICAL" | "ONLINE" | "HYBRID";
+  venueId?: string;
+  onlineUrl?: string;
+  locationLabel?: string;
+  locationNotes?: string;
+  adhocAddress?: Record<string, unknown>;
+  startsAt: string;
+  endsAt: string;
+  timezone: string;
+  organizerArtistId: string;
+  taxonomyTermIds?: string[];
+  status?: "DRAFT" | "PUBLISHED" | "CANCELLED";
+};

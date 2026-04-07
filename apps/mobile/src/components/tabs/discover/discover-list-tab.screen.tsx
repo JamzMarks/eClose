@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
@@ -7,6 +7,10 @@ import { DiscoverFiltersSheet } from "@/components/discover/DiscoverFiltersSheet
 import { DiscoverListToolbar } from "@/components/discover/DiscoverListToolbar";
 import { DiscoverPaginatedFlatList } from "@/components/discover/DiscoverPaginatedFlatList";
 import type { DiscoverListKind } from "@/components/discover/discover-segmented-kind";
+import { DiscoverQuickCategoriesRow } from "@/components/discover/DiscoverQuickCategoriesRow";
+import type { DiscoverQuickFilterId } from "@/components/discover/DiscoverQuickFilterChips";
+import { DiscoverQuickFilterChips } from "@/components/discover/DiscoverQuickFilterChips";
+import { DiscoverSearchBar } from "@/components/discover/DiscoverSearchBar";
 import { EventListingCard } from "@/components/listing/event-listing-card";
 import { VenueListingCard } from "@/components/listing/venue-listing-card";
 import { Screen } from "@/components/layout/screen";
@@ -15,7 +19,9 @@ import { TabScreenCenterLoading } from "@/components/shared/tab-screen/TabScreen
 import { useExploreVenues } from "@/components/tabs/explore/use-explore-venues";
 import { useHomePublishedEvents } from "@/components/tabs/home/use-home-published-events";
 import { AppPalette, getSchemeColors } from "@/constants/palette";
+import { useDiscoverGrid } from "@/hooks/use-discover-grid";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import type { DiscoverQuickCategory } from "@/services/discover/discover-quick-categories.mock";
 import {
   defaultDiscoverEventFilters,
   defaultDiscoverVenueFilters,
@@ -23,22 +29,103 @@ import {
   type DiscoverVenueListFilters,
 } from "@/services/discover/discover-list-filters.types";
 
+function filterVenueItems<
+  T extends { venue: { name: string; slug: string; address: { city: string }; isVerifiedL2?: boolean } },
+>(
+  items: T[],
+  search: string,
+  category: DiscoverQuickCategory | null,
+  quick: DiscoverQuickFilterId,
+): T[] {
+  let list = items;
+  const q = search.trim().toLowerCase();
+  if (q) {
+    list = list.filter(
+      (it) =>
+        it.venue.name.toLowerCase().includes(q) ||
+        it.venue.slug.toLowerCase().includes(q) ||
+        it.venue.address.city.toLowerCase().includes(q),
+    );
+  }
+  if (category?.filterKeyword) {
+    const k = category.filterKeyword.toLowerCase();
+    list = list.filter((it) => it.venue.name.toLowerCase().includes(k));
+  }
+  if (quick === "popular") {
+    list = list.filter((it) => Boolean(it.venue.isVerifiedL2));
+  }
+  return list;
+}
+
+function filterEventItems<
+  T extends {
+    event: { title: string; description: string | null; primaryMediaUrl?: string | null };
+    primaryMediaUrl?: string | null;
+  },
+>(items: T[], category: DiscoverQuickCategory | null, quick: DiscoverQuickFilterId): T[] {
+  let list = items;
+  if (category?.filterKeyword) {
+    const k = category.filterKeyword.toLowerCase();
+    list = list.filter(
+      (it) =>
+        it.event.title.toLowerCase().includes(k) ||
+        (it.event.description?.toLowerCase().includes(k) ?? false),
+    );
+  }
+  if (quick === "popular") {
+    list = [...list].sort(
+      (a, b) =>
+        Number(!!(b.primaryMediaUrl ?? b.event.primaryMediaUrl)) -
+        Number(!!(a.primaryMediaUrl ?? a.event.primaryMediaUrl)),
+    );
+  }
+  return list;
+}
+
 export function DiscoverListTabScreen() {
   const { t } = useTranslation("discover");
   const router = useRouter();
   const scheme = useColorScheme() ?? "light";
   const c = getSchemeColors(scheme);
+  const { numColumns, cardWidth, columnGap } = useDiscoverGrid();
 
   const [listKind, setListKind] = useState<DiscoverListKind>("events");
-  const [eventFilters, setEventFilters] =
-    useState<DiscoverEventListFilters>(defaultDiscoverEventFilters);
-  const [venueFilters, setVenueFilters] =
-    useState<DiscoverVenueListFilters>(defaultDiscoverVenueFilters);
+  const [eventFilters, setEventFilters] = useState<DiscoverEventListFilters>(defaultDiscoverEventFilters);
+  const [venueFilters, setVenueFilters] = useState<DiscoverVenueListFilters>(defaultDiscoverVenueFilters);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
+  const [searchDraft, setSearchDraft] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<DiscoverQuickCategory | null>(null);
+  const [quickFilter, setQuickFilter] = useState<DiscoverQuickFilterId>("all");
+
+  useEffect(() => {
+    const h = setTimeout(() => {
+      setEventFilters((prev) => ({ ...prev, query: searchDraft }));
+    }, 320);
+    return () => clearTimeout(h);
+  }, [searchDraft]);
+
+  const venueFiltersForApi = useMemo(
+    () => ({
+      ...venueFilters,
+      openToInquiriesOnly: venueFilters.openToInquiriesOnly || quickFilter === "recommends",
+    }),
+    [venueFilters, quickFilter],
+  );
+
   const events = useHomePublishedEvents(t, eventFilters, listKind === "events");
-  const venues = useExploreVenues(t, venueFilters, listKind === "venues");
+  const venues = useExploreVenues(t, venueFiltersForApi, listKind === "venues");
   const active = listKind === "events" ? events : venues;
+
+  const displayEvents = useMemo(
+    () => filterEventItems(events.items, selectedCategory, quickFilter),
+    [events.items, selectedCategory, quickFilter],
+  );
+
+  const displayVenues = useMemo(
+    () => filterVenueItems(venues.items, searchDraft, selectedCategory, quickFilter),
+    [venues.items, searchDraft, selectedCategory, quickFilter],
+  );
 
   const toolbarColors = {
     border: c.border,
@@ -64,23 +151,30 @@ export function DiscoverListTabScreen() {
     locationModeSection: t("filtersLocationModeSection"),
   };
 
-  const eventsErrorBanner =
-    events.error && events.items.length > 0 ? (
-      <View style={{ paddingBottom: 10, paddingHorizontal: 4 }}>
-        <Text style={{ color: AppPalette.error, fontSize: 14, lineHeight: 20 }}>
-          {events.error}
-        </Text>
-      </View>
-    ) : null;
-
-  const venuesErrorBanner =
-    venues.error && venues.items.length > 0 ? (
-      <View style={{ paddingBottom: 10, paddingHorizontal: 4 }}>
-        <Text style={{ color: AppPalette.error, fontSize: 14, lineHeight: 20 }}>
-          {venues.error}
-        </Text>
-      </View>
-    ) : null;
+  const listHeader = (
+    <View>
+      <DiscoverSearchBar value={searchDraft} onChangeText={setSearchDraft} />
+      <DiscoverQuickCategoriesRow
+        selectedId={selectedCategory?.id ?? null}
+        onSelect={setSelectedCategory}
+      />
+      <DiscoverQuickFilterChips
+        value={quickFilter}
+        onChange={setQuickFilter}
+        onMorePress={() => setFiltersOpen(true)}
+      />
+      {listKind === "events" && events.error && events.items.length > 0 ? (
+        <View style={{ paddingBottom: 10, paddingHorizontal: 4 }}>
+          <Text style={{ color: AppPalette.error, fontSize: 14, lineHeight: 20 }}>{events.error}</Text>
+        </View>
+      ) : null}
+      {listKind === "venues" && venues.error && venues.items.length > 0 ? (
+        <View style={{ paddingBottom: 10, paddingHorizontal: 4 }}>
+          <Text style={{ color: AppPalette.error, fontSize: 14, lineHeight: 20 }}>{venues.error}</Text>
+        </View>
+      ) : null}
+    </View>
+  );
 
   const filtersSheet = (
     <DiscoverFiltersSheet
@@ -107,10 +201,18 @@ export function DiscoverListTabScreen() {
     />
   );
 
+  const columnWrap = {
+    gap: columnGap,
+    marginBottom: 4,
+  };
+
+  const gridMode = numColumns > 1;
+
   if (active.loading && active.items.length === 0) {
     return (
       <Screen>
         {header}
+        {listHeader}
         <TabScreenCenterLoading message={t("loading")} subtitleColor={c.textSecondary} />
         {filtersSheet}
       </Screen>
@@ -121,6 +223,7 @@ export function DiscoverListTabScreen() {
     return (
       <Screen>
         {header}
+        {listHeader}
         <TabScreenCenterError
           message={active.error}
           retryLabel={t("retry")}
@@ -136,52 +239,64 @@ export function DiscoverListTabScreen() {
       {header}
       {listKind === "events" ? (
         <DiscoverPaginatedFlatList
-          data={events.items}
+          data={displayEvents}
           keyExtractor={(it) => it.event.id}
           emptyMessage={t("emptyEvents")}
           emptyHintColor={c.textSecondary}
-          listHeaderComponent={eventsErrorBanner}
+          listHeaderComponent={listHeader}
           refreshing={events.refreshing}
           onRefresh={events.onRefresh}
           onEndReached={events.onEndReached}
           loadingMore={events.loadingMore}
           canLoadMore={events.canLoadMore}
+          numColumns={numColumns}
+          columnWrapperStyle={gridMode ? columnWrap : undefined}
           renderItem={({ item }) => (
-            <EventListingCard
-              event={item.event}
-              primaryMediaUrl={item.primaryMediaUrl}
-              galleryUrls={item.galleryUrls}
-              categoryLabel={item.categoryLabel}
-              textColor={c.text}
-              subtitleColor={c.textSecondary}
-              imagePlaceholderColor={c.border}
-              onlineLabel={t("online")}
-              onPress={() => router.push(`/event/${item.event.id}`)}
-            />
+            <View style={gridMode ? { width: cardWidth } : undefined}>
+              <EventListingCard
+                event={item.event}
+                primaryMediaUrl={item.primaryMediaUrl}
+                galleryUrls={item.galleryUrls}
+                categoryLabel={item.categoryLabel}
+                textColor={c.text}
+                subtitleColor={c.textSecondary}
+                imagePlaceholderColor={c.border}
+                onlineLabel={t("online")}
+                onPress={() => router.push(`/event/${item.event.id}`)}
+                cardInnerWidth={cardWidth}
+                gridMode={gridMode}
+              />
+            </View>
           )}
         />
       ) : (
         <DiscoverPaginatedFlatList
-          data={venues.items}
+          data={displayVenues}
           keyExtractor={(it) => it.venue.id}
           emptyMessage={t("emptyVenues")}
           emptyHintColor={c.textSecondary}
-          listHeaderComponent={venuesErrorBanner}
+          listHeaderComponent={listHeader}
           refreshing={venues.refreshing}
           onRefresh={venues.onRefresh}
           onEndReached={venues.onEndReached}
           loadingMore={venues.loadingMore}
           canLoadMore={venues.canLoadMore}
+          numColumns={numColumns}
+          columnWrapperStyle={gridMode ? columnWrap : undefined}
           renderItem={({ item }) => (
-            <VenueListingCard
-              card={item}
-              categoryLabel={item.categoryLabel}
-              trustBadgeLabel={t("trustSemiReliable")}
-              textColor={c.text}
-              subtitleColor={c.textSecondary}
-              imagePlaceholderColor={c.border}
-              onPress={() => router.push(`/venue/${item.venue.id}`)}
-            />
+            <View style={gridMode ? { width: cardWidth } : undefined}>
+              <VenueListingCard
+                card={item}
+                categoryLabel={item.categoryLabel}
+                trustBadgeLabel={t("trustSemiReliable")}
+                textColor={c.text}
+                subtitleColor={c.textSecondary}
+                imagePlaceholderColor={c.border}
+                onPress={() => router.push(`/venue/${item.venue.id}`)}
+                cardInnerWidth={cardWidth}
+                gridMode={gridMode}
+              />
+            </View>
           )}
         />
       )}

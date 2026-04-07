@@ -17,6 +17,7 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
  */
 export function SettingsModalScreen() {
   const { t } = useTranslation("settings");
+  const { t: tProfile } = useTranslation("profile");
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const scheme = useColorScheme() ?? "light";
@@ -91,6 +92,32 @@ export function SettingsModalScreen() {
           subtitle={t("aboutHint")}
           onPress={() => {}}
           textColor={c.textSecondary}
+          subtitleColor={c.textMuted}
+          borderColor={c.border}
+          backgroundColor={c.surface}
+        />
+
+        <SettingsSectionHeader title={t("sectionLegal")} color={c.textMuted} />
+        <SettingsNavigationRow
+          title={tProfile("privacyPolicy")}
+          onPress={() => router.push({ pathname: "/profile-legal", params: { kind: "privacy" } })}
+          textColor={c.text}
+          subtitleColor={c.textMuted}
+          borderColor={c.border}
+          backgroundColor={c.surface}
+        />
+        <SettingsNavigationRow
+          title={tProfile("termsOfService")}
+          onPress={() => router.push({ pathname: "/profile-legal", params: { kind: "terms" } })}
+          textColor={c.text}
+          subtitleColor={c.textMuted}
+          borderColor={c.border}
+          backgroundColor={c.surface}
+        />
+        <SettingsNavigationRow
+          title={tProfile("helpContact")}
+          onPress={() => router.push({ pathname: "/profile-legal", params: { kind: "help" } })}
+          textColor={c.text}
           subtitleColor={c.textMuted}
           borderColor={c.border}
           backgroundColor={c.surface}

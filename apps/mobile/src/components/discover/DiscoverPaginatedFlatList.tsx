@@ -1,5 +1,5 @@
-import type { ReactNode } from "react";
-import type { ListRenderItem } from "react-native";
+import type { ReactElement } from "react";
+import type { ListRenderItem, StyleProp, ViewStyle } from "react-native";
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from "react-native";
 
 import { TabScreenEmptyHint } from "@/components/shared/tab-screen/TabScreenEmptyHint";
@@ -16,7 +16,9 @@ export type DiscoverPaginatedFlatListProps<T> = {
   onEndReached: () => void;
   loadingMore: boolean;
   canLoadMore: boolean;
-  listHeaderComponent?: ReactNode;
+  listHeaderComponent?: ReactElement | null;
+  numColumns?: number;
+  columnWrapperStyle?: StyleProp<ViewStyle>;
 };
 
 /**
@@ -34,11 +36,16 @@ export function DiscoverPaginatedFlatList<T>({
   loadingMore,
   canLoadMore,
   listHeaderComponent,
+  numColumns = 1,
+  columnWrapperStyle,
 }: DiscoverPaginatedFlatListProps<T>) {
+  const cols = numColumns > 1 ? numColumns : 1;
   return (
     <FlatList
       data={data}
       keyExtractor={keyExtractor}
+      numColumns={cols}
+      columnWrapperStyle={cols > 1 ? columnWrapperStyle : undefined}
       ListHeaderComponent={listHeaderComponent ?? null}
       refreshControl={
         <RefreshControl

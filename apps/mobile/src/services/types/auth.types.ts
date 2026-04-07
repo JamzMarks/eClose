@@ -7,6 +7,9 @@ export type SignUpRequest = {
   username: string;
   email: string;
   password: string;
+  /** Versões dos textos legais aceites (omissão na API usa valor do servidor). */
+  termsVersion?: string;
+  privacyVersion?: string;
 };
 
 export type AuthTokensResponse = {

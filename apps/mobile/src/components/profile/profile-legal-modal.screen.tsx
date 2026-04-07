@@ -16,6 +16,10 @@ import { ExternalLink } from "lucide-react-native";
 
 import { AppButton } from "@/components/ui/button";
 import {
+  getClientPrivacyVersion,
+  getClientTermsVersion,
+} from "@/constants/legal-document-versions";
+import {
   getProfileLegalModalConfig,
   isProfileLegalModalKind,
   type ProfileLegalModalKind,
@@ -59,6 +63,12 @@ export function ProfileLegalModalScreen({ kind }: ProfileLegalModalScreenProps) 
   }
 
   const title = t(config.titleI18nKey);
+  const versionLine =
+    validKind === "terms"
+      ? t("legalDocumentVersionLabel", { version: getClientTermsVersion() })
+      : validKind === "privacy"
+        ? t("legalDocumentVersionLabel", { version: getClientPrivacyVersion() })
+        : null;
 
   return (
     <View style={[styles.root, { backgroundColor: c.background, paddingTop: insets.top }]}>
@@ -71,9 +81,16 @@ export function ProfileLegalModalScreen({ kind }: ProfileLegalModalScreenProps) 
           style={styles.headerSide}>
           <Text style={[styles.backLabel, { color: AppPalette.primary }]}>{t("legalModalBack")}</Text>
         </Pressable>
-        <Text style={[styles.headerTitle, { color: c.text }]} numberOfLines={1}>
-          {title}
-        </Text>
+        <View style={styles.headerTitleBlock}>
+          <Text style={[styles.headerTitle, { color: c.text }]} numberOfLines={1}>
+            {title}
+          </Text>
+          {versionLine ? (
+            <Text style={[styles.versionLine, { color: c.textSecondary }]} numberOfLines={2}>
+              {versionLine}
+            </Text>
+          ) : null}
+        </View>
         <View style={[styles.headerSide, styles.headerSideRight]}>
           {config.isExternalLink ? (
             <View
@@ -148,11 +165,21 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: "600",
   },
-  headerTitle: {
+  headerTitleBlock: {
     flex: 1,
+    alignItems: "center",
+    gap: 2,
+  },
+  headerTitle: {
     fontSize: 17,
     fontWeight: "700",
     textAlign: "center",
+  },
+  versionLine: {
+    fontSize: 12,
+    lineHeight: 16,
+    textAlign: "center",
+    paddingHorizontal: 4,
   },
   webWrap: {
     flex: 1,

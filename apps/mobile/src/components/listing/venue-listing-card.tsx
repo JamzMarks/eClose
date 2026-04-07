@@ -17,6 +17,8 @@ export type VenueListingCardProps = {
   onPress: () => void;
   /** Ex.: “Semi confiável” quando `venue.isVerifiedL2`. */
   trustBadgeLabel?: string;
+  cardInnerWidth?: number;
+  gridMode?: boolean;
 };
 
 function citySubtitle(card: MarketplaceVenueCardDto): string {
@@ -34,6 +36,8 @@ export function VenueListingCard({
   imagePlaceholderColor,
   onPress,
   trustBadgeLabel,
+  cardInnerWidth,
+  gridMode = false,
 }: VenueListingCardProps) {
   const { venue, primaryMediaUrl, galleryUrls } = card;
   const mediaUrls = [primaryMediaUrl, ...(galleryUrls ?? [])].filter(
@@ -47,6 +51,9 @@ export function VenueListingCard({
       title={venue.name}
       subtitle={citySubtitle(card)}
       onPress={onPress}
+      cardInnerWidth={cardInnerWidth}
+      carouselHeight={gridMode ? 104 : undefined}
+      marginBottom={gridMode ? 12 : 18}
       imageOverlay={
         categoryLabel || (trustBadgeLabel && venue.isVerifiedL2) ? (
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6 }}>

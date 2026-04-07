@@ -39,6 +39,16 @@ export function CreateTabScreen() {
         </Pressable>
 
         <View style={styles.block}>
+          <Text style={[styles.sectionLabel, { color: c.textSecondary }]}>{t("createVenueScreenTitle")}</Text>
+          <AppButton
+            title={t("createVenueCta")}
+            onPress={() => router.push("/create/venue")}
+            fullWidth
+          />
+          <Text style={[styles.muted, { color: c.textSecondary }]}>{t("createVenueHint")}</Text>
+        </View>
+
+        <View style={styles.block}>
           <Text style={[styles.sectionLabel, { color: c.textSecondary }]}>{t("createEventSection")}</Text>
           <AppButton
             title={t("createEventCta")}

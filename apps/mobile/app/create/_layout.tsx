@@ -11,6 +11,7 @@ export default function CreateStackLayout() {
         headerShown: true,
       }}>
       <Stack.Screen name="event" options={{ title: t("createEventScreenTitle") }} />
+      <Stack.Screen name="venue" options={{ title: t("createVenueScreenTitle") }} />
     </Stack>
   );
 }

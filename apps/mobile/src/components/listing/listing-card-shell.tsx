@@ -12,6 +12,8 @@ import {
 } from "react-native";
 import { Image } from "expo-image";
 
+import { Radius } from "@/constants/radius";
+
 const LIST_HORIZONTAL_INSET = 32;
 const CAROUSEL_HEIGHT = 132;
 
@@ -29,6 +31,11 @@ export type ListingCardShellProps = {
     subtitle: string;
     imagePlaceholder: string;
   };
+  /** Largura útil da imagem (grelha 2 colunas ou lista completa). */
+  cardInnerWidth?: number;
+  /** Altura do carrossel; em grelha usar mais baixo. */
+  carouselHeight?: number;
+  marginBottom?: number;
 };
 
 /**
@@ -43,9 +50,16 @@ export function ListingCardShell({
   onPress,
   imageOverlay,
   colors,
+  cardInnerWidth: cardInnerWidthProp,
+  carouselHeight: carouselHeightProp,
+  marginBottom = 18,
 }: ListingCardShellProps) {
   const { width: windowWidth } = useWindowDimensions();
-  const slideWidth = Math.max(0, windowWidth - LIST_HORIZONTAL_INSET);
+  const slideWidth = Math.max(
+    0,
+    cardInnerWidthProp ?? Math.max(0, windowWidth - LIST_HORIZONTAL_INSET),
+  );
+  const carouselHeight = carouselHeightProp ?? CAROUSEL_HEIGHT;
   const urls = useMemo(
     () => mediaUrls.map((u) => u.trim()).filter((u) => u.length > 0),
     [mediaUrls],
@@ -64,19 +78,22 @@ export function ListingCardShell({
   return (
     <Pressable
       onPress={onPress}
-      style={({ pressed }) => [styles.card, pressed && styles.pressed]}
+      style={({ pressed }) => [styles.card, { marginBottom }, pressed && styles.pressed]}
       accessibilityRole="button"
       accessibilityLabel={`${title}. ${subtitle}`}
     >
       <View style={[styles.carouselWrap, { width: slideWidth }]}>
         <View
-          style={[styles.slidesViewport, { height: CAROUSEL_HEIGHT, backgroundColor: colors.imagePlaceholder }]}
+          style={[
+            styles.slidesViewport,
+            { height: carouselHeight, backgroundColor: colors.imagePlaceholder },
+          ]}
           accessibilityLabel={imageAccessibilityLabel}
         >
           {urls.length === 0 ? null : urls.length === 1 ? (
             <Image
               source={{ uri: urls[0] }}
-              style={{ width: slideWidth, height: CAROUSEL_HEIGHT }}
+              style={{ width: slideWidth, height: carouselHeight }}
               contentFit="cover"
               transition={200}
             />
@@ -97,7 +114,7 @@ export function ListingCardShell({
                 <Image
                   key={uri}
                   source={{ uri }}
-                  style={{ width: slideWidth, height: CAROUSEL_HEIGHT }}
+                  style={{ width: slideWidth, height: carouselHeight }}
                   contentFit="cover"
                   transition={200}
                 />
@@ -141,19 +158,17 @@ export function ListingCardShell({
 }
 
 const styles = StyleSheet.create({
-  card: {
-    marginBottom: 18,
-  },
+  card: {},
   pressed: {
     opacity: 0.92,
   },
   carouselWrap: {
-    borderRadius: 12,
+    borderRadius: Radius.medium,
     overflow: "hidden",
     alignSelf: "center",
   },
   slidesViewport: {
-    borderRadius: 12,
+    borderRadius: Radius.medium,
     overflow: "hidden",
   },
   pagerContent: {

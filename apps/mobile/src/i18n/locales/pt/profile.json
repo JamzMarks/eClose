@@ -14,5 +14,6 @@
   "legalExternalLinkA11y": "Conteúdo ou ação com link externo",
   "legalHelpBody": "Para falar connosco, abre a tua aplicação de e-mail com o endereço de suporte configurado para a app.",
   "legalHelpOpenExternal": "Abrir email",
-  "legalHelpOpenExternalA11y": "Abrir aplicação de email com link externo"
+  "legalHelpOpenExternalA11y": "Abrir aplicação de email com link externo",
+  "legalDocumentVersionLabel": "Versão do texto em vigor na app: {{version}}"
 }
