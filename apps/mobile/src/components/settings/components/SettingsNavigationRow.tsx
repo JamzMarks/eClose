@@ -56,7 +56,7 @@ export function SettingsNavigationRow({
         ) : null}
       </View>
       {showChevron && !destructive ? (
-        <Ionicons name="chevron-forward" size={18} color={subtitleColor} style={styles.chevron} />
+        <Ionicons name="chevron-forward" size={16} color={subtitleColor} style={styles.chevron} />
       ) : null}
     </Pressable>
   );

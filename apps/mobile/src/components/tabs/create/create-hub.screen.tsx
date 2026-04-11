@@ -5,14 +5,16 @@ import { useTranslation } from "react-i18next";
 
 import { AuthRequiredPlaceholder } from "@/components/auth";
 import { Screen } from "@/components/layout/screen";
-import { AppTabScreenHeader } from "@/components/shared/tab-screen/AppTabScreenHeader";
 import { PartnerProgramSheet } from "@/components/tabs/create/components/partner-program-sheet";
 import { AppButton } from "@/components/ui/Button";
 import { AppPalette, getSchemeColors } from "@/constants/palette";
 import { useAuth } from "@/contexts/auth-context";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
-export function CreateTabScreen() {
+/**
+ * Hub de criação (espaço / evento) — aberto a partir do header ou stack `/create`.
+ */
+export function CreateHubScreen() {
   const { t } = useTranslation("discover");
   const { t: tAuth } = useTranslation("auth");
   const router = useRouter();
@@ -27,48 +29,51 @@ export function CreateTabScreen() {
 
   return (
     <Screen>
-      <AppTabScreenHeader title={t("createTitle")} borderColor={c.border} titleColor={c.text} />
       {!isSignedIn ? (
         <AuthRequiredPlaceholder message={tAuth("authRequiredCreateBody")} />
       ) : (
-      <View style={[styles.content, { backgroundColor: c.background }]}>
-        <Pressable
-          onPress={() => setPartnerOpen(true)}
-          style={({ pressed }) => [
-            styles.partnerCta,
-            { borderColor: c.border, backgroundColor: c.surface },
-            pressed && styles.pressed,
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel={t("createPartnerVenueA11y")}>
-          <Text style={[styles.partnerCtaLabel, { color: AppPalette.primary }]}>
-            {t("createPartnerVenueCta")}
-          </Text>
-          <Text style={[styles.partnerCtaHint, { color: c.textSecondary }]}>
-            {t("createPartnerVenueHint")}
-          </Text>
-        </Pressable>
+        <View style={[styles.content, { backgroundColor: c.background }]}>
+          <Pressable
+            onPress={() => setPartnerOpen(true)}
+            style={({ pressed }) => [
+              styles.partnerCta,
+              { borderColor: c.border, backgroundColor: c.surface },
+              pressed && styles.pressed,
+            ]}
+            accessibilityRole="button"
+            accessibilityLabel={t("createPartnerVenueA11y")}>
+            <Text style={[styles.partnerCtaLabel, { color: AppPalette.primary }]}>
+              {t("createPartnerVenueCta")}
+            </Text>
+            <Text style={[styles.partnerCtaHint, { color: c.textSecondary }]}>
+              {t("createPartnerVenueHint")}
+            </Text>
+          </Pressable>
 
-        <View style={styles.block}>
-          <Text style={[styles.sectionLabel, { color: c.textSecondary }]}>{t("createVenueScreenTitle")}</Text>
-          <AppButton
-            title={t("createVenueCta")}
-            onPress={() => router.push("/create/venue")}
-            fullWidth
-          />
-          <Text style={[styles.muted, { color: c.textSecondary }]}>{t("createVenueHint")}</Text>
-        </View>
+          <View style={styles.block}>
+            <Text style={[styles.sectionLabel, { color: c.textSecondary }]}>
+              {t("createVenueScreenTitle")}
+            </Text>
+            <AppButton
+              title={t("createVenueCta")}
+              onPress={() => router.push("/create/venue")}
+              fullWidth
+            />
+            <Text style={[styles.muted, { color: c.textSecondary }]}>{t("createVenueHint")}</Text>
+          </View>
 
-        <View style={styles.block}>
-          <Text style={[styles.sectionLabel, { color: c.textSecondary }]}>{t("createEventSection")}</Text>
-          <AppButton
-            title={t("createEventCta")}
-            onPress={() => router.push("/create/event")}
-            fullWidth
-          />
-          <Text style={[styles.muted, { color: c.textSecondary }]}>{t("createEventHint")}</Text>
+          <View style={styles.block}>
+            <Text style={[styles.sectionLabel, { color: c.textSecondary }]}>
+              {t("createEventSection")}
+            </Text>
+            <AppButton
+              title={t("createEventCta")}
+              onPress={() => router.push("/create/event")}
+              fullWidth
+            />
+            <Text style={[styles.muted, { color: c.textSecondary }]}>{t("createEventHint")}</Text>
+          </View>
         </View>
-      </View>
       )}
       <PartnerProgramSheet visible={partnerOpen} onClose={() => setPartnerOpen(false)} />
     </Screen>

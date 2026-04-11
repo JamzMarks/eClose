@@ -3,5 +3,10 @@
   "programacao": "Schedule",
   "createTab": "Create",
   "mapTab": "Map",
-  "profile": "Profile"
+  "profile": "Profile",
+  "appName": "eClose",
+  "tabHeaderCreateA11y": "Add or create",
+  "tabHeaderNotificationsA11y": "Notifications",
+  "notificationsTitle": "Notifications",
+  "notificationsPlaceholder": "You don't have notifications yet. Soon you'll see updates from your account and events here."
 }

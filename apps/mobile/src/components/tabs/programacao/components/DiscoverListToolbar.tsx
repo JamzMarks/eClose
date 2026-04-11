@@ -16,7 +16,7 @@ export type DiscoverListToolbarProps = {
 };
 
 /**
- * Cabeçalho da Programação (filtros à direita). Eventos/Espaços mudam nos filtros.
+ * Cabeçalho da Programação (título + filtros à direita).
  */
 export function DiscoverListToolbar({
   title,

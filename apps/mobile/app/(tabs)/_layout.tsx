@@ -56,21 +56,6 @@ export default function TabLayout() {
         />
 
         <Tabs.Screen
-          name="create"
-          options={{
-            tabBarIcon: ({ color, focused }) => (
-              <Icon
-                name={AppIcon.Create}
-                size="lg"
-                color={color}
-                filled={focused}
-              />
-            ),
-            tabBarAccessibilityLabel: t("createTab"),
-          }}
-        />
-
-        <Tabs.Screen
           name="explore"
           options={{
             tabBarIcon: ({ color, focused }) => (

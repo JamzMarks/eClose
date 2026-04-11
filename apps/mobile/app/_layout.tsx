@@ -74,6 +74,10 @@ export default function RootLayout() {
                         />
                         <Stack.Screen name="create" options={{ headerShown: false }} />
                         <Stack.Screen
+                          name="notifications"
+                          options={{ headerShown: true, headerBackTitle: "Voltar" }}
+                        />
+                        <Stack.Screen
                           name="settings"
                           options={{
                             presentation: "modal",

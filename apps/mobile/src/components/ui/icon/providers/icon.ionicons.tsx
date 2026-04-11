@@ -16,6 +16,9 @@ function map(name: AppIcon, filled?: boolean) {
     case AppIcon.Create:
       return filled ? "add-circle" : "add-circle-outline";
 
+    case AppIcon.Notifications:
+      return filled ? "notifications" : "notifications-outline";
+
     case AppIcon.Wishlist:
       return filled ? "bookmark" : "bookmark-outline";
 

@@ -7,6 +7,7 @@ import {
   CalendarDays,
   Bookmark,
   CirclePlus,
+  Bell,
 } from "lucide-react-native";
 
 import { IconSizes, AppIcon } from "../icon.types";
@@ -17,6 +18,7 @@ const map = {
   [AppIcon.Explore]: Compass,
   [AppIcon.Programacao]: CalendarDays,
   [AppIcon.Create]: CirclePlus,
+  [AppIcon.Notifications]: Bell,
   [AppIcon.Wishlist]: Bookmark,
   [AppIcon.Profile]: User,
   [AppIcon.Like]: Heart,
@@ -36,7 +38,7 @@ export const lucideProvider: IconProvider = ({
     <Icon
       size={iconSize}
       color={color}
-      strokeWidth={filled ? 2.5 : 2}
+      strokeWidth={filled ? 1.65 : 1.35}
     />
   );
 };

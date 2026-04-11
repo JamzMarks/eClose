@@ -3,6 +3,7 @@ export enum AppIcon {
   Explore = "explore",
   Programacao = "programacao",
   Create = "create",
+  Notifications = "notifications",
   Wishlist = "wishlist",
   Profile = "profile",
   Like = "like",
@@ -10,10 +11,10 @@ export enum AppIcon {
 }
 
 export const IconSizes = {
-  sm: 16,
-  md: 22,
-  lg: 28,
-  xl: 32,
+  sm: 15,
+  md: 20,
+  lg: 24,
+  xl: 28,
 } as const;
 
 export type IconProps = {

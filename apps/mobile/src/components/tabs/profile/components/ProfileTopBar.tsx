@@ -7,6 +7,8 @@ export type ProfileTopBarProps = {
   borderColor: string;
   settingsA11yLabel: string;
   onOpenSettings: () => void;
+  /** Quando o cabeçalho principal da app já tem separador, omitir o traço inferior. */
+  showBorder?: boolean;
 };
 
 export function ProfileTopBar({
@@ -15,9 +17,14 @@ export function ProfileTopBar({
   borderColor,
   settingsA11yLabel,
   onOpenSettings,
+  showBorder = true,
 }: ProfileTopBarProps) {
   return (
-    <View style={[styles.topBar, { borderBottomColor: borderColor }]}>
+    <View
+      style={[
+        styles.topBar,
+        showBorder && { borderBottomColor: borderColor, borderBottomWidth: StyleSheet.hairlineWidth },
+      ]}>
       <Text style={[styles.handle, { color: textColor }]}>@{handle}</Text>
       <Pressable
         onPress={onOpenSettings}
@@ -25,7 +32,7 @@ export function ProfileTopBar({
         accessibilityRole="button"
         accessibilityLabel={settingsA11yLabel}
       >
-        <Ionicons name="settings-outline" size={26} color={textColor} />
+        <Ionicons name="settings-outline" size={22} color={textColor} />
       </Pressable>
     </View>
   );
@@ -39,7 +46,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     marginHorizontal: -16,
     paddingHorizontal: 16,
-    borderBottomWidth: StyleSheet.hairlineWidth,
   },
   handle: {
     fontSize: 18,

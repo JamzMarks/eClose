@@ -3,5 +3,10 @@
   "programacao": "Programação",
   "createTab": "Criar",
   "mapTab": "Mapa",
-  "profile": "Perfil"
+  "profile": "Perfil",
+  "appName": "eClose",
+  "tabHeaderCreateA11y": "Adicionar ou criar",
+  "tabHeaderNotificationsA11y": "Notificações",
+  "notificationsTitle": "Notificações",
+  "notificationsPlaceholder": "Ainda não tens notificações. Em breve verás aqui atualizações da tua conta e dos eventos."
 }

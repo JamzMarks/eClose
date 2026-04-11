@@ -7,6 +7,10 @@ import { DiscoverPaginatedFlatList } from "@/components/shared/discover/Discover
 import { EventListingCard } from "@/components/shared/listing/event-listing-card";
 import { Screen } from "@/components/layout/screen";
 import { AppTabScreenHeader } from "@/components/shared/tab-screen/AppTabScreenHeader";
+import {
+  TabHeaderCreateButton,
+  TabHeaderNotificationsButton,
+} from "@/components/shared/tab-screen/TabHeaderChrome";
 import { TabScreenCenterError } from "@/components/shared/tab-screen/TabScreenCenterError";
 import { TabScreenCenterLoading } from "@/components/shared/tab-screen/TabScreenCenterLoading";
 import { ListingInlineErrorBanner } from "@/components/shared/tab-screen/ListingInlineErrorBanner";
@@ -20,6 +24,7 @@ import { defaultDiscoverEventFilters } from "@/services/discover/discover-list-f
  */
 export function HomeFeedTabScreen() {
   const { t } = useTranslation("discover");
+  const { t: tTabs } = useTranslation("tabs");
   const router = useRouter();
   const scheme = useColorScheme() ?? "light";
   const c = getSchemeColors(scheme);
@@ -34,7 +39,13 @@ export function HomeFeedTabScreen() {
   if (events.loading && events.items.length === 0) {
     return (
       <Screen>
-        <AppTabScreenHeader title={t("homeFeedTitle")} borderColor={c.border} titleColor={c.text} />
+        <AppTabScreenHeader
+          title={tTabs("appName")}
+          borderColor={c.border}
+          titleColor={c.text}
+          leading={<TabHeaderCreateButton color={c.text} />}
+          trailing={<TabHeaderNotificationsButton color={c.text} />}
+        />
         <TabScreenCenterLoading message={t("loading")} subtitleColor={c.textSecondary} />
       </Screen>
     );
@@ -43,7 +54,13 @@ export function HomeFeedTabScreen() {
   if (events.error && events.items.length === 0) {
     return (
       <Screen>
-        <AppTabScreenHeader title={t("homeFeedTitle")} borderColor={c.border} titleColor={c.text} />
+        <AppTabScreenHeader
+          title={tTabs("appName")}
+          borderColor={c.border}
+          titleColor={c.text}
+          leading={<TabHeaderCreateButton color={c.text} />}
+          trailing={<TabHeaderNotificationsButton color={c.text} />}
+        />
         <TabScreenCenterError
           message={events.error}
           retryLabel={t("retry")}
@@ -55,7 +72,13 @@ export function HomeFeedTabScreen() {
 
   return (
     <Screen>
-      <AppTabScreenHeader title={t("homeFeedTitle")} borderColor={c.border} titleColor={c.text} />
+      <AppTabScreenHeader
+        title={tTabs("appName")}
+        borderColor={c.border}
+        titleColor={c.text}
+        leading={<TabHeaderCreateButton color={c.text} />}
+        trailing={<TabHeaderNotificationsButton color={c.text} />}
+      />
       <Text style={[styles.subtitle, { color: c.textSecondary }]}>{t("homeFeedSubtitle")}</Text>
       <DiscoverPaginatedFlatList
         data={events.items}

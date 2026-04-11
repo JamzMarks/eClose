@@ -1,13 +1,16 @@
 import type { ReactNode } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Platform, StyleSheet, Text, View } from "react-native";
 
 /**
- * Cabeçalho reutilizável para ecrãs dentro das tabs (título + ação à direita opcional).
+ * Cabeçalho para ecrãs nas tabs.
+ * Com `leading` (ex.: Início): ação à esquerda, título centrado, `trailing` à direita.
+ * Sem `leading`: título à esquerda e `trailing` opcional (comportamento clássico).
  */
 export type AppTabScreenHeaderProps = {
   title: string;
   borderColor: string;
   titleColor: string;
+  leading?: ReactNode;
   trailing?: ReactNode;
 };
 
@@ -15,39 +18,107 @@ export function AppTabScreenHeader({
   title,
   borderColor,
   titleColor,
+  leading,
   trailing,
 }: AppTabScreenHeaderProps) {
+  if (leading) {
+    return (
+      <View style={[styles.header, { borderBottomColor: borderColor }]}>
+        <View style={styles.topRowBalanced}>
+          <View style={styles.edgeSlotStart}>{leading}</View>
+          <View style={styles.titleColumn} pointerEvents="box-none">
+            <Text
+              style={[styles.title, styles.titleCentered, { color: titleColor }]}
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              {...(Platform.OS === "android" ? { includeFontPadding: false } : {})}>
+              {title}
+            </Text>
+          </View>
+          <View style={styles.edgeSlotEnd}>{trailing}</View>
+        </View>
+      </View>
+    );
+  }
+
   return (
     <View style={[styles.header, { borderBottomColor: borderColor }]}>
-      <View style={styles.topRow}>
-        <View style={styles.titles}>
-          <Text style={[styles.title, { color: titleColor }]}>{title}</Text>
+      <View style={styles.topRowSimple}>
+        <View style={styles.simpleTitleColumn}>
+          <Text
+            style={[styles.title, styles.titleStart, { color: titleColor }]}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            {...(Platform.OS === "android" ? { includeFontPadding: false } : {})}>
+            {title}
+          </Text>
         </View>
-        {trailing ? <View style={styles.trailing}>{trailing}</View> : null}
+        {trailing ? <View style={styles.simpleTrailingSlot}>{trailing}</View> : null}
       </View>
     </View>
   );
 }
 
+const EDGE_SLOT_W = 44;
+
 const styles = StyleSheet.create({
   header: {
     paddingHorizontal: 20,
-    paddingTop: 6,
-    paddingBottom: 10,
+    paddingVertical: 10,
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
-  topRow: {
+  topRowBalanced: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    gap: 12,
+    minHeight: 40,
   },
-  titles: {
+  edgeSlotStart: {
+    width: EDGE_SLOT_W,
+    minHeight: 40,
+    justifyContent: "center",
+    alignItems: "flex-start",
+  },
+  edgeSlotEnd: {
+    width: EDGE_SLOT_W,
+    minHeight: 40,
+    justifyContent: "center",
+    alignItems: "flex-end",
+  },
+  titleColumn: {
     flex: 1,
     minWidth: 0,
+    minHeight: 40,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  title: { fontSize: 22, fontWeight: "700", letterSpacing: -0.3 },
-  trailing: {
-    alignSelf: "center",
+  topRowSimple: {
+    flexDirection: "row",
+    alignItems: "center",
+    minHeight: 40,
+  },
+  simpleTitleColumn: {
+    flex: 1,
+    minWidth: 0,
+    minHeight: 40,
+    justifyContent: "center",
+  },
+  simpleTrailingSlot: {
+    minWidth: EDGE_SLOT_W,
+    minHeight: 40,
+    justifyContent: "center",
+    alignItems: "flex-end",
+    marginLeft: 8,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: "700",
+    letterSpacing: -0.3,
+    lineHeight: 26,
+  },
+  titleCentered: {
+    textAlign: "center",
+  },
+  titleStart: {
+    textAlign: "left",
   },
 });

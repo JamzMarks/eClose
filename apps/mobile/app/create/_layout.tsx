@@ -10,6 +10,7 @@ export default function CreateStackLayout() {
         headerBackTitle: "Voltar",
         headerShown: true,
       }}>
+      <Stack.Screen name="index" options={{ title: t("createTitle") }} />
       <Stack.Screen name="event" options={{ title: t("createEventScreenTitle") }} />
       <Stack.Screen name="venue" options={{ title: t("createVenueScreenTitle") }} />
     </Stack>

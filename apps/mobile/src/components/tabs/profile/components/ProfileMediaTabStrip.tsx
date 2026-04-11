@@ -15,14 +15,14 @@ export function ProfileMediaTabStrip({
   return (
     <View style={[styles.tabBar, { borderTopColor: borderColor }]}>
       <View style={styles.tabActive}>
-        <Ionicons name="grid-outline" size={22} color={textColor} />
+        <Ionicons name="grid-outline" size={20} color={textColor} />
         <View style={[styles.underline, { backgroundColor: textColor }]} />
       </View>
       <View style={styles.tabInactive}>
-        <Ionicons name="play-outline" size={22} color={mutedColor} />
+        <Ionicons name="play-outline" size={20} color={mutedColor} />
       </View>
       <View style={styles.tabInactive}>
-        <Ionicons name="person-outline" size={22} color={mutedColor} />
+        <Ionicons name="person-outline" size={20} color={mutedColor} />
       </View>
     </View>
   );
