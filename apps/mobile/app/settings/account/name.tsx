@@ -1,6 +1,5 @@
-import { SettingsAccountNameScreen } from "@/components/settings/settings-account-name.screen";
+import { Redirect } from "expo-router";
 
-export default function SettingsAccountNameRoute() {
-  return <SettingsAccountNameScreen />;
+export default function SettingsAccountNameRedirectRoute() {
+  return <Redirect href="/settings/account?expand=name" />;
 }
-

@@ -19,7 +19,12 @@ import { normalizeHttpError } from "@/infrastructure/http/error-handler";
 import { SharedEventListService } from "@/services/shared-event-list/shared-event-list.service";
 import type { SharedEventListSummaryDto } from "@/services/shared-event-list/shared-event-list.types";
 
-export function WishlistsIndexScreen() {
+export type WishlistsIndexScreenProps = {
+  /** Base path for list/detail routes (ex.: `/wishlists` ou `/settings/wishlists`). */
+  hrefBase?: string;
+};
+
+export function WishlistsIndexScreen({ hrefBase = "/wishlists" }: WishlistsIndexScreenProps) {
   const { t } = useTranslation("wishlists");
   const router = useRouter();
   const scheme = useColorScheme() ?? "light";
@@ -108,7 +113,7 @@ export function WishlistsIndexScreen() {
       setNewTitle("");
       setCreateOpen(false);
       setItems((prev) => [created, ...prev]);
-      router.push(`/wishlists/${created.id}`);
+      router.push(`${hrefBase}/${created.id}`);
     } catch (e) {
       setError(normalizeHttpError(e, t("error")).message);
     } finally {
@@ -161,7 +166,7 @@ export function WishlistsIndexScreen() {
         renderItem={({ item }) => (
           <Pressable
             style={[styles.card, { backgroundColor: c.surface, borderColor: c.border }]}
-            onPress={() => router.push(`/wishlists/${item.id}`)}>
+            onPress={() => router.push(`${hrefBase}/${item.id}`)}>
             <Text style={[styles.cardTitle, { color: c.text }]} numberOfLines={2}>
               {item.title}
             </Text>

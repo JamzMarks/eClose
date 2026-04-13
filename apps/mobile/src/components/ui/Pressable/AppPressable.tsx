@@ -37,6 +37,8 @@ export type NavigationPressableProps = AppPressableBase & {
   /** Cor do subtítulo e do chevron (por defeito: texto secundário do tema). */
   mutedColor?: string;
   showChevron?: boolean;
+  /** Lista em Configurações usa `forward`; linhas expansíveis podem usar `down`. */
+  navigationChevron?: "forward" | "down";
   destructive?: boolean;
 };
 
@@ -63,6 +65,7 @@ export function AppPressable(props: AppPressableProps) {
       subtitle,
       mutedColor,
       showChevron = true,
+      navigationChevron = "forward",
       destructive,
       color,
       iconSize = "md",
@@ -104,7 +107,7 @@ export function AppPressable(props: AppPressableProps) {
           </View>
           {showChevron ? (
             <Ionicons
-              name="chevron-forward"
+              name={navigationChevron === "down" ? "chevron-down" : "chevron-forward"}
               size={16}
               color={chevColor}
               style={styles.chevron}

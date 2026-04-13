@@ -1,5 +1,6 @@
 import { getApiClient } from "@/services/api-client";
-import { USE_API_MOCKS } from "@/services/config/api-mocks";
+import { USE_LOCAL_SERVICE_DATA } from "@/services/config/service-data-source";
+import { localRegisteredMediaAsset } from "@/services/media/media.local-data";
 
 export type RegisterVenueMediaBody = {
   parentType: "VENUE";
@@ -25,18 +26,9 @@ export class MediaApiService {
   private readonly client = getApiClient();
 
   registerAsset(body: RegisterVenueMediaBody): Promise<RegisteredMediaAssetDto> {
-    if (USE_API_MOCKS) {
-      return Promise.resolve({
-        id: `media_mock_${Date.now()}`,
-        parentType: body.parentType,
-        parentId: body.parentId,
-        kind: body.kind,
-        sourceUrl: body.sourceUrl,
-        mimeType: body.mimeType ?? null,
-      });
+    if (USE_LOCAL_SERVICE_DATA) {
+      return Promise.resolve(localRegisteredMediaAsset(body));
     }
-
-    // return this.client.post<RegisteredMediaAssetDto>("/media/assets", { ...body, listable: body.listable ?? true });
     return this.client.post<RegisteredMediaAssetDto>("/media/assets", {
       ...body,
       listable: body.listable ?? true,

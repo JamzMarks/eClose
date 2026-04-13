@@ -1,6 +1,5 @@
-import { SettingsAccountEmailScreen } from "@/components/settings/settings-account-email.screen";
+import { Redirect } from "expo-router";
 
-export default function SettingsAccountEmailRoute() {
-  return <SettingsAccountEmailScreen />;
+export default function SettingsAccountEmailRedirectRoute() {
+  return <Redirect href="/settings/account?expand=email" />;
 }
-

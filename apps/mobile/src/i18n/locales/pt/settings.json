@@ -45,6 +45,7 @@
   "aboutPrivacy": "Política de privacidade",
   "aboutTerms": "Termos de utilização",
   "aboutHelp": "Contactar apoio",
+  "aboutVersionFooter": "Versão {{version}}",
   "aboutLinkError": "Não foi possível abrir a ligação.",
   "signOut": "Terminar sessão",
   "signOutConfirmTitle": "Terminar sessão?",

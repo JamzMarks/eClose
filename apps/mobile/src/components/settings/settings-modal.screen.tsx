@@ -7,11 +7,16 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useNavigation, useRouter, type Href } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { StackContentPageTitle } from "@/components/navigation/StackContentPageTitle";
+import {
+  CollapsingStackLargeTitle,
+  collapsingScrollProps,
+  useCollapsingStackHeaderTitle,
+} from "@/components/navigation/collapsing-stack-header-title";
+import { minimalStackBackCircleBackground } from "@/components/navigation/minimal-stack-header";
 import { SettingsNavigationRow } from "@/components/settings/components/SettingsNavigationRow";
 import { SettingsScreenGroup } from "@/components/settings/components/SettingsScreenGroup";
 import { AppIcon } from "@/components/ui/icon/icon.types";
@@ -28,10 +33,26 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 export function SettingsModalScreen() {
   const { t } = useTranslation("settings");
   const { t: tProfile } = useTranslation("profile");
+  const { t: tCommon } = useTranslation("common");
+  const navigation = useNavigation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const scheme = useColorScheme() ?? "light";
   const c = getSchemeColors(scheme);
+  const isDark = scheme === "dark";
+
+  const collapse = useCollapsingStackHeaderTitle({
+    enabled: true,
+    navigation,
+    collapsedTitle: t("title"),
+    headerTitleColor: c.text,
+    chrome: {
+      headerBackgroundColor: c.background,
+      tintColor: c.text,
+      circleBackgroundColor: minimalStackBackCircleBackground(isDark ? "dark" : "light"),
+      backAccessibilityLabel: tCommon("backA11y"),
+    },
+  });
   const { user, signOut } = useAuth();
   const { openNotificationPreferencesSetup } = useAccountSetup();
   const { preference, setPreference } = useThemePreference();
@@ -181,8 +202,11 @@ export function SettingsModalScreen() {
           styles.scrollContent,
           { paddingBottom: insets.bottom + 24 },
         ]}
-        showsVerticalScrollIndicator={false}>
-        <StackContentPageTitle color={c.text}>{t("title")}</StackContentPageTitle>
+        showsVerticalScrollIndicator={false}
+        {...collapsingScrollProps(collapse)}>
+        <CollapsingStackLargeTitle color={c.text} collapse={collapse}>
+          {t("title")}
+        </CollapsingStackLargeTitle>
         {/* Conta: identidade + conteúdo associado */}
         <SettingsScreenGroup borderColor={c.border} showBottomRule paddingTop={0}>
           <SettingsNavigationRow
@@ -196,10 +220,7 @@ export function SettingsModalScreen() {
             icon={AppIcon.Wishlist}
             title={tProfile("wishlistsMenuTitle")}
             subtitle={tProfile("wishlistsMenuHint")}
-            onPress={() => {
-              router.back();
-              requestAnimationFrame(() => router.push("/wishlists"));
-            }}
+            onPress={() => router.push("/settings/wishlists" as Href)}
             {...navProps}
           />
         </SettingsScreenGroup>
@@ -248,7 +269,9 @@ export function SettingsModalScreen() {
               key={item.kind}
               icon={item.icon}
               title={tProfile(item.titleKey)}
-              onPress={() => router.push({ pathname: "/profile-legal", params: { kind: item.kind } })}
+              onPress={() =>
+                router.push({ pathname: "/settings/legal/[kind]", params: { kind: item.kind } })
+              }
               {...navProps}
             />
           ))}

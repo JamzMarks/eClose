@@ -25,15 +25,18 @@ export function MinimalStackBackButton({
   tintColor,
   circleBackgroundColor,
   accessibilityLabel,
+  onPress,
 }: {
   tintColor: string;
   circleBackgroundColor: string;
   accessibilityLabel: string;
+  /** Por omissão chama `router.back()`. */
+  onPress?: () => void;
 }) {
   const router = useRouter();
   return (
     <Pressable
-      onPress={() => router.back()}
+      onPress={() => (onPress ? onPress() : router.back())}
       hitSlop={10}
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}

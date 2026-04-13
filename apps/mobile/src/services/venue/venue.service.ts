@@ -1,5 +1,6 @@
 import { getApiClient } from "@/services/api-client";
-import { USE_API_MOCKS } from "@/services/config/api-mocks";
+import { USE_LOCAL_SERVICE_DATA } from "@/services/config/service-data-source";
+import { findMarketplaceVenueRowById } from "@/services/venue/venue.local-data";
 import type { IVenueService } from "@/services/venue/venue.service.interface";
 import type { CreateVenueRequest, VenueDto, VenueManageDto } from "@/services/types/venue.types";
 
@@ -7,10 +8,10 @@ export class VenueService implements IVenueService {
   private readonly client = getApiClient();
 
   create(body: CreateVenueRequest): Promise<VenueDto> {
-    if (USE_API_MOCKS) {
+    if (USE_LOCAL_SERVICE_DATA) {
       const now = new Date().toISOString();
       return Promise.resolve({
-        id: `venue_mock_${Date.now()}`,
+        id: `venue_local_${Date.now()}`,
         name: body.name,
         slug: body.slug,
         description: body.description ?? null,
@@ -31,31 +32,34 @@ export class VenueService implements IVenueService {
       });
     }
 
-    // return this.client.post<VenueDto>("/venues", body);
     return this.client.post<VenueDto>("/venues", body);
   }
 
   getById(id: string): Promise<VenueDto> {
-    if (USE_API_MOCKS) {
+    if (USE_LOCAL_SERVICE_DATA) {
+      const row = findMarketplaceVenueRowById(id);
+      if (row) {
+        return Promise.resolve({ ...row.venue });
+      }
       const now = new Date().toISOString();
       return Promise.resolve({
         id,
-        name: "Mock Venue",
-        slug: "mock-venue",
-        description: "Venue mockada (sem API).",
-        ownerUserId: "user_mock_1",
+        name: "Espaço (dados locais)",
+        slug: "espaco-local",
+        description: "Sem entrada neste id na lista local.",
+        ownerUserId: null,
         address: {
-          line1: "Rua Mock, 123",
+          line1: "—",
           line2: null,
-          neighborhood: "Centro",
-          city: "São Paulo",
-          region: "SP",
-          countryCode: "BR",
-          postalCode: "01000-000",
+          neighborhood: null,
+          city: "—",
+          region: "—",
+          countryCode: "PT",
+          postalCode: null,
         },
-        geoLat: -23.55052,
-        geoLng: -46.633308,
-        timezone: "America/Sao_Paulo",
+        geoLat: null,
+        geoLng: null,
+        timezone: "Europe/Lisbon",
         openingHours: [],
         taxonomyTermIds: [],
         marketplaceListed: true,
@@ -68,51 +72,52 @@ export class VenueService implements IVenueService {
       });
     }
 
-    // return this.client.get<VenueDto>(`/venues/${encodeURIComponent(id)}`);
     return this.client.get<VenueDto>(`/venues/${encodeURIComponent(id)}`);
   }
 
   getManage(id: string): Promise<VenueManageDto> {
-    if (USE_API_MOCKS) {
+    if (USE_LOCAL_SERVICE_DATA) {
+      const row = findMarketplaceVenueRowById(id);
+      const base = row?.venue;
       const now = new Date().toISOString();
       return Promise.resolve({
         id,
-        name: "Mock Venue (Manage)",
-        slug: "mock-venue",
-        description: "Venue mockada (manage).",
-        ownerUserId: "user_mock_1",
-        address: {
-          line1: "Rua Mock, 123",
-          line2: null,
-          neighborhood: "Centro",
-          city: "São Paulo",
-          region: "SP",
-          countryCode: "BR",
-          postalCode: "01000-000",
-        },
-        geoLat: -23.55052,
-        geoLng: -46.633308,
-        timezone: "America/Sao_Paulo",
-        openingHours: [],
-        taxonomyTermIds: [],
-        marketplaceListed: true,
-        openToArtistInquiries: true,
-        primaryMediaAssetId: null,
-        isActive: true,
-        isVerifiedL2: false,
-        createdAt: now,
+        name: base?.name ?? "Gestão (dados locais)",
+        slug: base?.slug ?? "gestao-local",
+        description: base?.description ?? null,
+        ownerUserId: base?.ownerUserId ?? null,
+        address:
+          base?.address ?? {
+            line1: "—",
+            line2: null,
+            neighborhood: null,
+            city: "—",
+            region: "—",
+            countryCode: "PT",
+            postalCode: null,
+          },
+        geoLat: base?.geoLat ?? null,
+        geoLng: base?.geoLng ?? null,
+        timezone: base?.timezone ?? "Europe/Lisbon",
+        openingHours: base?.openingHours ?? [],
+        taxonomyTermIds: base?.taxonomyTermIds ?? [],
+        marketplaceListed: base?.marketplaceListed ?? true,
+        openToArtistInquiries: base?.openToArtistInquiries ?? true,
+        primaryMediaAssetId: base?.primaryMediaAssetId ?? null,
+        isActive: base?.isActive ?? true,
+        isVerifiedL2: base?.isVerifiedL2 ?? false,
+        createdAt: base?.createdAt ?? now,
         updatedAt: now,
         verificationStatus: "pending_review",
         cnpj: "12.345.678/0001-90",
-        verificationCnpjDocMediaAssetId: "media_mock_cnpj_doc",
-        verificationAddressProofMediaAssetId: "media_mock_address_proof",
+        verificationCnpjDocMediaAssetId: "media_local_cnpj_doc",
+        verificationAddressProofMediaAssetId: "media_local_address_proof",
         hasCnpjDocument: true,
         hasAddressProofDocument: true,
         registryCheckedAt: null,
       });
     }
 
-    // return this.client.get<VenueManageDto>(`/venues/${encodeURIComponent(id)}/manage`);
     return this.client.get<VenueManageDto>(
       `/venues/${encodeURIComponent(id)}/manage`,
     );
@@ -126,34 +131,37 @@ export class VenueService implements IVenueService {
       addressProofMediaAssetId: string;
     },
   ): Promise<VenueManageDto> {
-    if (USE_API_MOCKS) {
+    if (USE_LOCAL_SERVICE_DATA) {
+      const row = findMarketplaceVenueRowById(id);
+      const base = row?.venue;
       const now = new Date().toISOString();
       return Promise.resolve({
         id,
-        name: "Mock Venue (Trust Verification)",
-        slug: "mock-venue",
-        description: "Venue mockada (trust verification).",
-        ownerUserId: "user_mock_1",
-        address: {
-          line1: "Rua Mock, 123",
-          line2: null,
-          neighborhood: "Centro",
-          city: "São Paulo",
-          region: "SP",
-          countryCode: "BR",
-          postalCode: "01000-000",
-        },
-        geoLat: -23.55052,
-        geoLng: -46.633308,
-        timezone: "America/Sao_Paulo",
-        openingHours: [],
-        taxonomyTermIds: [],
-        marketplaceListed: true,
-        openToArtistInquiries: true,
-        primaryMediaAssetId: null,
-        isActive: true,
-        isVerifiedL2: false,
-        createdAt: now,
+        name: base?.name ?? "Verificação (dados locais)",
+        slug: base?.slug ?? "verificacao-local",
+        description: base?.description ?? null,
+        ownerUserId: base?.ownerUserId ?? null,
+        address:
+          base?.address ?? {
+            line1: "—",
+            line2: null,
+            neighborhood: null,
+            city: "—",
+            region: "—",
+            countryCode: "PT",
+            postalCode: null,
+          },
+        geoLat: base?.geoLat ?? null,
+        geoLng: base?.geoLng ?? null,
+        timezone: base?.timezone ?? "Europe/Lisbon",
+        openingHours: base?.openingHours ?? [],
+        taxonomyTermIds: base?.taxonomyTermIds ?? [],
+        marketplaceListed: base?.marketplaceListed ?? true,
+        openToArtistInquiries: base?.openToArtistInquiries ?? true,
+        primaryMediaAssetId: base?.primaryMediaAssetId ?? null,
+        isActive: base?.isActive ?? true,
+        isVerifiedL2: base?.isVerifiedL2 ?? false,
+        createdAt: base?.createdAt ?? now,
         updatedAt: now,
         verificationStatus: "pending_documents",
         cnpj: body.cnpj,
@@ -165,7 +173,6 @@ export class VenueService implements IVenueService {
       });
     }
 
-    // return this.client.post<VenueManageDto>(`/venues/${encodeURIComponent(id)}/trust-verification`, body);
     return this.client.post<VenueManageDto>(
       `/venues/${encodeURIComponent(id)}/trust-verification`,
       body,

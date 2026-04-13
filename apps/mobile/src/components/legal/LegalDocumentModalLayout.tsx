@@ -1,36 +1,41 @@
 import type { ReactNode } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { AppPalette, getSchemeColors } from "@/constants/palette";
+import {
+  MinimalStackBackButton,
+  minimalStackBackCircleBackground,
+} from "@/components/navigation/minimal-stack-header";
+import { Layout } from "@/constants/layout";
+import { getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
 export type LegalDocumentModalLayoutProps = {
   title: string;
   versionLine?: string | null;
   onClose: () => void;
-  backLabel: string;
-  closeA11yLabel: string;
+  backAccessibilityLabel: string;
   children: ReactNode;
-  /** Barra cosmética tipo sheet (Airbnb-style affordance). */
+  /** Barra cosmética tipo sheet; desligada para alinhar com stacks tipo definições. */
   showDragHandle?: boolean;
 };
 
 /**
  * Chrome partilhado dos documentos legais em modal fullscreen: safe area, handle opcional, título, versão, fecho.
+ * Voltar alinhado ao header minimal (círculo + chevron).
  */
 export function LegalDocumentModalLayout({
   title,
   versionLine,
   onClose,
-  backLabel,
-  closeA11yLabel,
+  backAccessibilityLabel,
   children,
-  showDragHandle = true,
+  showDragHandle = false,
 }: LegalDocumentModalLayoutProps) {
   const insets = useSafeAreaInsets();
   const scheme = useColorScheme() ?? "light";
   const c = getSchemeColors(scheme);
+  const isDark = scheme === "dark";
 
   return (
     <View style={[styles.root, { backgroundColor: c.background, paddingTop: insets.top }]}>
@@ -40,14 +45,14 @@ export function LegalDocumentModalLayout({
         </View>
       ) : null}
       <View style={[styles.header, { borderBottomColor: c.border }]}>
-        <Pressable
-          onPress={onClose}
-          hitSlop={12}
-          accessibilityRole="button"
-          accessibilityLabel={closeA11yLabel}
-          style={styles.headerSide}>
-          <Text style={[styles.backLabel, { color: AppPalette.primary }]}>{backLabel}</Text>
-        </Pressable>
+        <View style={styles.headerSide}>
+          <MinimalStackBackButton
+            tintColor={c.text}
+            circleBackgroundColor={minimalStackBackCircleBackground(isDark ? "dark" : "light")}
+            accessibilityLabel={backAccessibilityLabel}
+            onPress={onClose}
+          />
+        </View>
         <View style={styles.headerTitleBlock}>
           <Text style={[styles.headerTitle, { color: c.text }]} numberOfLines={1}>
             {title}
@@ -83,21 +88,19 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 12,
+    paddingLeft: Layout.tab.header.horizontalPadding,
+    paddingRight: Layout.tab.header.horizontalPadding - 4,
     paddingVertical: 10,
     borderBottomWidth: StyleSheet.hairlineWidth,
     gap: 8,
   },
   headerSide: {
-    minWidth: 72,
+    minWidth: 40,
     justifyContent: "center",
   },
   headerSideRight: {
+    minWidth: 40,
     alignItems: "flex-end",
-  },
-  backLabel: {
-    fontSize: 17,
-    fontWeight: "600",
   },
   headerTitleBlock: {
     flex: 1,

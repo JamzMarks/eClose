@@ -8,7 +8,7 @@ import {
 import { getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
-export default function SettingsLayout() {
+export default function SettingsWishlistsLayout() {
   const { t: tCommon } = useTranslation("common");
   const scheme = useColorScheme() ?? "light";
   const c = getSchemeColors(scheme);
@@ -26,13 +26,7 @@ export default function SettingsLayout() {
         }),
       }}>
       <Stack.Screen name="index" options={{ title: "" }} />
-      <Stack.Screen name="about" options={{ title: "" }} />
-      <Stack.Screen name="account" options={{ title: "" }} />
-      <Stack.Screen name="account/name" options={{ title: "" }} />
-      <Stack.Screen name="account/email" options={{ title: "" }} />
-      <Stack.Screen name="account/password" options={{ title: "" }} />
-      <Stack.Screen name="legal/[kind]" options={{ title: "" }} />
-      <Stack.Screen name="wishlists" options={{ headerShown: false }} />
+      <Stack.Screen name="[id]" options={{ title: "" }} />
     </Stack>
   );
 }

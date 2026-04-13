@@ -45,6 +45,7 @@
   "aboutPrivacy": "Privacy policy",
   "aboutTerms": "Terms of service",
   "aboutHelp": "Contact support",
+  "aboutVersionFooter": "Version {{version}}",
   "aboutLinkError": "Could not open the link.",
   "signOut": "Sign out",
   "signOutConfirmTitle": "Sign out?",

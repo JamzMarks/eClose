@@ -1,9 +1,10 @@
 /**
- * Paginação em memória sobre `discover.seed-data` — apenas para consumo interno dos serviços.
+ * Paginação em memória sobre dados locais dos services — apenas consumo interno.
  */
 import type { DiscoverEventListFilters, DiscoverVenueListFilters } from "@/services/discover/discover-list-filters.types";
 import type { MarketplaceVenueListItem, PublishedEventListItem } from "@/services/discover/discover-list.types";
-import { MOCK_EXPLORE_VENUES, MOCK_HOME_EVENTS } from "@/services/discover/discover.seed-data";
+import { LOCAL_PUBLISHED_EVENTS } from "@/services/event/event.local-data";
+import { LOCAL_MARKETPLACE_VENUES } from "@/services/venue/venue.local-data";
 import type { ListMarketplaceVenuesParams } from "@/services/marketplace/marketplace.service.interface";
 import type { ListPublishedEventsParams } from "@/services/types/event.types";
 import type { PaginatedResponse } from "@/services/types/pagination.types";
@@ -93,7 +94,7 @@ export async function paginateLocalPublishedEvents(
   await stubDelay();
   const page = params?.page ?? 1;
   const limit = params?.limit ?? 15;
-  const filtered = applyEventFilters(MOCK_HOME_EVENTS, eventFiltersFromListParams(params));
+  const filtered = applyEventFilters(LOCAL_PUBLISHED_EVENTS, eventFiltersFromListParams(params));
   return slicePage(filtered, page, limit);
 }
 
@@ -103,6 +104,6 @@ export async function paginateLocalVenues(
   await stubDelay();
   const page = params?.page ?? 1;
   const limit = params?.limit ?? 15;
-  const filtered = applyVenueFilters(MOCK_EXPLORE_VENUES, venueFiltersFromListParams(params));
+  const filtered = applyVenueFilters(LOCAL_MARKETPLACE_VENUES, venueFiltersFromListParams(params));
   return slicePage(filtered, page, limit);
 }

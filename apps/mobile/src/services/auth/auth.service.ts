@@ -1,6 +1,12 @@
 import { getApiClient } from "@/services/api-client";
+import {
+  LOCAL_AUTH_TOKENS,
+  LOCAL_USER_PROFILE,
+  localOnboardingStepResponse,
+  localRefreshTokens,
+} from "@/services/auth/auth.local-data";
+import { USE_LOCAL_SERVICE_DATA } from "@/services/config/service-data-source";
 import type { IAuthService } from "@/services/auth/auth.service.interface";
-import { USE_API_MOCKS } from "@/services/config/api-mocks";
 import type {
   AuthTokensResponse,
   OnboardingStepRequest,
@@ -13,118 +19,59 @@ import type {
 export class AuthService implements IAuthService {
   private readonly client = getApiClient();
 
-  signIn(credentials: SignInRequest): Promise<AuthTokensResponse> {
-    if (USE_API_MOCKS) {
-      return Promise.resolve({
-        accessToken: "mock_access_token",
-        refreshToken: "mock_refresh_token",
-        tokenType: "Bearer",
-        expiresIn: 60 * 60,
-      });
+  signIn(_credentials: SignInRequest): Promise<AuthTokensResponse> {
+    if (USE_LOCAL_SERVICE_DATA) {
+      return Promise.resolve(LOCAL_AUTH_TOKENS);
     }
-
-    // return this.client.post<AuthTokensResponse>("/auth/sign-in", credentials);
-    return this.client.post<AuthTokensResponse>("/auth/sign-in", credentials);
+    return this.client.post<AuthTokensResponse>("/auth/sign-in", _credentials);
   }
 
-  signUp(data: SignUpRequest): Promise<AuthTokensResponse> {
-    if (USE_API_MOCKS) {
-      return Promise.resolve({
-        accessToken: "mock_access_token",
-        refreshToken: "mock_refresh_token",
-        tokenType: "Bearer",
-        expiresIn: 60 * 60,
-      });
+  signUp(_data: SignUpRequest): Promise<AuthTokensResponse> {
+    if (USE_LOCAL_SERVICE_DATA) {
+      return Promise.resolve(LOCAL_AUTH_TOKENS);
     }
-
-    // return this.client.post<AuthTokensResponse>("/auth/sign-up", data);
-    return this.client.post<AuthTokensResponse>("/auth/sign-up", data);
+    return this.client.post<AuthTokensResponse>("/auth/sign-up", _data);
   }
 
   sendEmailVerification(): Promise<void> {
-    if (USE_API_MOCKS) {
+    if (USE_LOCAL_SERVICE_DATA) {
       return Promise.resolve();
     }
-
-    // return this.client.post<void>("/auth/email-verification/send", {});
     return this.client.post<void>("/auth/email-verification/send", {});
   }
 
-  confirmEmailVerification(token: string): Promise<void> {
-    if (USE_API_MOCKS) {
+  confirmEmailVerification(_token: string): Promise<void> {
+    if (USE_LOCAL_SERVICE_DATA) {
       return Promise.resolve();
     }
-
-    // return this.client.post<void>("/auth/email-verification/confirm", { token });
-    return this.client.post<void>("/auth/email-verification/confirm", { token });
+    return this.client.post<void>("/auth/email-verification/confirm", { token: _token });
   }
 
   me(): Promise<UserProfileResponse> {
-    if (USE_API_MOCKS) {
-      return Promise.resolve({
-        id: "user_mock_1",
-        email: "mock@eclose.app",
-        username: "mock_user",
-        firstName: "Mock",
-        lastName: "User",
-        profileNamesAcknowledgedAt: new Date().toISOString(),
-        emailVerifiedAt: new Date().toISOString(),
-        needsEmailVerification: false,
-        needsProfileNames: false,
-        needsEventInterests: false,
-        profileCompletion: "full",
-      });
+    if (USE_LOCAL_SERVICE_DATA) {
+      return Promise.resolve(LOCAL_USER_PROFILE);
     }
-
-    // return this.client.get<UserProfileResponse>("/auth/me");
     return this.client.get<UserProfileResponse>("/auth/me");
   }
 
   submitOnboardingStep(body: OnboardingStepRequest): Promise<OnboardingStepResponse> {
-    if (USE_API_MOCKS) {
-      if (body.step === "names") {
-        return Promise.resolve({ step: "names" });
-      }
-      if (body.step === "notification_preferences") {
-        return Promise.resolve({
-          step: "notification_preferences",
-          preferences: {
-            email: body.email ?? true,
-            push: body.push ?? true,
-            sms: body.sms ?? false,
-          },
-        });
-      }
-      return Promise.resolve({
-        step: "event_interests",
-        eventInterests: body.eventInterests ?? [],
-      });
+    if (USE_LOCAL_SERVICE_DATA) {
+      return Promise.resolve(localOnboardingStepResponse(body));
     }
-
-    // return this.client.patch<OnboardingStepResponse>("/auth/me/onboarding", body);
     return this.client.patch<OnboardingStepResponse>("/auth/me/onboarding", body);
   }
 
   refresh(refreshToken: string): Promise<AuthTokensResponse> {
-    if (USE_API_MOCKS) {
-      return Promise.resolve({
-        accessToken: "mock_access_token_refreshed",
-        refreshToken: refreshToken || "mock_refresh_token",
-        tokenType: "Bearer",
-        expiresIn: 60 * 60,
-      });
+    if (USE_LOCAL_SERVICE_DATA) {
+      return Promise.resolve(localRefreshTokens(refreshToken));
     }
-
-    // return this.client.post<AuthTokensResponse>("/auth/refresh", { refreshToken });
     return this.client.post<AuthTokensResponse>("/auth/refresh", { refreshToken });
   }
 
   logout(): Promise<void> {
-    if (USE_API_MOCKS) {
+    if (USE_LOCAL_SERVICE_DATA) {
       return Promise.resolve();
     }
-
-    // return this.client.post<void>("/auth/logout", {});
     return this.client.post<void>("/auth/logout", {});
   }
 }

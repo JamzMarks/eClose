@@ -1,14 +1,19 @@
 import Constants from "expo-constants";
 import { useCallback } from "react";
 import { Alert, Linking, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useNavigation } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { StackContentPageTitle } from "@/components/navigation/StackContentPageTitle";
-import { SettingsGroupedCard } from "@/components/settings/components/SettingsGroupedCard";
+import {
+  CollapsingStackLargeTitle,
+  collapsingScrollProps,
+  useCollapsingStackHeaderTitle,
+} from "@/components/navigation/collapsing-stack-header-title";
+import { minimalStackBackCircleBackground } from "@/components/navigation/minimal-stack-header";
 import { SettingsNavigationRow } from "@/components/settings/components/SettingsNavigationRow";
 import { SettingsSectionHeader } from "@/components/settings/components/SettingsSectionHeader";
-import { SettingsValueRow } from "@/components/settings/components/SettingsValueRow";
+import { SettingsScreenGroup } from "@/components/settings/components/SettingsScreenGroup";
 import { Layout } from "@/constants/layout";
 import { getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -21,9 +26,25 @@ type Extra = {
 
 export function SettingsAboutScreen() {
   const { t } = useTranslation("settings");
+  const { t: tCommon } = useTranslation("common");
+  const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const scheme = useColorScheme() ?? "light";
   const c = getSchemeColors(scheme);
+  const isDark = scheme === "dark";
+
+  const collapse = useCollapsingStackHeaderTitle({
+    enabled: true,
+    navigation,
+    collapsedTitle: t("aboutScreenTitle"),
+    headerTitleColor: c.text,
+    chrome: {
+      headerBackgroundColor: c.background,
+      tintColor: c.text,
+      circleBackgroundColor: minimalStackBackCircleBackground(isDark ? "dark" : "light"),
+      backAccessibilityLabel: tCommon("backA11y"),
+    },
+  });
   const extra = (Constants.expoConfig?.extra ?? {}) as Extra;
   const version =
     Constants.expoConfig?.version ??
@@ -47,6 +68,14 @@ export function SettingsAboutScreen() {
     }
   }, [t]);
 
+  const navProps = {
+    textColor: c.text,
+    subtitleColor: c.textMuted,
+    borderColor: c.border,
+    backgroundColor: c.background,
+    flat: true as const,
+  };
+
   return (
     <View style={[styles.root, { backgroundColor: c.background }]}>
       <ScrollView
@@ -55,50 +84,32 @@ export function SettingsAboutScreen() {
           paddingBottom: insets.bottom + 24,
         }}
         showsVerticalScrollIndicator={false}
-      >
-        <StackContentPageTitle color={c.text}>{t("aboutScreenTitle")}</StackContentPageTitle>
-        <SettingsSectionHeader title={t("aboutVersion")} color={c.textMuted} />
-        <SettingsValueRow
-          label="eClose"
-          value={version}
-          labelColor={c.textSecondary}
-          valueColor={c.text}
-          borderColor={c.border}
-          backgroundColor={c.surface}
-        />
-
+        {...collapsingScrollProps(collapse)}>
+        <CollapsingStackLargeTitle color={c.text} collapse={collapse}>
+          {t("aboutScreenTitle")}
+        </CollapsingStackLargeTitle>
         <SettingsSectionHeader title={t("aboutLinks")} color={c.textMuted} />
-        <SettingsGroupedCard borderColor={c.border} backgroundColor={c.surface}>
+        <SettingsScreenGroup borderColor={c.border} showBottomRule={false} paddingTop={0}>
           <SettingsNavigationRow
             title={t("aboutPrivacy")}
             onPress={() => void openUrl(extra.privacyPolicyUrl)}
-            textColor={c.text}
-            subtitleColor={c.textMuted}
-            borderColor={c.border}
-            backgroundColor={c.surface}
-            showDividerBelow
+            {...navProps}
           />
           <SettingsNavigationRow
             title={t("aboutTerms")}
             onPress={() => void openUrl(extra.termsOfServiceUrl)}
-            textColor={c.text}
-            subtitleColor={c.textMuted}
-            borderColor={c.border}
-            backgroundColor={c.surface}
-            showDividerBelow
+            {...navProps}
           />
           <SettingsNavigationRow
             title={t("aboutHelp")}
             onPress={() => void openUrl(extra.helpMailto)}
-            textColor={c.text}
-            subtitleColor={c.textMuted}
-            borderColor={c.border}
-            backgroundColor={c.surface}
-            showDividerBelow={false}
+            {...navProps}
           />
-        </SettingsGroupedCard>
+        </SettingsScreenGroup>
 
-        <Text style={[styles.footer, { color: c.textMuted }]}>eClose</Text>
+        <Text style={[styles.footer, { color: c.textMuted }]}>
+          {t("aboutVersionFooter", { version })}
+        </Text>
       </ScrollView>
     </View>
   );

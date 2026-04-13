@@ -1,4 +1,4 @@
-import { USE_MOCK_DISCOVER } from "@/services/config/discover-mode";
+import { USE_LOCAL_SERVICE_DATA } from "@/services/config/service-data-source";
 import type { MarketplaceVenueListItem } from "@/services/discover/discover-list.types";
 import { paginateLocalVenues } from "@/services/discover/discover.stub-pagination";
 import { getApiClient } from "@/services/api-client";
@@ -16,7 +16,7 @@ export class MarketplaceService implements IMarketplaceService {
   listVenues(
     params?: ListMarketplaceVenuesParams,
   ): Promise<PaginatedResponse<MarketplaceVenueListItem>> {
-    if (USE_MOCK_DISCOVER) {
+    if (USE_LOCAL_SERVICE_DATA) {
       return paginateLocalVenues(params);
     }
 

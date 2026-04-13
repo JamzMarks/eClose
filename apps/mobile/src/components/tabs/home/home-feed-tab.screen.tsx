@@ -22,9 +22,7 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useScrollHideChrome } from "@/hooks/use-scroll-hide-chrome";
 import { defaultDiscoverEventFilters } from "@/services/discover/discover-list-filters.types";
 
-/**
- * Início — próximos eventos publicados (API real quando `EXPO_PUBLIC_USE_MOCK_DISCOVER` ≠ true).
- */
+/** Início — próximos eventos publicados via `EventService`. */
 export function HomeFeedTabScreen() {
   const { t } = useTranslation("discover");
   const { t: tTabs } = useTranslation("tabs");
