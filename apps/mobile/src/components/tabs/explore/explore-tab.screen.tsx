@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 
 import { Screen } from "@/components/layout/screen";
 import { AppTabScreenHeader } from "@/components/shared/tab-screen/AppTabScreenHeader";
+import { TabScreenContent } from "@/components/shared/tab-screen/TabScreenContent";
 import { getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
@@ -15,23 +16,28 @@ export function ExploreTabScreen() {
   return (
     <Screen>
       <AppTabScreenHeader title={t("mapExploreTitle")} borderColor={c.border} titleColor={c.text} />
-      <View style={[styles.mockArea, { backgroundColor: c.surface }]}>
-        <Text style={[styles.mockTitle, { color: c.text }]}>{t("mapTabPlaceholderTitle")}</Text>
-        <Text style={[styles.mockBody, { color: c.textSecondary }]}>{t("mapTabPlaceholderBody")}</Text>
-      </View>
+      <TabScreenContent edgeToEdge>
+        <View style={[styles.mapHost, { backgroundColor: c.surface }]}>
+          <View style={styles.mapPlaceholderInner}>
+            <Text style={[styles.mockTitle, { color: c.text }]}>{t("mapTabPlaceholderTitle")}</Text>
+            <Text style={[styles.mockBody, { color: c.textSecondary }]}>
+              {t("mapTabPlaceholderBody")}
+            </Text>
+          </View>
+        </View>
+      </TabScreenContent>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  mockArea: {
+  mapHost: {
     flex: 1,
-    marginHorizontal: 24,
-    marginTop: 16,
-    marginBottom: 24,
-    borderRadius: 16,
-    padding: 24,
+  },
+  mapPlaceholderInner: {
+    flex: 1,
     justifyContent: "center",
+    alignItems: "center",
   },
   mockTitle: {
     fontSize: 18,

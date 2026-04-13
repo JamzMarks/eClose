@@ -1,18 +1,33 @@
 import { Stack } from "expo-router";
 import { useTranslation } from "react-i18next";
 
+import {
+  buildMinimalStackHeaderOptions,
+  minimalStackBackCircleBackground,
+} from "@/components/navigation/minimal-stack-header";
+import { getSchemeColors } from "@/constants/palette";
+import { useColorScheme } from "@/hooks/use-color-scheme";
+
 export default function CreateStackLayout() {
-  const { t } = useTranslation("discover");
+  const { t: tCommon } = useTranslation("common");
+  const scheme = useColorScheme() ?? "light";
+  const c = getSchemeColors(scheme);
+  const isDark = scheme === "dark";
 
   return (
     <Stack
       screenOptions={{
-        headerBackTitle: "Voltar",
         headerShown: true,
+        ...buildMinimalStackHeaderOptions({
+          headerBackgroundColor: c.background,
+          tintColor: c.text,
+          circleBackgroundColor: minimalStackBackCircleBackground(isDark ? "dark" : "light"),
+          backAccessibilityLabel: tCommon("backA11y"),
+        }),
       }}>
-      <Stack.Screen name="index" options={{ title: t("createTitle") }} />
-      <Stack.Screen name="event" options={{ title: t("createEventScreenTitle") }} />
-      <Stack.Screen name="venue" options={{ title: t("createVenueScreenTitle") }} />
+      <Stack.Screen name="index" options={{ title: "" }} />
+      <Stack.Screen name="event" options={{ title: "" }} />
+      <Stack.Screen name="venue" options={{ title: "" }} />
     </Stack>
   );
 }

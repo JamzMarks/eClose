@@ -12,6 +12,7 @@ import { Redirect, useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
 import { Screen } from "@/components/layout/screen";
+import { StackContentPageTitle } from "@/components/navigation/StackContentPageTitle";
 import { AppButton } from "@/components/ui/Button";
 import { AppTextField } from "@/components/ui/Input";
 import { AppPalette, getSchemeColors } from "@/constants/palette";
@@ -98,6 +99,7 @@ export default function CreateVenueRoute() {
         <ScrollView
           contentContainerStyle={[styles.content, { backgroundColor: c.background }]}
           keyboardShouldPersistTaps="handled">
+          <StackContentPageTitle color={c.text}>{t("createVenueScreenTitle")}</StackContentPageTitle>
           <Text style={[styles.lead, { color: c.textSecondary }]}>{t("createVenueHint")}</Text>
 
           <AppTextField label={t("createVenueName")} value={name} onChangeText={onNameChange} />

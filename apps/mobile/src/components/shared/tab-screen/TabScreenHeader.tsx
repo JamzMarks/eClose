@@ -1,5 +1,10 @@
 import { StyleSheet, Text, View } from "react-native";
 
+import {
+  TAB_SCREEN_HEADER_DIVIDER_OPACITY,
+  TAB_SCREEN_HEADER_HORIZONTAL_PADDING,
+} from "@/components/shared/tab-screen/tabScreenHeader.tokens";
+
 export type TabScreenHeaderProps = {
   title: string;
   subtitle?: string;
@@ -16,21 +21,34 @@ export function TabScreenHeader({
   subtitleColor,
 }: TabScreenHeaderProps) {
   return (
-    <View style={[styles.header, { borderBottomColor: borderColor }]}>
-      <Text style={[styles.title, { color: titleColor }]}>{title}</Text>
-      {subtitle ? (
-        <Text style={[styles.subtitle, { color: subtitleColor }]}>{subtitle}</Text>
-      ) : null}
+    <View style={styles.wrap}>
+      <View style={styles.header}>
+        <Text style={[styles.title, { color: titleColor }]}>{title}</Text>
+        {subtitle ? (
+          <Text style={[styles.subtitle, { color: subtitleColor }]}>{subtitle}</Text>
+        ) : null}
+      </View>
+      <View
+        style={[styles.divider, { backgroundColor: borderColor }]}
+        pointerEvents="none"
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  wrap: {
+    width: "100%",
+  },
   header: {
-    paddingHorizontal: 20,
+    paddingHorizontal: TAB_SCREEN_HEADER_HORIZONTAL_PADDING,
     paddingTop: 8,
     paddingBottom: 16,
-    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  divider: {
+    height: 1,
+    width: "100%",
+    opacity: TAB_SCREEN_HEADER_DIVIDER_OPACITY,
   },
   title: { fontSize: 28, fontWeight: "700" },
   subtitle: { fontSize: 15, marginTop: 4 },

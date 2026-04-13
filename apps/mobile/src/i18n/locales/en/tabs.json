@@ -3,10 +3,21 @@
   "programacao": "Schedule",
   "createTab": "Create",
   "mapTab": "Map",
+  "chatTab": "Chats",
+  "chatTitle": "Chats",
+  "chatSectionIndividual": "Direct messages",
+  "chatSectionGroups": "Groups",
+  "chatEmptyIndividual": "Your one-to-one conversations will appear here.",
+  "chatEmptyGroups": "Your group chats will appear here.",
   "profile": "Profile",
   "appName": "eClose",
   "tabHeaderCreateA11y": "Add or create",
   "tabHeaderNotificationsA11y": "Notifications",
+  "tabHeaderSettingsA11y": "Open settings",
   "notificationsTitle": "Notifications",
-  "notificationsPlaceholder": "You don't have notifications yet. Soon you'll see updates from your account and events here."
+  "notificationsPlaceholder": "You don't have notifications yet. Soon you'll see updates from your account and events here.",
+  "chatSearchPlaceholder": "Search",
+  "chatSearchA11y": "Search conversations",
+  "chatNewMessageA11y": "New message",
+  "chatNewMessageTitle": "New message"
 }

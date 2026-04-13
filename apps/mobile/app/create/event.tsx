@@ -13,6 +13,7 @@ import { Redirect, useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
 import { Screen } from "@/components/layout/screen";
+import { StackContentPageTitle } from "@/components/navigation/StackContentPageTitle";
 import { AppButton } from "@/components/ui/Button";
 import { AppTextField } from "@/components/ui/Input";
 import { AppPalette, getSchemeColors } from "@/constants/palette";
@@ -190,6 +191,7 @@ export default function CreateEventRoute() {
         <ScrollView
           contentContainerStyle={[styles.content, { backgroundColor: c.background }]}
           keyboardShouldPersistTaps="handled">
+          <StackContentPageTitle color={c.text}>{t("createEventScreenTitle")}</StackContentPageTitle>
           {linkedLoading ? (
             <Text style={{ color: c.textSecondary }}>{t("loading")}</Text>
           ) : null}

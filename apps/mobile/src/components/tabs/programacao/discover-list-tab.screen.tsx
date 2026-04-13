@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
 import { Screen } from "@/components/layout/screen";
+import { TabScreenContent } from "@/components/shared/tab-screen/TabScreenContent";
 import { DiscoverPaginatedFlatList } from "@/components/shared/discover/DiscoverPaginatedFlatList";
 import { EventListingCard } from "@/components/shared/listing/event-listing-card";
 import { VenueListingCard } from "@/components/shared/listing/venue-listing-card";
@@ -152,12 +153,6 @@ export function DiscoverListTabScreen() {
 
   const listHeader = (
     <View style={{ paddingBottom: 8 }}>
-      <DiscoverListToolbar
-        title={t("programacaoTitle")}
-        onFilterPress={() => setFiltersOpen(true)}
-        filterAccessibilityLabel={t("filtersTitle")}
-        colors={toolbarColors}
-      />
       <DiscoverSearchBar value={searchDraft} onChangeText={setSearchDraft} />
       <DiscoverQuickCategoriesRow
         selectedId={selectedCategory?.id ?? null}
@@ -232,6 +227,13 @@ export function DiscoverListTabScreen() {
 
   return (
     <Screen>
+      <DiscoverListToolbar
+        title={t("programacaoTitle")}
+        onFilterPress={() => setFiltersOpen(true)}
+        filterAccessibilityLabel={t("filtersTitle")}
+        colors={toolbarColors}
+      />
+      <TabScreenContent style={{ flex: 1 }}>
       {listKind === "events" ? (
         <DiscoverPaginatedFlatList
           data={displayEvents}
@@ -297,6 +299,7 @@ export function DiscoverListTabScreen() {
           )}
         />
       )}
+      </TabScreenContent>
       {filtersSheet}
     </Screen>
   );

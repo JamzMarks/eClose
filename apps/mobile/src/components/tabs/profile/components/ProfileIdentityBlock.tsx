@@ -6,6 +6,8 @@ const AVATAR_SIZE = 72;
 export type ProfileIdentityBlockProps = {
   avatarSeed: string;
   displayName: string;
+  /** Handle sem @; mostrado como @handle abaixo do nome. */
+  handle?: string;
   email: string;
   borderColor: string;
   surfaceColor: string;
@@ -16,6 +18,7 @@ export type ProfileIdentityBlockProps = {
 export function ProfileIdentityBlock({
   avatarSeed,
   displayName,
+  handle,
   email,
   borderColor,
   surfaceColor,
@@ -34,6 +37,11 @@ export function ProfileIdentityBlock({
         <Text style={[styles.name, { color: textColor }]} numberOfLines={2}>
           {displayName}
         </Text>
+        {handle ? (
+          <Text style={[styles.handle, { color: mutedColor }]} numberOfLines={1}>
+            @{handle}
+          </Text>
+        ) : null}
         <Text style={[styles.email, { color: mutedColor }]} numberOfLines={1}>
           {email}
         </Text>
@@ -62,6 +70,11 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 20,
     fontWeight: "700",
+  },
+  handle: {
+    fontSize: 15,
+    fontWeight: "600",
+    marginTop: 4,
   },
   email: {
     fontSize: 14,

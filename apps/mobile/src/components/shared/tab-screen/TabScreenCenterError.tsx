@@ -36,12 +36,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 24,
+    paddingVertical: 24,
   },
   embedded: {
     minHeight: 220,
     paddingVertical: 32,
-    paddingHorizontal: 16,
     justifyContent: "center",
     alignItems: "center",
   },

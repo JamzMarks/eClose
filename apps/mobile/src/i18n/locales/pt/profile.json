@@ -8,12 +8,16 @@
   "sectionLegal": "Legal e apoio",
   "privacyPolicy": "Política de privacidade",
   "termsOfService": "Termos de utilização",
-  "helpContact": "Ajuda e contacto",
+  "helpContact": "Ajuda e contato",
   "legalModalBack": "Voltar",
   "legalModalCloseA11y": "Fechar e voltar ao perfil",
   "legalExternalLinkA11y": "Conteúdo ou ação com link externo",
   "legalHelpBody": "Para falar connosco, abre a tua aplicação de e-mail com o endereço de suporte configurado para a app.",
   "legalHelpOpenExternal": "Abrir email",
   "legalHelpOpenExternalA11y": "Abrir aplicação de email com link externo",
-  "legalDocumentVersionLabel": "Versão do texto em vigor na app: {{version}}"
+  "legalDocumentVersionLabel": "Versão do texto em vigor na app: {{version}}",
+  "legalWebLoadError": "Não foi possível carregar este documento.",
+  "legalWebRetry": "Tentar outra vez",
+  "legalWebOpenInBrowser": "Abrir no browser",
+  "legalWebOfflineFallback": "Ver cópia offline"
 }

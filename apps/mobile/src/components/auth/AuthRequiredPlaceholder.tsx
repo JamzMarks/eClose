@@ -2,6 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
+import { TAB_SCREEN_CONTENT_HORIZONTAL_PADDING } from "@/components/shared/tab-screen/tabScreenHeader.tokens";
 import { PrimaryButton } from "@/components/ui";
 import { getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -13,6 +14,8 @@ export type AuthRequiredPlaceholderProps = {
   title?: string;
   /** Rótulo do botão; omite para usar `auth.signIn`. */
   loginLabel?: string;
+  /** Quando `true`, sem padding horizontal no bloco (o pai define o gutter, ex. `TabScreenContent`). */
+  insetFromParent?: boolean;
 };
 
 /**
@@ -22,6 +25,7 @@ export function AuthRequiredPlaceholder({
   message,
   title,
   loginLabel,
+  insetFromParent,
 }: AuthRequiredPlaceholderProps) {
   const router = useRouter();
   const { t } = useTranslation("auth");
@@ -33,7 +37,7 @@ export function AuthRequiredPlaceholder({
 
   return (
     <View
-      style={styles.root}
+      style={[styles.root, insetFromParent && styles.rootInsetParent]}
       accessibilityRole="summary"
       accessibilityLabel={`${headline}. ${message}`}>
       <Text style={[styles.title, { color: c.text }]}>{headline}</Text>
@@ -47,12 +51,15 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     justifyContent: "center",
-    paddingHorizontal: 28,
+    paddingHorizontal: TAB_SCREEN_CONTENT_HORIZONTAL_PADDING,
     paddingVertical: 32,
     gap: 16,
     maxWidth: 420,
     alignSelf: "center",
     width: "100%",
+  },
+  rootInsetParent: {
+    paddingHorizontal: 0,
   },
   title: {
     fontSize: 22,

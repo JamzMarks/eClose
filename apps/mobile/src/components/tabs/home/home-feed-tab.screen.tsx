@@ -1,5 +1,5 @@
 import { useMemo, useState, type ReactElement } from "react";
-import { StyleSheet, Text } from "react-native";
+import { Animated, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
@@ -7,6 +7,8 @@ import { DiscoverPaginatedFlatList } from "@/components/shared/discover/Discover
 import { EventListingCard } from "@/components/shared/listing/event-listing-card";
 import { Screen } from "@/components/layout/screen";
 import { AppTabScreenHeader } from "@/components/shared/tab-screen/AppTabScreenHeader";
+import { TabScreenContent } from "@/components/shared/tab-screen/TabScreenContent";
+import { TAB_SCREEN_CONTENT_HORIZONTAL_PADDING } from "@/components/shared/tab-screen/tabScreenHeader.tokens";
 import {
   TabHeaderCreateButton,
   TabHeaderNotificationsButton,
@@ -17,6 +19,7 @@ import { ListingInlineErrorBanner } from "@/components/shared/tab-screen/Listing
 import { useHomePublishedEvents } from "@/hooks/use-home-published-events";
 import { getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useScrollHideChrome } from "@/hooks/use-scroll-hide-chrome";
 import { defaultDiscoverEventFilters } from "@/services/discover/discover-list-filters.types";
 
 /**
@@ -30,6 +33,7 @@ export function HomeFeedTabScreen() {
   const c = getSchemeColors(scheme);
   const [filters] = useState(() => defaultDiscoverEventFilters());
   const events = useHomePublishedEvents(t, filters, true);
+  const { onChromeLayout, onScroll, chromeAnimatedStyle } = useScrollHideChrome();
 
   const errorBanner: ReactElement | undefined = useMemo(() => {
     if (!events.error || events.items.length === 0) return undefined;
@@ -46,7 +50,9 @@ export function HomeFeedTabScreen() {
           leading={<TabHeaderCreateButton color={c.text} />}
           trailing={<TabHeaderNotificationsButton color={c.text} />}
         />
-        <TabScreenCenterLoading message={t("loading")} subtitleColor={c.textSecondary} />
+        <TabScreenContent style={{ flex: 1 }}>
+          <TabScreenCenterLoading message={t("loading")} subtitleColor={c.textSecondary} />
+        </TabScreenContent>
       </Screen>
     );
   }
@@ -61,26 +67,33 @@ export function HomeFeedTabScreen() {
           leading={<TabHeaderCreateButton color={c.text} />}
           trailing={<TabHeaderNotificationsButton color={c.text} />}
         />
-        <TabScreenCenterError
-          message={events.error}
-          retryLabel={t("retry")}
-          onRetry={events.loadInitial}
-        />
+        <TabScreenContent style={{ flex: 1 }}>
+          <TabScreenCenterError
+            message={events.error}
+            retryLabel={t("retry")}
+            onRetry={events.loadInitial}
+          />
+        </TabScreenContent>
       </Screen>
     );
   }
 
   return (
     <Screen>
-      <AppTabScreenHeader
-        title={tTabs("appName")}
-        borderColor={c.border}
-        titleColor={c.text}
-        leading={<TabHeaderCreateButton color={c.text} />}
-        trailing={<TabHeaderNotificationsButton color={c.text} />}
-      />
-      <Text style={[styles.subtitle, { color: c.textSecondary }]}>{t("homeFeedSubtitle")}</Text>
-      <DiscoverPaginatedFlatList
+      <Animated.View style={chromeAnimatedStyle}>
+        <View onLayout={onChromeLayout}>
+          <AppTabScreenHeader
+            title={tTabs("appName")}
+            borderColor={c.border}
+            titleColor={c.text}
+            leading={<TabHeaderCreateButton color={c.text} />}
+            trailing={<TabHeaderNotificationsButton color={c.text} />}
+          />
+          <Text style={[styles.subtitle, { color: c.textSecondary }]}>{t("homeFeedSubtitle")}</Text>
+        </View>
+      </Animated.View>
+      <TabScreenContent style={{ flex: 1 }}>
+        <DiscoverPaginatedFlatList
         data={events.items}
         keyExtractor={(it) => it.event.id}
         emptyMessage={t("emptyEvents")}
@@ -91,6 +104,8 @@ export function HomeFeedTabScreen() {
         onEndReached={events.onEndReached}
         loadingMore={events.loadingMore}
         canLoadMore={events.canLoadMore}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
         renderItem={({ item }) => (
           <EventListingCard
             event={item.event}
@@ -104,14 +119,15 @@ export function HomeFeedTabScreen() {
             onPress={() => router.push(`/event/${item.event.id}`)}
           />
         )}
-      />
+        />
+      </TabScreenContent>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
   subtitle: {
-    paddingHorizontal: 24,
+    paddingHorizontal: TAB_SCREEN_CONTENT_HORIZONTAL_PADDING,
     paddingTop: 8,
     paddingBottom: 4,
     fontSize: 15,

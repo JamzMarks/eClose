@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 
 import { AuthRequiredPlaceholder } from "@/components/auth";
 import { Screen } from "@/components/layout/screen";
+import { StackContentPageTitle } from "@/components/navigation/StackContentPageTitle";
 import { PartnerProgramSheet } from "@/components/tabs/create/components/partner-program-sheet";
 import { AppButton } from "@/components/ui/Button";
 import { AppPalette, getSchemeColors } from "@/constants/palette";
@@ -33,6 +34,7 @@ export function CreateHubScreen() {
         <AuthRequiredPlaceholder message={tAuth("authRequiredCreateBody")} />
       ) : (
         <View style={[styles.content, { backgroundColor: c.background }]}>
+          <StackContentPageTitle color={c.text}>{t("createTitle")}</StackContentPageTitle>
           <Pressable
             onPress={() => setPartnerOpen(true)}
             style={({ pressed }) => [

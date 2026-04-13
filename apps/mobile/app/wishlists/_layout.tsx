@@ -1,24 +1,32 @@
 import { Stack } from "expo-router";
 import { useTranslation } from "react-i18next";
 
-import { AppPalette, getSchemeColors } from "@/constants/palette";
+import {
+  buildMinimalStackHeaderOptions,
+  minimalStackBackCircleBackground,
+} from "@/components/navigation/minimal-stack-header";
+import { getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
 export default function WishlistsLayout() {
-  const { t } = useTranslation("wishlists");
+  const { t: tCommon } = useTranslation("common");
   const scheme = useColorScheme() ?? "light";
   const c = getSchemeColors(scheme);
+  const isDark = scheme === "dark";
 
   return (
     <Stack
       screenOptions={{
-        headerTintColor: AppPalette.primary,
-        headerStyle: { backgroundColor: c.surface },
-        headerTitleStyle: { color: c.text },
-        headerBackTitle: "Voltar",
+        headerShown: true,
+        ...buildMinimalStackHeaderOptions({
+          headerBackgroundColor: c.background,
+          tintColor: c.text,
+          circleBackgroundColor: minimalStackBackCircleBackground(isDark ? "dark" : "light"),
+          backAccessibilityLabel: tCommon("backA11y"),
+        }),
       }}>
-      <Stack.Screen name="index" options={{ title: t("title") }} />
-      <Stack.Screen name="[id]" options={{ title: t("detailTitle") }} />
+      <Stack.Screen name="index" options={{ title: "" }} />
+      <Stack.Screen name="[id]" options={{ title: "" }} />
     </Stack>
   );
 }

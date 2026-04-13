@@ -6,8 +6,19 @@ export enum AppIcon {
   Notifications = "notifications",
   Wishlist = "wishlist",
   Profile = "profile",
+  Chat = "chat",
+  Settings = "settings",
+  Shield = "shield",
+  FileText = "fileText",
+  Help = "help",
+  LogOut = "logOut",
+  Search = "search",
+  NewMessage = "newMessage",
   Like = "like",
   Filter = "filter",
+  Edit = "edit",
+  Undo = "undo",
+  ChevronLeft = "chevronLeft",
 }
 
 export const IconSizes = {

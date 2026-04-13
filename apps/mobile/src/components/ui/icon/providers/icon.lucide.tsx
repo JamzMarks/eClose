@@ -8,6 +8,17 @@ import {
   Bookmark,
   CirclePlus,
   Bell,
+  MessagesSquare,
+  Settings,
+  Shield,
+  FileText,
+  HelpCircle,
+  LogOut,
+  Search,
+  MessageSquarePlus,
+  SquarePen,
+  Undo2,
+  ChevronLeft,
 } from "lucide-react-native";
 
 import { IconSizes, AppIcon } from "../icon.types";
@@ -21,8 +32,19 @@ const map = {
   [AppIcon.Notifications]: Bell,
   [AppIcon.Wishlist]: Bookmark,
   [AppIcon.Profile]: User,
+  [AppIcon.Chat]: MessagesSquare,
+  [AppIcon.Settings]: Settings,
+  [AppIcon.Shield]: Shield,
+  [AppIcon.FileText]: FileText,
+  [AppIcon.Help]: HelpCircle,
+  [AppIcon.LogOut]: LogOut,
+  [AppIcon.Search]: Search,
+  [AppIcon.NewMessage]: MessageSquarePlus,
   [AppIcon.Like]: Heart,
   [AppIcon.Filter]: SlidersHorizontal,
+  [AppIcon.Edit]: SquarePen,
+  [AppIcon.Undo]: Undo2,
+  [AppIcon.ChevronLeft]: ChevronLeft,
 };
 
 export const lucideProvider: IconProvider = ({

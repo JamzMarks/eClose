@@ -4,6 +4,7 @@ import { Alert, Linking, ScrollView, StyleSheet, Text, View } from "react-native
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { StackContentPageTitle } from "@/components/navigation/StackContentPageTitle";
 import { SettingsGroupedCard } from "@/components/settings/components/SettingsGroupedCard";
 import { SettingsNavigationRow } from "@/components/settings/components/SettingsNavigationRow";
 import { SettingsSectionHeader } from "@/components/settings/components/SettingsSectionHeader";
@@ -48,9 +49,13 @@ export function SettingsAboutScreen() {
   return (
     <View style={[styles.root, { backgroundColor: c.background }]}>
       <ScrollView
-        contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
+        contentContainerStyle={{
+          paddingHorizontal: 16,
+          paddingBottom: insets.bottom + 24,
+        }}
         showsVerticalScrollIndicator={false}
       >
+        <StackContentPageTitle color={c.text}>{t("aboutScreenTitle")}</StackContentPageTitle>
         <SettingsSectionHeader title={t("aboutVersion")} color={c.textMuted} />
         <SettingsValueRow
           label="eClose"

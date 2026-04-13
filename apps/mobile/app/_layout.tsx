@@ -8,6 +8,7 @@ import "react-native-reanimated";
 import "@/i18n";
 
 import { AppIntroProvider } from "@/features/app-intro";
+import { AccountSetupProvider } from "@/features/account-setup";
 import { AuthProvider } from "@/contexts/auth-context";
 import { LocalePreferenceProvider } from "@/contexts/locale-preference-context";
 import { LocationProvider } from "@/contexts/location-context";
@@ -54,7 +55,8 @@ export default function RootLayout() {
                 <AuthProvider>
                   <SplashScreenGate>
                     <NavigationThemeBridge>
-                      <Stack>
+                      <AccountSetupProvider>
+                        <Stack>
                         <Stack.Screen name="index" options={{ headerShown: false }} />
                         <Stack.Screen name="app-intro" options={{ headerShown: false }} />
                         <Stack.Screen name="login" options={{ headerShown: false }} />
@@ -73,10 +75,8 @@ export default function RootLayout() {
                           options={{ headerShown: false, presentation: "modal" }}
                         />
                         <Stack.Screen name="create" options={{ headerShown: false }} />
-                        <Stack.Screen
-                          name="notifications"
-                          options={{ headerShown: true, headerBackTitle: "Voltar" }}
-                        />
+                        <Stack.Screen name="notifications" options={{ headerShown: true }} />
+                        <Stack.Screen name="chat-new" options={{ headerShown: true }} />
                         <Stack.Screen
                           name="settings"
                           options={{
@@ -96,7 +96,8 @@ export default function RootLayout() {
                           name="modal"
                           options={{ presentation: "modal", title: "Modal" }}
                         />
-                      </Stack>
+                        </Stack>
+                      </AccountSetupProvider>
                     </NavigationThemeBridge>
                   </SplashScreenGate>
                 </AuthProvider>

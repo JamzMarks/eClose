@@ -1,5 +1,11 @@
 import type { ReactElement } from "react";
-import type { ListRenderItem, StyleProp, ViewStyle } from "react-native";
+import type {
+  ListRenderItem,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  StyleProp,
+  ViewStyle,
+} from "react-native";
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from "react-native";
 
 import { TabScreenEmptyHint } from "@/components/shared/tab-screen/TabScreenEmptyHint";
@@ -19,6 +25,8 @@ export type DiscoverPaginatedFlatListProps<T> = {
   listHeaderComponent?: ReactElement | null;
   /** Se definido, substitui o hint vazio por defeito (ex.: loading / erro inicial). */
   listEmptyComponent?: ReactElement | null;
+  onScroll?: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
+  scrollEventThrottle?: number;
   /** Altura mínima do estado vazio (alinhada com loading/erro embebidos). */
   emptyMinHeight?: number;
   numColumns?: number;
@@ -44,6 +52,8 @@ export function DiscoverPaginatedFlatList<T>({
   emptyMinHeight = 220,
   numColumns = 1,
   columnWrapperStyle,
+  onScroll,
+  scrollEventThrottle,
 }: DiscoverPaginatedFlatListProps<T>) {
   const cols = numColumns > 1 ? numColumns : 1;
   const empty =
@@ -59,6 +69,8 @@ export function DiscoverPaginatedFlatList<T>({
       numColumns={cols}
       columnWrapperStyle={cols > 1 ? columnWrapperStyle : undefined}
       ListHeaderComponent={listHeaderComponent ?? null}
+      onScroll={onScroll}
+      scrollEventThrottle={scrollEventThrottle}
       refreshControl={
         <RefreshControl
           refreshing={refreshing}
@@ -84,7 +96,7 @@ export function DiscoverPaginatedFlatList<T>({
 
 const styles = StyleSheet.create({
   listContent: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 0,
     paddingBottom: 32,
     flexGrow: 1,
     paddingTop: 10,

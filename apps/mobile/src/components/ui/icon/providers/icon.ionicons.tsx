@@ -25,11 +25,38 @@ function map(name: AppIcon, filled?: boolean) {
     case AppIcon.Profile:
       return filled ? "person" : "person-outline";
 
+    case AppIcon.Chat:
+      return filled ? "chatbubbles" : "chatbubbles-outline";
+
+    case AppIcon.Settings:
+      return filled ? "settings" : "settings-outline";
+
+    case AppIcon.Shield:
+      return filled ? "shield" : "shield-outline";
+
+    case AppIcon.FileText:
+      return filled ? "document-text" : "document-text-outline";
+
+    case AppIcon.Help:
+      return filled ? "help-circle" : "help-circle-outline";
+
+    case AppIcon.LogOut:
+      return filled ? "log-out" : "log-out-outline";
+
+    case AppIcon.Search:
+      return filled ? "search" : "search-outline";
+
+    case AppIcon.NewMessage:
+      return filled ? "create" : "create-outline";
+
     case AppIcon.Like:
       return filled ? "heart" : "heart-outline";
 
     case AppIcon.Filter:
       return "options-outline";
+
+    case AppIcon.ChevronLeft:
+      return "chevron-back";
 
     default:
       return "help-circle";

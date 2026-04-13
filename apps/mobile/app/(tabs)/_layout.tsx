@@ -1,7 +1,6 @@
 import { Tabs } from "expo-router";
 import { useTranslation } from "react-i18next";
 
-import { AccountSetupProvider } from "@/features/account-setup";
 import { Icon } from "@/components/ui/icon/icon";
 import { AppIcon } from "@/components/ui/icon/icon.types";
 import { Colors } from "@/constants/theme";
@@ -12,8 +11,7 @@ export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <AccountSetupProvider>
-      <Tabs
+    <Tabs
         screenOptions={{
           tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
           headerShown: false,
@@ -71,6 +69,21 @@ export default function TabLayout() {
         />
 
         <Tabs.Screen
+          name="chat"
+          options={{
+            tabBarIcon: ({ color, focused }) => (
+              <Icon
+                name={AppIcon.Chat}
+                size="lg"
+                color={color}
+                filled={focused}
+              />
+            ),
+            tabBarAccessibilityLabel: t("chatTab"),
+          }}
+        />
+
+        <Tabs.Screen
           name="profile"
           options={{
             tabBarIcon: ({ color, focused }) => (
@@ -84,7 +97,6 @@ export default function TabLayout() {
             tabBarAccessibilityLabel: t("profile"),
           }}
         />
-      </Tabs>
-    </AccountSetupProvider>
+    </Tabs>
   );
 }

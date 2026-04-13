@@ -11,10 +11,11 @@ import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { SettingsGroupedCard } from "@/components/settings/components/SettingsGroupedCard";
+import { StackContentPageTitle } from "@/components/navigation/StackContentPageTitle";
 import { SettingsNavigationRow } from "@/components/settings/components/SettingsNavigationRow";
-import { SettingsSectionHeader } from "@/components/settings/components/SettingsSectionHeader";
+import { SettingsScreenGroup } from "@/components/settings/components/SettingsScreenGroup";
 import { SettingsValueRow } from "@/components/settings/components/SettingsValueRow";
+import { AppIcon } from "@/components/ui/icon/icon.types";
 import { getSchemeColors } from "@/constants/palette";
 import { useAuth } from "@/contexts/auth-context";
 import { useLocalePreference, type AppLocale } from "@/contexts/locale-preference-context";
@@ -23,8 +24,7 @@ import { useAccountSetup } from "@/features/account-setup";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
 /**
- * Modal central de definições (padrão tipo Instagram: um único ecrã com secções).
- * Sub-opções pesadas podem virar rotas filhas mais tarde (`/settings/appearance`, etc.).
+ * Modal de definições: grupos por finalidade; traço só no fim de cada grupo; linhas transparentes.
  */
 export function SettingsModalScreen() {
   const { t } = useTranslation("settings");
@@ -131,12 +131,33 @@ export function SettingsModalScreen() {
   const legalItems = useMemo(
     () =>
       [
-        { kind: "privacy" as const, titleKey: "privacyPolicy" as const },
-        { kind: "terms" as const, titleKey: "termsOfService" as const },
-        { kind: "help" as const, titleKey: "helpContact" as const },
+        {
+          kind: "privacy" as const,
+          titleKey: "privacyPolicy" as const,
+          icon: AppIcon.Shield,
+        },
+        {
+          kind: "terms" as const,
+          titleKey: "termsOfService" as const,
+          icon: AppIcon.FileText,
+        },
+        {
+          kind: "help" as const,
+          titleKey: "helpContact" as const,
+          icon: AppIcon.Help,
+        },
       ] as const,
     [],
   );
+
+  const rowBg = "transparent";
+  const navProps = {
+    textColor: c.text,
+    subtitleColor: c.textMuted,
+    borderColor: c.border,
+    backgroundColor: rowBg,
+    flat: true as const,
+  };
 
   async function handleSignOut() {
     await signOut();
@@ -157,88 +178,96 @@ export function SettingsModalScreen() {
   return (
     <View style={[styles.root, { backgroundColor: c.background }]}>
       <ScrollView
-        contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
-        showsVerticalScrollIndicator={false}
-      >
-        <SettingsSectionHeader title={t("sectionAccount")} color={c.textMuted} />
-        <SettingsValueRow
-          label={t("emailLabel")}
-          value={user?.email ?? "—"}
-          labelColor={c.textSecondary}
-          valueColor={c.text}
-          borderColor={c.border}
-          backgroundColor={c.surface}
-        />
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingBottom: insets.bottom + 24 },
+        ]}
+        showsVerticalScrollIndicator={false}>
+        <StackContentPageTitle color={c.text}>{t("title")}</StackContentPageTitle>
+        {/* Conta: identidade + conteúdo associado */}
+        <SettingsScreenGroup borderColor={c.border} showBottomRule paddingTop={0}>
+          <SettingsValueRow
+            flat
+            label={t("emailLabel")}
+            value={user?.email ?? "—"}
+            labelColor={c.textSecondary}
+            valueColor={c.text}
+            borderColor={c.border}
+            backgroundColor={rowBg}
+          />
+          <SettingsNavigationRow
+            icon={AppIcon.Wishlist}
+            title={tProfile("wishlistsMenuTitle")}
+            subtitle={tProfile("wishlistsMenuHint")}
+            onPress={() => {
+              router.back();
+              requestAnimationFrame(() => router.push("/wishlists"));
+            }}
+            {...navProps}
+          />
+        </SettingsScreenGroup>
 
-        <SettingsSectionHeader title={t("sectionGeneral")} color={c.textMuted} />
-        <SettingsNavigationRow
-          title={t("notifications")}
-          onPress={() => {
-            router.back();
-            requestAnimationFrame(() => openNotificationPreferencesSetup());
-          }}
-          textColor={c.text}
-          subtitleColor={c.textMuted}
-          borderColor={c.border}
-          backgroundColor={c.surface}
-        />
-        <SettingsNavigationRow
-          title={t("appearance")}
-          subtitle={t(appearanceSubtitleKey)}
-          onPress={openAppearancePicker}
-          textColor={c.textSecondary}
-          subtitleColor={c.textMuted}
-          borderColor={c.border}
-          backgroundColor={c.surface}
-        />
-        <SettingsNavigationRow
-          title={t("language")}
-          subtitle={t(languageSubtitleKey)}
-          onPress={openLanguagePicker}
-          textColor={c.textSecondary}
-          subtitleColor={c.textMuted}
-          borderColor={c.border}
-          backgroundColor={c.surface}
-        />
-        <SettingsNavigationRow
-          title={t("about")}
-          onPress={() => router.push("/settings/about")}
-          textColor={c.textSecondary}
-          subtitleColor={c.textMuted}
-          borderColor={c.border}
-          backgroundColor={c.surface}
-        />
+        {/* Experiência da app: alertas e personalização (UI + língua) */}
+        <SettingsScreenGroup borderColor={c.border} showBottomRule paddingTop={14}>
+          <SettingsNavigationRow
+            icon={AppIcon.Notifications}
+            title={t("notifications")}
+            onPress={() => {
+              router.back();
+              requestAnimationFrame(() => openNotificationPreferencesSetup());
+            }}
+            {...navProps}
+          />
+          <SettingsNavigationRow
+            icon={AppIcon.Settings}
+            title={t("appearance")}
+            subtitle={t(appearanceSubtitleKey)}
+            onPress={openAppearancePicker}
+            {...navProps}
+          />
+          <SettingsNavigationRow
+            icon={AppIcon.Explore}
+            title={t("language")}
+            subtitle={t(languageSubtitleKey)}
+            onPress={openLanguagePicker}
+            {...navProps}
+          />
+        </SettingsScreenGroup>
 
-        <SettingsSectionHeader title={t("sectionLegal")} color={c.textMuted} />
-        <SettingsGroupedCard borderColor={c.border} backgroundColor={c.surface}>
-          {legalItems.map((item, index) => (
+        {/* Informação sobre o produto */}
+        <SettingsScreenGroup borderColor={c.border} showBottomRule paddingTop={14}>
+          <SettingsNavigationRow
+            icon={AppIcon.Help}
+            title={t("about")}
+            onPress={() => router.push("/settings/about")}
+            {...navProps}
+          />
+        </SettingsScreenGroup>
+
+        {/* Documentos legais e apoio formal */}
+        <SettingsScreenGroup borderColor={c.border} showBottomRule paddingTop={14}>
+          {legalItems.map((item) => (
             <SettingsNavigationRow
               key={item.kind}
+              icon={item.icon}
               title={tProfile(item.titleKey)}
               onPress={() => router.push({ pathname: "/profile-legal", params: { kind: item.kind } })}
-              textColor={c.text}
-              subtitleColor={c.textMuted}
-              borderColor={c.border}
-              backgroundColor={c.surface}
-              showDividerBelow={index < legalItems.length - 1}
+              {...navProps}
             />
           ))}
-        </SettingsGroupedCard>
+        </SettingsScreenGroup>
 
-        <SettingsSectionHeader title={t("sectionSession")} color={c.textMuted} />
-        <SettingsGroupedCard borderColor={c.border} backgroundColor={c.surface}>
+        {/* Sessão */}
+        <SettingsScreenGroup borderColor={c.border} showBottomRule={false} paddingTop={14}>
           <SettingsNavigationRow
+            icon={AppIcon.LogOut}
             title={t("signOut")}
             onPress={confirmSignOut}
-            textColor={c.text}
-            subtitleColor={c.textMuted}
-            borderColor={c.border}
-            backgroundColor={c.surface}
+            {...navProps}
             destructive
             showChevron={false}
-            showDividerBelow={false}
           />
-        </SettingsGroupedCard>
+        </SettingsScreenGroup>
       </ScrollView>
     </View>
   );
@@ -246,4 +275,7 @@ export function SettingsModalScreen() {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
+  scrollContent: {
+    paddingHorizontal: 16,
+  },
 });

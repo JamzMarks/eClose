@@ -9,7 +9,7 @@ import { useFocusEffect, useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
 import { Screen } from "@/components/layout/screen";
-import { AppTabScreenHeader } from "@/components/shared/tab-screen/AppTabScreenHeader";
+import { StackContentPageTitle } from "@/components/navigation/StackContentPageTitle";
 import { TabScreenCenterError } from "@/components/shared/tab-screen/TabScreenCenterError";
 import { TabScreenCenterLoading } from "@/components/shared/tab-screen/TabScreenCenterLoading";
 import { TabScreenEmptyHint } from "@/components/shared/tab-screen/TabScreenEmptyHint";
@@ -116,14 +116,12 @@ export function WishlistsIndexScreen() {
     }
   }
 
-  const header = (
-    <AppTabScreenHeader title={t("title")} borderColor={c.border} titleColor={c.text} />
-  );
+  const titleEl = <StackContentPageTitle color={c.text}>{t("title")}</StackContentPageTitle>;
 
   if (loading && items.length === 0 && !error) {
     return (
       <Screen>
-        {header}
+        <View style={styles.titleWrap}>{titleEl}</View>
         <TabScreenCenterLoading message={t("loading")} subtitleColor={c.textSecondary} />
       </Screen>
     );
@@ -132,7 +130,7 @@ export function WishlistsIndexScreen() {
   if (error && items.length === 0) {
     return (
       <Screen>
-        {header}
+        <View style={styles.titleWrap}>{titleEl}</View>
         <TabScreenCenterError message={error} retryLabel={t("retry")} onRetry={retryInitial} />
       </Screen>
     );
@@ -140,7 +138,6 @@ export function WishlistsIndexScreen() {
 
   return (
     <Screen>
-      {header}
       <FlatList
         data={items}
         keyExtractor={(it) => it.id}
@@ -149,11 +146,14 @@ export function WishlistsIndexScreen() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={AppPalette.primary} />
         }
         ListHeaderComponent={
-          <Pressable
-            style={[styles.newRow, { backgroundColor: c.surface, borderColor: c.border }]}
-            onPress={() => setCreateOpen(true)}>
-            <Text style={[styles.newRowText, { color: AppPalette.primary }]}>{t("newList")}</Text>
-          </Pressable>
+          <View>
+            {titleEl}
+            <Pressable
+              style={[styles.newRow, { backgroundColor: c.surface, borderColor: c.border }]}
+              onPress={() => setCreateOpen(true)}>
+              <Text style={[styles.newRowText, { color: AppPalette.primary }]}>{t("newList")}</Text>
+            </Pressable>
+          </View>
         }
         ListEmptyComponent={
           <TabScreenEmptyHint message={t("empty")} color={c.textSecondary} minHeight={220} />
@@ -219,6 +219,7 @@ export function WishlistsIndexScreen() {
 }
 
 const styles = StyleSheet.create({
+  titleWrap: { paddingHorizontal: 16, paddingTop: 8 },
   list: { paddingHorizontal: 16, paddingBottom: 32, flexGrow: 1 },
   newRow: {
     padding: 16,

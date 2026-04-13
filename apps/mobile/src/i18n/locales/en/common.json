@@ -1,4 +1,5 @@
 {
   "loading": "Loading…",
-  "error": "Could not load"
+  "error": "Could not load",
+  "backA11y": "Go back"
 }

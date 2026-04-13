@@ -13,6 +13,11 @@ import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
 import { Screen } from "@/components/layout/screen";
+import {
+  buildMinimalStackHeaderOptions,
+  minimalStackBackCircleBackground,
+} from "@/components/navigation/minimal-stack-header";
+import { StackContentPageTitle } from "@/components/navigation/StackContentPageTitle";
 import { TabScreenCenterError } from "@/components/shared/tab-screen/TabScreenCenterError";
 import { AppPalette, getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -28,6 +33,7 @@ export function WishlistDetailScreen() {
   const { id: rawId } = useLocalSearchParams<{ id: string }>();
   const listId = Array.isArray(rawId) ? rawId[0] : rawId;
   const { t } = useTranslation("wishlists");
+  const { t: tCommon } = useTranslation("common");
   const { t: tDiscover } = useTranslation("discover");
   const router = useRouter();
   const navigation = useNavigation();
@@ -84,34 +90,43 @@ export function WishlistDetailScreen() {
     };
   }, [listId, load, t]);
 
+  const isDark = scheme === "dark";
+
   useLayoutEffect(() => {
-    navigation.setOptions({
-      title: detail?.title ?? t("detailTitle"),
-      headerTintColor: AppPalette.primary,
-      headerStyle: { backgroundColor: c.surface },
-      headerTitleStyle: { color: c.text },
-      headerRight:
-        detail?.myRole === "OWNER"
-          ? () => (
-              <Pressable
-                onPress={() =>
-                  Alert.alert(t("deleteList"), t("deleteListConfirm"), [
-                    { text: t("cancel"), style: "cancel" },
-                    {
-                      text: t("deleteList"),
-                      style: "destructive",
-                      onPress: () => void handleDeleteList(),
-                    },
-                  ])
-                }
-                hitSlop={12}
-                style={{ marginRight: 12 }}>
-                <Text style={{ color: AppPalette.error, fontWeight: "600" }}>{t("deleteList")}</Text>
-              </Pressable>
-            )
-          : undefined,
-    });
-  }, [navigation, detail?.title, detail?.myRole, c.surface, c.text, t, handleDeleteList]);
+    navigation.setOptions(
+      buildMinimalStackHeaderOptions(
+        {
+          headerBackgroundColor: c.background,
+          tintColor: c.text,
+          circleBackgroundColor: minimalStackBackCircleBackground(isDark ? "dark" : "light"),
+          backAccessibilityLabel: tCommon("backA11y"),
+        },
+        {
+          headerRight:
+            detail?.myRole === "OWNER"
+              ? () => (
+                  <Pressable
+                    onPress={() =>
+                      Alert.alert(t("deleteList"), t("deleteListConfirm"), [
+                        { text: t("cancel"), style: "cancel" },
+                        {
+                          text: t("deleteList"),
+                          style: "destructive",
+                          onPress: () => void handleDeleteList(),
+                        },
+                      ])
+                    }
+                    hitSlop={12}
+                    accessibilityRole="button"
+                    accessibilityLabel={t("deleteList")}>
+                    <Text style={{ color: AppPalette.error, fontWeight: "600" }}>{t("deleteList")}</Text>
+                  </Pressable>
+                )
+              : undefined,
+        },
+      ),
+    );
+  }, [navigation, c.background, c.text, isDark, tCommon, detail?.myRole, t, handleDeleteList]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -176,6 +191,7 @@ export function WishlistDetailScreen() {
         }
         ListHeaderComponent={
           <View style={styles.headerBlock}>
+            <StackContentPageTitle color={c.text}>{detail.title}</StackContentPageTitle>
             <Text style={[styles.meta, { color: c.textSecondary }]}>
               {t("members", { count: detail.memberCount, events: detail.eventCount })}
             </Text>

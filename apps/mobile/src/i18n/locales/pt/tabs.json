@@ -3,10 +3,21 @@
   "programacao": "Programação",
   "createTab": "Criar",
   "mapTab": "Mapa",
+  "chatTab": "Chat",
+  "chatTitle": "Chat",
+  "chatSectionIndividual": "Conversas individuais",
+  "chatSectionGroups": "Grupos",
+  "chatEmptyIndividual": "As tuas conversas individuais aparecerão aqui.",
+  "chatEmptyGroups": "Os teus grupos aparecerão aqui.",
   "profile": "Perfil",
   "appName": "eClose",
   "tabHeaderCreateA11y": "Adicionar ou criar",
   "tabHeaderNotificationsA11y": "Notificações",
+  "tabHeaderSettingsA11y": "Abrir definições",
   "notificationsTitle": "Notificações",
-  "notificationsPlaceholder": "Ainda não tens notificações. Em breve verás aqui atualizações da tua conta e dos eventos."
+  "notificationsPlaceholder": "Ainda não tens notificações. Em breve verás aqui atualizações da tua conta e dos eventos.",
+  "chatSearchPlaceholder": "Pesquisar",
+  "chatSearchA11y": "Pesquisar conversas",
+  "chatNewMessageA11y": "Nova mensagem",
+  "chatNewMessageTitle": "Nova mensagem"
 }
