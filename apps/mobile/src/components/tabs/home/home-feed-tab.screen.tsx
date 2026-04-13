@@ -8,7 +8,7 @@ import { EventListingCard } from "@/components/shared/listing/event-listing-card
 import { Screen } from "@/components/layout/screen";
 import { AppTabScreenHeader } from "@/components/shared/tab-screen/AppTabScreenHeader";
 import { TabScreenContent } from "@/components/shared/tab-screen/TabScreenContent";
-import { TAB_SCREEN_CONTENT_HORIZONTAL_PADDING } from "@/components/shared/tab-screen/tabScreenHeader.tokens";
+import { Layout } from "@/constants/layout";
 import {
   TabHeaderCreateButton,
   TabHeaderNotificationsButton,
@@ -127,7 +127,7 @@ export function HomeFeedTabScreen() {
 
 const styles = StyleSheet.create({
   subtitle: {
-    paddingHorizontal: TAB_SCREEN_CONTENT_HORIZONTAL_PADDING,
+    paddingHorizontal: Layout.tab.content.horizontalPadding,
     paddingTop: 8,
     paddingBottom: 4,
     fontSize: 15,

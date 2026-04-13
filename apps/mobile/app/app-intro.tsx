@@ -20,7 +20,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { APP_INTRO_SLIDES, useAppIntro } from "@/features/app-intro";
 import { useAuth } from "@/contexts/auth-context";
 import { AppPalette, getSchemeColors } from "@/constants/palette";
-import { Radius } from "@/constants/radius";
+import { Radius } from "@/constants/layout";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
 const { width: SCREEN_W } = Dimensions.get("window");

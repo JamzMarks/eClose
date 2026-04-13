@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { StyleSheet, View } from "react-native";
 
-import { Radius } from "@/constants/radius";
+import { Radius } from "@/constants/layout";
 
 export type SettingsGroupedCardProps = {
   children: ReactNode;

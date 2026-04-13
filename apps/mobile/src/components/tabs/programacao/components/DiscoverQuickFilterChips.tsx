@@ -2,7 +2,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useTranslation } from "react-i18next";
 
 import { AppPalette, getSchemeColors } from "@/constants/palette";
-import { Radius } from "@/constants/radius";
+import { Radius } from "@/constants/layout";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
 export type DiscoverQuickFilterId = "all" | "popular" | "recommends" | "more";

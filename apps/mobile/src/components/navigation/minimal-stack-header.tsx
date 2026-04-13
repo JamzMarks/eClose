@@ -5,7 +5,7 @@ import { useRouter } from "expo-router";
 
 import { Icon } from "@/components/ui/icon/icon";
 import { AppIcon } from "@/components/ui/icon/icon.types";
-import { TAB_SCREEN_HEADER_HORIZONTAL_PADDING } from "@/components/shared/tab-screen/tabScreenHeader.tokens";
+import { Layout } from "@/constants/layout";
 
 const BACK_CIRCLE_SIZE = 36;
 
@@ -45,10 +45,42 @@ export function MinimalStackBackButton({
   );
 }
 
+export function MinimalStackCloseButton({
+  tintColor,
+  circleBackgroundColor,
+  accessibilityLabel,
+}: {
+  tintColor: string;
+  circleBackgroundColor: string;
+  accessibilityLabel: string;
+}) {
+  const router = useRouter();
+  return (
+    <Pressable
+      onPress={() => router.dismiss()}
+      hitSlop={10}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
+      style={({ pressed }) => [
+        styles.backCircle,
+        { backgroundColor: circleBackgroundColor, opacity: pressed ? 0.85 : 1 },
+      ]}>
+      <View style={styles.iconSlot} pointerEvents="none">
+        <Icon name={AppIcon.Close} size="md" color={tintColor} />
+      </View>
+    </Pressable>
+  );
+}
+
 export function buildMinimalStackHeaderOptions(
   chrome: MinimalStackHeaderChrome,
-  options?: { headerRight?: () => ReactNode },
+  options?: {
+    headerRight?: () => ReactNode;
+    headerLeft?: () => ReactNode;
+    hideBackButton?: boolean;
+  },
 ): NativeStackNavigationOptions {
+  const shouldHideBack = options?.hideBackButton === true;
   return {
     /** Expo Router usa o nome do ficheiro (ex.: `index`) como título por defeito; tem de ficar vazio. */
     title: "",
@@ -62,15 +94,21 @@ export function buildMinimalStackHeaderOptions(
       ...(Platform.OS === "android" ? { elevation: 0 } : {}),
     },
     headerTintColor: chrome.tintColor,
-    headerLeft: () => (
-      <View style={styles.headerSide}>
-        <MinimalStackBackButton
-          tintColor={chrome.tintColor}
-          circleBackgroundColor={chrome.circleBackgroundColor}
-          accessibilityLabel={chrome.backAccessibilityLabel}
-        />
-      </View>
-    ),
+    headerLeft: shouldHideBack
+      ? undefined
+      : () => (
+          <View style={styles.headerSide}>
+            {options?.headerLeft ? (
+              options.headerLeft()
+            ) : (
+              <MinimalStackBackButton
+                tintColor={chrome.tintColor}
+                circleBackgroundColor={chrome.circleBackgroundColor}
+                accessibilityLabel={chrome.backAccessibilityLabel}
+              />
+            )}
+          </View>
+        ),
     headerRight:
       options?.headerRight != null
         ? () => <View style={styles.headerSideEnd}>{options.headerRight!()}</View>
@@ -80,12 +118,12 @@ export function buildMinimalStackHeaderOptions(
 
 const styles = StyleSheet.create({
   headerSide: {
-    paddingLeft: TAB_SCREEN_HEADER_HORIZONTAL_PADDING,
+    paddingLeft: Layout.tab.header.horizontalPadding,
     flexDirection: "row",
     alignItems: "center",
   },
   headerSideEnd: {
-    paddingRight: TAB_SCREEN_HEADER_HORIZONTAL_PADDING,
+    paddingRight: Layout.tab.header.horizontalPadding,
     flexDirection: "row",
     alignItems: "center",
   },

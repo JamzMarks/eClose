@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { Image } from "expo-image";
 
-import { Radius } from "@/constants/radius";
+import { Radius } from "@/constants/layout";
 
 const LIST_HORIZONTAL_INSET = 32;
 const CAROUSEL_HEIGHT = 132;

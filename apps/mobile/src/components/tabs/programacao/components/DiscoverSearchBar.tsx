@@ -1,7 +1,7 @@
 import { StyleSheet, TextInput, View } from "react-native";
 import { useTranslation } from "react-i18next";
 
-import { Radius } from "@/constants/radius";
+import { Radius } from "@/constants/layout";
 import { getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 

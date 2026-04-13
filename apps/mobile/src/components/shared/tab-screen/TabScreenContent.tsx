@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import type { StyleProp, ViewStyle } from "react-native";
 import { StyleSheet, View } from "react-native";
 
-import { TAB_SCREEN_CONTENT_HORIZONTAL_PADDING } from "@/components/shared/tab-screen/tabScreenHeader.tokens";
+import { Layout } from "@/constants/layout";
 
 export type TabScreenContentProps = {
   children: ReactNode;
@@ -22,5 +22,5 @@ export function TabScreenContent({ children, edgeToEdge, style }: TabScreenConte
 
 const styles = StyleSheet.create({
   fill: { flex: 1 },
-  padded: { paddingHorizontal: TAB_SCREEN_CONTENT_HORIZONTAL_PADDING },
+  padded: { paddingHorizontal: Layout.tab.content.horizontalPadding },
 });

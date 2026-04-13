@@ -3,6 +3,8 @@ import { StyleSheet, Text, View } from "react-native";
 export type SettingsSectionHeaderProps = {
   title: string;
   color: string;
+  /** Padding horizontal opcional para alinhar com o gutter do ecrã. */
+  insetHorizontal?: number;
 };
 
 export function SettingsSectionHeader({ title, color }: SettingsSectionHeaderProps) {

@@ -7,7 +7,7 @@ import {
 } from "react-native";
 
 import { AppPalette, getSchemeColors } from "@/constants/palette";
-import { Radius } from "@/constants/radius";
+import { Radius } from "@/constants/layout";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
 export type AppTextFieldProps = TextInputProps & {

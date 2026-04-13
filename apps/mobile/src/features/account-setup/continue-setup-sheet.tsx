@@ -13,6 +13,7 @@ import { useTranslation } from "react-i18next";
 
 import { AppButton } from "@/components/ui/Button";
 import { AppPalette, getSchemeColors } from "@/constants/palette";
+import { Radius } from "@/constants/layout";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import type { IAuthService } from "@/services/auth/auth.service.interface";
 import { AuthService } from "@/services/auth/auth.service";
@@ -180,6 +181,7 @@ export function ContinueSetupSheet({
                 onPress={() => onDismiss("skip")}
                 disabled={saving}
                 fullWidth
+                style={styles.actionSecondary}
               />
             ) : null}
           </View>
@@ -223,8 +225,8 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.45)",
   },
   sheet: {
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderTopLeftRadius: Radius.xl,
+    borderTopRightRadius: Radius.xl,
     paddingHorizontal: 24,
     paddingTop: 12,
   },
@@ -270,8 +272,10 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   actions: {
-    gap: 8,
-    marginTop: 16,
+    marginTop: 24,
+  },
+  actionSecondary: {
+    marginTop: 8,
   },
   hint: {
     fontSize: 13,

@@ -9,6 +9,7 @@ import { SettingsGroupedCard } from "@/components/settings/components/SettingsGr
 import { SettingsNavigationRow } from "@/components/settings/components/SettingsNavigationRow";
 import { SettingsSectionHeader } from "@/components/settings/components/SettingsSectionHeader";
 import { SettingsValueRow } from "@/components/settings/components/SettingsValueRow";
+import { Layout } from "@/constants/layout";
 import { getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
@@ -50,7 +51,7 @@ export function SettingsAboutScreen() {
     <View style={[styles.root, { backgroundColor: c.background }]}>
       <ScrollView
         contentContainerStyle={{
-          paddingHorizontal: 16,
+          paddingHorizontal: Layout.tab.content.horizontalPadding,
           paddingBottom: insets.bottom + 24,
         }}
         showsVerticalScrollIndicator={false}

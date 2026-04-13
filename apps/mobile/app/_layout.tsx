@@ -16,6 +16,7 @@ import { ThemePreferenceProvider } from "@/contexts/theme-preference-context";
 import { SplashScreenGate } from "@/components/splash/splash-screen-gate";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { AppPalette, getSchemeColors } from "@/constants/palette";
+import { Radius } from "@/constants/layout";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 function NavigationThemeBridge({ children }: { children: ReactNode }) {
@@ -45,6 +46,9 @@ function NavigationThemeBridge({ children }: { children: ReactNode }) {
 }
 
 export default function RootLayout() {
+  const scheme = useColorScheme() ?? "light";
+  const c = getSchemeColors(scheme);
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ThemePreferenceProvider>
@@ -72,7 +76,16 @@ export default function RootLayout() {
                         />
                         <Stack.Screen
                           name="wishlists"
-                          options={{ headerShown: false, presentation: "modal" }}
+                          options={{
+                            headerShown: false,
+                            presentation: "modal",
+                            contentStyle: {
+                              backgroundColor: c.background,
+                              borderTopLeftRadius: Radius.xl,
+                              borderTopRightRadius: Radius.xl,
+                              overflow: "hidden",
+                            },
+                          }}
                         />
                         <Stack.Screen name="create" options={{ headerShown: false }} />
                         <Stack.Screen name="notifications" options={{ headerShown: true }} />
@@ -80,7 +93,6 @@ export default function RootLayout() {
                         <Stack.Screen
                           name="settings"
                           options={{
-                            presentation: "modal",
                             headerShown: false,
                           }}
                         />
@@ -94,7 +106,16 @@ export default function RootLayout() {
                         />
                         <Stack.Screen
                           name="modal"
-                          options={{ presentation: "modal", title: "Modal" }}
+                          options={{
+                            presentation: "modal",
+                            title: "Modal",
+                            contentStyle: {
+                              backgroundColor: c.background,
+                              borderTopLeftRadius: Radius.xl,
+                              borderTopRightRadius: Radius.xl,
+                              overflow: "hidden",
+                            },
+                          }}
                         />
                         </Stack>
                       </AccountSetupProvider>

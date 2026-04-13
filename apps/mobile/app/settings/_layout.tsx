@@ -27,6 +27,10 @@ export default function SettingsLayout() {
       }}>
       <Stack.Screen name="index" options={{ title: "" }} />
       <Stack.Screen name="about" options={{ title: "" }} />
+      <Stack.Screen name="account" options={{ title: "" }} />
+      <Stack.Screen name="account/name" options={{ title: "" }} />
+      <Stack.Screen name="account/email" options={{ title: "" }} />
+      <Stack.Screen name="account/password" options={{ title: "" }} />
     </Stack>
   );
 }

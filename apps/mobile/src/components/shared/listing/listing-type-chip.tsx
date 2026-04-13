@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 
-import { Radius } from "@/constants/radius";
+import { Radius } from "@/constants/layout";
 
 export type ListingTypeChipProps = {
   label: string;

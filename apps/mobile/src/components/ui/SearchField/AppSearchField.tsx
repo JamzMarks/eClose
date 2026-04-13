@@ -12,7 +12,7 @@ import {
 import { Icon } from "@/components/ui/icon/icon";
 import { AppIcon } from "@/components/ui/icon/icon.types";
 import { getSchemeColors } from "@/constants/palette";
-import { Radius } from "@/constants/radius";
+import { Radius } from "@/constants/layout";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
 export type AppSearchFieldProps = Omit<TextInputProps, "style" | "placeholderTextColor"> & {

@@ -1,14 +1,7 @@
 import type { ReactNode } from "react";
 import { Platform, StyleSheet, Text, View } from "react-native";
 
-import {
-  TAB_SCREEN_HEADER_DIVIDER_OPACITY,
-  TAB_SCREEN_HEADER_EDGE_SLOT_WIDTH,
-  TAB_SCREEN_HEADER_HORIZONTAL_PADDING,
-  TAB_SCREEN_HEADER_NATURAL_GAP,
-  TAB_SCREEN_HEADER_ROW_MIN_HEIGHT,
-  TAB_SCREEN_HEADER_VERTICAL_PADDING,
-} from "@/components/shared/tab-screen/tabScreenHeader.tokens";
+import { Layout } from "@/constants/layout";
 
 /**
  * Shell de cabeçalho para ecrãs nas tabs: padding, divisor e altura mínima fixos;
@@ -133,66 +126,66 @@ export function AppTabScreenHeader({
   );
 }
 
-const EDGE_SLOT_W = TAB_SCREEN_HEADER_EDGE_SLOT_WIDTH;
+const EDGE_SLOT_W = Layout.tab.header.edgeSlotWidth;
 
 const styles = StyleSheet.create({
   headerWrap: {
     width: "100%",
   },
   header: {
-    paddingHorizontal: TAB_SCREEN_HEADER_HORIZONTAL_PADDING,
-    paddingVertical: TAB_SCREEN_HEADER_VERTICAL_PADDING,
+    paddingHorizontal: Layout.tab.header.horizontalPadding,
+    paddingVertical: Layout.tab.header.verticalPadding,
   },
   headerDivider: {
     height: 1,
     width: "100%",
-    opacity: TAB_SCREEN_HEADER_DIVIDER_OPACITY,
+    opacity: Layout.tab.header.dividerOpacity,
   },
   row: {
     flexDirection: "row",
     alignItems: "center",
-    minHeight: TAB_SCREEN_HEADER_ROW_MIN_HEIGHT,
+    minHeight: Layout.tab.header.rowMinHeight,
   },
   rowNatural: {
-    columnGap: TAB_SCREEN_HEADER_NATURAL_GAP,
+    columnGap: Layout.tab.header.naturalGap,
   },
   rowSymmetric: {
-    columnGap: TAB_SCREEN_HEADER_NATURAL_GAP,
+    columnGap: Layout.tab.header.naturalGap,
   },
   edgeSlotStart: {
     width: EDGE_SLOT_W,
-    minHeight: TAB_SCREEN_HEADER_ROW_MIN_HEIGHT,
+    minHeight: Layout.tab.header.rowMinHeight,
     justifyContent: "center",
     alignItems: "flex-start",
   },
   edgeSlotEnd: {
     width: EDGE_SLOT_W,
-    minHeight: TAB_SCREEN_HEADER_ROW_MIN_HEIGHT,
+    minHeight: Layout.tab.header.rowMinHeight,
     justifyContent: "center",
     alignItems: "flex-end",
   },
   centerSymmetric: {
     flex: 1,
     minWidth: 0,
-    minHeight: TAB_SCREEN_HEADER_ROW_MIN_HEIGHT,
+    minHeight: Layout.tab.header.rowMinHeight,
     justifyContent: "center",
   },
   leadingNatural: {
     flexShrink: 0,
-    minHeight: TAB_SCREEN_HEADER_ROW_MIN_HEIGHT,
+    minHeight: Layout.tab.header.rowMinHeight,
     justifyContent: "center",
     alignItems: "flex-start",
   },
   centerNatural: {
     flex: 1,
     minWidth: 0,
-    minHeight: TAB_SCREEN_HEADER_ROW_MIN_HEIGHT,
+    minHeight: Layout.tab.header.rowMinHeight,
     justifyContent: "center",
   },
   trailingNatural: {
     flexShrink: 0,
     minWidth: EDGE_SLOT_W,
-    minHeight: TAB_SCREEN_HEADER_ROW_MIN_HEIGHT,
+    minHeight: Layout.tab.header.rowMinHeight,
     justifyContent: "center",
     alignItems: "flex-end",
   },

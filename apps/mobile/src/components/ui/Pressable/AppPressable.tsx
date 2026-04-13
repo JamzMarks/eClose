@@ -12,7 +12,7 @@ import {
 import { Icon } from "@/components/ui/icon/icon";
 import type { AppIcon, IconSize } from "@/components/ui/icon/icon.types";
 import { AppPalette, getSchemeColors } from "@/constants/palette";
-import { Radius } from "@/constants/radius";
+import { Radius } from "@/constants/layout";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
 type AppPressableBase = Omit<PressableProps, "children" | "style"> & {

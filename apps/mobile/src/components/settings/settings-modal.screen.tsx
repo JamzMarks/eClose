@@ -14,7 +14,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StackContentPageTitle } from "@/components/navigation/StackContentPageTitle";
 import { SettingsNavigationRow } from "@/components/settings/components/SettingsNavigationRow";
 import { SettingsScreenGroup } from "@/components/settings/components/SettingsScreenGroup";
-import { SettingsValueRow } from "@/components/settings/components/SettingsValueRow";
 import { AppIcon } from "@/components/ui/icon/icon.types";
 import { getSchemeColors } from "@/constants/palette";
 import { useAuth } from "@/contexts/auth-context";
@@ -186,14 +185,12 @@ export function SettingsModalScreen() {
         <StackContentPageTitle color={c.text}>{t("title")}</StackContentPageTitle>
         {/* Conta: identidade + conteúdo associado */}
         <SettingsScreenGroup borderColor={c.border} showBottomRule paddingTop={0}>
-          <SettingsValueRow
-            flat
-            label={t("emailLabel")}
-            value={user?.email ?? "—"}
-            labelColor={c.textSecondary}
-            valueColor={c.text}
-            borderColor={c.border}
-            backgroundColor={rowBg}
+          <SettingsNavigationRow
+            icon={AppIcon.Profile}
+            title={t("sectionAccount")}
+            subtitle={user?.email ?? "—"}
+            onPress={() => router.push("/settings/account")}
+            {...navProps}
           />
           <SettingsNavigationRow
             icon={AppIcon.Wishlist}

@@ -16,6 +16,20 @@ export default function TabLayout() {
           tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
           headerShown: false,
           tabBarShowLabel: false,
+          tabBarIconStyle: {
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: 0,
+            marginBottom: 0,
+          },
+          tabBarItemStyle: {
+            justifyContent: "center",
+            alignItems: "center",
+            paddingTop: 0,
+            paddingBottom: 0,
+          },
+          tabBarLabelStyle: { display: "none" },
           tabBarStyle: {
             backgroundColor: Colors[colorScheme ?? "light"].background,
             borderTopWidth: 0,

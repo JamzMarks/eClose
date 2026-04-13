@@ -1,9 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 
-import {
-  TAB_SCREEN_HEADER_DIVIDER_OPACITY,
-  TAB_SCREEN_HEADER_HORIZONTAL_PADDING,
-} from "@/components/shared/tab-screen/tabScreenHeader.tokens";
+import { Layout } from "@/constants/layout";
 
 export type TabScreenHeaderProps = {
   title: string;
@@ -41,14 +38,14 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   header: {
-    paddingHorizontal: TAB_SCREEN_HEADER_HORIZONTAL_PADDING,
+    paddingHorizontal: Layout.tab.header.horizontalPadding,
     paddingTop: 8,
     paddingBottom: 16,
   },
   divider: {
     height: 1,
     width: "100%",
-    opacity: TAB_SCREEN_HEADER_DIVIDER_OPACITY,
+    opacity: Layout.tab.header.dividerOpacity,
   },
   title: { fontSize: 28, fontWeight: "700" },
   subtitle: { fontSize: 15, marginTop: 4 },

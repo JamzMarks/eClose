@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
-import { TAB_SCREEN_CONTENT_HORIZONTAL_PADDING } from "@/components/shared/tab-screen/tabScreenHeader.tokens";
+import { Layout } from "@/constants/layout";
 import { PrimaryButton } from "@/components/ui";
 import { getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     justifyContent: "center",
-    paddingHorizontal: TAB_SCREEN_CONTENT_HORIZONTAL_PADDING,
+    paddingHorizontal: Layout.tab.content.horizontalPadding,
     paddingVertical: 32,
     gap: 16,
     maxWidth: 420,
