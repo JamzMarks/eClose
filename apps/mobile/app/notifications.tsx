@@ -32,7 +32,7 @@ export default function NotificationsScreen() {
   }, [navigation, c.background, c.text, isDark, tCommon]);
 
   return (
-    <Screen>
+    <Screen edges={["bottom"]}>
       <View style={styles.body}>
         <StackContentPageTitle color={c.text}>{t("notificationsTitle")}</StackContentPageTitle>
         <Text style={[styles.placeholder, { color: c.textSecondary }]}>
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   body: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingTop: 8,
+    paddingTop: 0,
   },
   placeholder: {
     fontSize: 15,

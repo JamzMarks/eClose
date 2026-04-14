@@ -30,6 +30,8 @@ export type DiscoverFiltersSheetLabels = {
   listKindSection: string;
   segmentEvents: string;
   segmentVenues: string;
+  segmentArtists: string;
+  artistsFiltersHint: string;
 };
 
 export type DiscoverFiltersSheetProps = {
@@ -85,7 +87,7 @@ export function DiscoverFiltersSheet({
   const apply = () => {
     if (listKind === "events") {
       onApplyEvents(draftEvents);
-    } else {
+    } else if (listKind === "venues") {
       onApplyVenues(draftVenues);
     }
     onClose();
@@ -98,7 +100,7 @@ export function DiscoverFiltersSheet({
         locationMode: "ALL",
         query: "",
       });
-    } else {
+    } else if (listKind === "venues") {
       setDraftVenues({
         city: "",
         region: "",
@@ -148,7 +150,11 @@ export function DiscoverFiltersSheet({
           embedded
           value={listKind}
           onChange={onListKindChange}
-          labels={{ events: labels.segmentEvents, venues: labels.segmentVenues }}
+                   labels={{
+            events: labels.segmentEvents,
+            venues: labels.segmentVenues,
+            artists: labels.segmentArtists,
+          }}
           activeBackground={AppPalette.primary}
           activeText={AppPalette.white}
           inactiveText={c.textSecondary}
@@ -180,7 +186,7 @@ export function DiscoverFiltersSheet({
               {modeChip("ONLINE", labels.locationModeOnline)}
             </View>
           </>
-        ) : (
+        ) : listKind === "venues" ? (
           <>
             <FieldLabel color={c.textSecondary} text={labels.city} />
             <TextInput
@@ -210,6 +216,10 @@ export function DiscoverFiltersSheet({
               />
             </View>
           </>
+        ) : (
+          <Text style={{ color: c.textSecondary, marginTop: 8, lineHeight: 20 }}>
+            {labels.artistsFiltersHint}
+          </Text>
         )}
 
         <View style={styles.actions}>

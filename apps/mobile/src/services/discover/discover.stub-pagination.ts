@@ -2,10 +2,17 @@
  * Paginação em memória sobre dados locais dos services — apenas consumo interno.
  */
 import type { DiscoverEventListFilters, DiscoverVenueListFilters } from "@/services/discover/discover-list-filters.types";
-import type { MarketplaceVenueListItem, PublishedEventListItem } from "@/services/discover/discover-list.types";
+import type {
+  MarketplaceArtistListItem,
+  MarketplaceVenueListItem,
+  PublishedEventListItem,
+} from "@/services/discover/discover-list.types";
 import { LOCAL_PUBLISHED_EVENTS } from "@/services/event/event.local-data";
 import { LOCAL_MARKETPLACE_VENUES } from "@/services/venue/venue.local-data";
-import type { ListMarketplaceVenuesParams } from "@/services/marketplace/marketplace.service.interface";
+import type {
+  ListMarketplaceArtistsParams,
+  ListMarketplaceVenuesParams,
+} from "@/services/marketplace/marketplace.service.interface";
 import type { ListPublishedEventsParams } from "@/services/types/event.types";
 import type { PaginatedResponse } from "@/services/types/pagination.types";
 
@@ -106,4 +113,14 @@ export async function paginateLocalVenues(
   const limit = params?.limit ?? 15;
   const filtered = applyVenueFilters(LOCAL_MARKETPLACE_VENUES, venueFiltersFromListParams(params));
   return slicePage(filtered, page, limit);
+}
+
+export async function paginateLocalArtists(
+  params?: ListMarketplaceArtistsParams,
+): Promise<PaginatedResponse<MarketplaceArtistListItem>> {
+  await stubDelay();
+  const page = params?.page ?? 1;
+  const limit = params?.limit ?? 15;
+  const all: MarketplaceArtistListItem[] = [];
+  return slicePage(all, page, limit);
 }

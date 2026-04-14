@@ -12,4 +12,5 @@ export interface IVenueService {
       addressProofMediaAssetId: string;
     },
   ): Promise<VenueManageDto>;
+  linkPrimaryMedia(venueId: string, mediaAssetId: string): Promise<VenueDto>;
 }

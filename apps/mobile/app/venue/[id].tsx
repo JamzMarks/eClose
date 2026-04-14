@@ -7,7 +7,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import { useLocalSearchParams, useNavigation, useRouter, type Href } from "expo-router";
 import { useTranslation } from "react-i18next";
 
 import { AppPalette, getSchemeColors } from "@/constants/palette";
@@ -164,6 +164,18 @@ export default function VenueDetailScreen() {
           <Text style={[styles.body, { color: c.text }]}>{venue.description}</Text>
         </>
       ) : null}
+      {isSignedIn && venue.openToArtistInquiries && !showOwnerTools ? (
+        <Pressable
+          onPress={() =>
+            router.push({
+              pathname: "/booking/new-inquiry",
+              params: { venueId: venue.id },
+            } as Href)
+          }
+          style={[styles.bookingCta, { backgroundColor: AppPalette.primary }]}>
+          <Text style={styles.bookingCtaText}>{t("bookingInquiryTitle")}</Text>
+        </Pressable>
+      ) : null}
     </ScrollView>
   );
 }
@@ -198,4 +210,6 @@ const styles = StyleSheet.create({
   section: { fontSize: 13, fontWeight: "600", textTransform: "uppercase", marginTop: 16, marginBottom: 6 },
   body: { fontSize: 16, lineHeight: 24 },
   err: { textAlign: "center", paddingHorizontal: 24 },
+  bookingCta: { marginTop: 24, paddingVertical: 14, borderRadius: 12, alignItems: "center" },
+  bookingCtaText: { color: "#fff", fontWeight: "700", fontSize: 16 },
 });

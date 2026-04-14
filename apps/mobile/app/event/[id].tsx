@@ -8,7 +8,7 @@ import {
   View,
 } from "react-native";
 import { Image } from "expo-image";
-import { useLocalSearchParams, useNavigation } from "expo-router";
+import { useLocalSearchParams, useNavigation, useRouter, type Href } from "expo-router";
 import { useTranslation } from "react-i18next";
 
 import { AddToWishlistSheet } from "@/components/wishlists/add-to-wishlist-sheet";
@@ -24,6 +24,7 @@ export default function EventDetailScreen() {
   const { id: rawId } = useLocalSearchParams<{ id: string }>();
   const id = Array.isArray(rawId) ? rawId[0] : rawId;
   const navigation = useNavigation();
+  const router = useRouter();
   const { t } = useTranslation("discover");
   const { t: tWishlists } = useTranslation("wishlists");
   const { isSignedIn } = useAuth();
@@ -44,15 +45,26 @@ export default function EventDetailScreen() {
       headerRight:
         isSignedIn && id
           ? () => (
-              <Pressable onPress={() => setWishlistOpen(true)} hitSlop={12} style={{ marginRight: 12 }}>
-                <Text style={{ color: AppPalette.primary, fontWeight: "600", fontSize: 15 }}>
-                  {tWishlists("addToWishlist")}
-                </Text>
-              </Pressable>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 14, marginRight: 8 }}>
+                <Pressable
+                  onPress={() =>
+                    router.push(`/event-organizer/${encodeURIComponent(id)}` as Href)
+                  }
+                  hitSlop={10}>
+                  <Text style={{ color: AppPalette.primary, fontWeight: "600", fontSize: 15 }}>
+                    {t("eventOrganizerView")}
+                  </Text>
+                </Pressable>
+                <Pressable onPress={() => setWishlistOpen(true)} hitSlop={12}>
+                  <Text style={{ color: AppPalette.primary, fontWeight: "600", fontSize: 15 }}>
+                    {tWishlists("addToWishlist")}
+                  </Text>
+                </Pressable>
+              </View>
             )
           : undefined,
     });
-  }, [navigation, event?.title, t, c.surface, c.text, isSignedIn, id, tWishlists]);
+  }, [navigation, event?.title, t, c.surface, c.text, isSignedIn, id, tWishlists, router]);
 
   useEffect(() => {
     if (!id) {

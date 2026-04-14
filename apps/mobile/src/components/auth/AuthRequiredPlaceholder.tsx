@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
-import { Layout } from "@/constants/layout";
+import { Layout, Paddings } from "@/constants/layout";
 import { PrimaryButton } from "@/components/ui";
 import { getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -42,7 +42,7 @@ export function AuthRequiredPlaceholder({
       accessibilityLabel={`${headline}. ${message}`}>
       <Text style={[styles.title, { color: c.text }]}>{headline}</Text>
       <Text style={[styles.message, { color: c.textSecondary }]}>{message}</Text>
-      <PrimaryButton title={cta} onPress={() => router.push("/login")} fullWidth />
+      <PrimaryButton title={cta} onPress={() => router.push("/login")} style={styles.loginCta} />
     </View>
   );
 }
@@ -50,27 +50,31 @@ export function AuthRequiredPlaceholder({
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-start",
     paddingHorizontal: Layout.tab.content.horizontalPadding,
-    paddingVertical: 32,
-    gap: 16,
+    paddingTop: Layout.tab.content.topPaddingAfterHeader + Paddings.sm,
+    paddingBottom: Paddings.xxl,
+    gap: Paddings.lg,
     maxWidth: 420,
     alignSelf: "center",
     width: "100%",
+    alignItems: "flex-start",
   },
   rootInsetParent: {
     paddingHorizontal: 0,
   },
   title: {
-    fontSize: 22,
+    fontSize: 26,
     fontWeight: "700",
-    letterSpacing: -0.3,
-    textAlign: "center",
+    letterSpacing: -0.35,
+    textAlign: "left",
   },
   message: {
-    fontSize: 16,
-    lineHeight: 24,
-    textAlign: "center",
-    marginBottom: 8,
+    fontSize: 18,
+    lineHeight: 28,
+    textAlign: "left",
+  },
+  loginCta: {
+    alignSelf: "flex-start",
   },
 });

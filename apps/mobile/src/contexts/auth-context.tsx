@@ -9,9 +9,10 @@ import {
   type ReactNode,
 } from "react";
 
+import { runOAuthBrowserFlow } from "@/features/auth/run-oauth-login";
 import { AuthService } from "@/services/auth/auth.service";
 import type { IAuthService } from "@/services/auth/auth.service.interface";
-import type { SignUpRequest, UserProfileResponse } from "@/services/types/auth.types";
+import type { OAuthProviderId, SignUpRequest, UserProfileResponse } from "@/services/types/auth.types";
 import {
   clearAuthAccessToken,
   setAuthAccessToken,
@@ -38,6 +39,7 @@ type AuthContextValue = {
   user: UserProfileResponse | null;
   signIn: (email: string, password: string) => Promise<void>;
   signInMock: () => Promise<void>;
+  signInWithOAuth: (provider: OAuthProviderId) => Promise<void>;
   signUp: (data: SignUpRequest) => Promise<void>;
   signOut: () => Promise<void>;
   refreshUser: () => Promise<void>;
@@ -129,6 +131,21 @@ export function AuthProvider({
     setUser(MOCK_USER);
   }, []);
 
+  const signInWithOAuth = useCallback(
+    async (provider: OAuthProviderId) => {
+      await setMockSessionActive(false);
+      const tokens = await runOAuthBrowserFlow(authService, provider);
+      await persistTokens({
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken ?? null,
+      });
+      setAuthAccessToken(tokens.accessToken);
+      const profile = await authService.me();
+      setUser(profile);
+    },
+    [authService],
+  );
+
   const signUp = useCallback(
     async (data: SignUpRequest) => {
       await setMockSessionActive(false);
@@ -175,11 +192,12 @@ export function AuthProvider({
       user,
       signIn,
       signInMock,
+      signInWithOAuth,
       signUp,
       signOut,
       refreshUser,
     }),
-    [isReady, user, signIn, signInMock, signUp, signOut, refreshUser],
+    [isReady, user, signIn, signInMock, signInWithOAuth, signUp, signOut, refreshUser],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

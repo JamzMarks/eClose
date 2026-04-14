@@ -52,4 +52,21 @@ export class SharedEventListService {
       `/shared-event-lists/${encodeURIComponent(listId)}/events/${encodeURIComponent(eventId)}`,
     );
   }
+
+  addMember(
+    listId: string,
+    userId: string,
+    role: "EDITOR" | "VIEWER",
+  ): Promise<unknown> {
+    return this.client.post(
+      `/shared-event-lists/${encodeURIComponent(listId)}/members`,
+      { userId, role },
+    );
+  }
+
+  removeMember(listId: string, memberUserId: string): Promise<void> {
+    return this.client.delete<void>(
+      `/shared-event-lists/${encodeURIComponent(listId)}/members/${encodeURIComponent(memberUserId)}`,
+    );
+  }
 }

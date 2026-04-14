@@ -8,8 +8,11 @@ import {
   type ReactNode,
 } from "react";
 import * as Location from "expo-location";
-import { PermissionStatus } from "expo-location";
 
+import {
+  checkForegroundLocationPermission,
+  requestForegroundLocationPermission,
+} from "@/lib/permissions/foreground-location-permission";
 import {
   loadLocationSnapshot,
   saveLocationSnapshot,
@@ -39,12 +42,6 @@ type LocationContextValue = {
 };
 
 const LocationContext = createContext<LocationContextValue | null>(null);
-
-function mapPermission(status: PermissionStatus): StoredLocationPermission {
-  if (status === PermissionStatus.GRANTED) return "granted";
-  if (status === PermissionStatus.DENIED) return "denied";
-  return "undetermined";
-}
 
 function snapshotToCoords(s: LocationSnapshotV1): AppLocationCoords {
   return {
@@ -120,8 +117,11 @@ export function LocationProvider({
     setIsRefreshing(true);
     setError(null);
     try {
-      const { status } = await Location.getForegroundPermissionsAsync();
-      const p = mapPermission(status);
+      const snap = await loadLocationSnapshot();
+      let p = await checkForegroundLocationPermission();
+      if (snap?.permission === "denied" && p !== "granted") {
+        p = "denied";
+      }
       setPermission(p);
       if (p === "granted") {
         await fetchPositionIfGranted();
@@ -139,8 +139,7 @@ export function LocationProvider({
     setIsRefreshing(true);
     setError(null);
     try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      const p = mapPermission(status);
+      const p = await requestForegroundLocationPermission();
       setPermission(p);
       if (p === "granted") {
         await fetchPositionIfGranted();
@@ -166,15 +165,17 @@ export function LocationProvider({
       }
 
       try {
-        let { status } = await Location.getForegroundPermissionsAsync();
+        let p = await checkForegroundLocationPermission();
         if (cancelled) return;
 
-        if (status === PermissionStatus.UNDETERMINED && requestOnFirstLaunch) {
-          const req = await Location.requestForegroundPermissionsAsync();
-          status = req.status;
+        if (p === "undetermined" && requestOnFirstLaunch) {
+          p = await requestForegroundLocationPermission();
         }
 
-        const p = mapPermission(status);
+        if (snap?.permission === "denied" && p !== "granted") {
+          p = "denied";
+        }
+
         setPermission(p);
 
         if (p === "granted") {

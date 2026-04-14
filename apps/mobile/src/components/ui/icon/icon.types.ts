@@ -20,6 +20,8 @@ export enum AppIcon {
   Undo = "undo",
   ChevronLeft = "chevronLeft",
   Close = "close",
+  Mail = "mail",
+  Lock = "lock",
 }
 
 export const IconSizes = {

@@ -64,7 +64,7 @@ export default function AppIntroRoute() {
   }
 
   if (!isSignedIn) {
-    return <Redirect href="/login" />;
+    return <Redirect href="/(tabs)" />;
   }
 
   if (!introPending) {

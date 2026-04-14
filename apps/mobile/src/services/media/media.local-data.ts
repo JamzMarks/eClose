@@ -1,11 +1,15 @@
-import type {
-  RegisterVenueMediaBody,
-  RegisteredMediaAssetDto,
-} from "@/services/media/media.service";
+import type { RegisteredMediaAssetDto } from "@/services/media/media.types";
 
-export function localRegisteredMediaAsset(
-  body: RegisterVenueMediaBody,
-): RegisteredMediaAssetDto {
+export type LocalRegisterMediaInput = {
+  parentType: "VENUE" | "EVENT" | "ARTIST" | "USER";
+  parentId: string;
+  kind: "IMAGE" | "DOCUMENT";
+  sourceUrl: string;
+  mimeType?: string;
+  listable?: boolean;
+};
+
+export function localRegisteredMediaAsset(body: LocalRegisterMediaInput): RegisteredMediaAssetDto {
   return {
     id: `media_local_${Date.now()}`,
     parentType: body.parentType,

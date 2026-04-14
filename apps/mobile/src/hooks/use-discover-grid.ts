@@ -1,6 +1,8 @@
 import { useWindowDimensions } from "react-native";
 
-const H_PADDING = 16;
+import { Layout } from "@/constants/layout";
+
+const H_PADDING = Layout.tab.content.horizontalPadding;
 const COLUMN_GAP = 12;
 
 /** Largura mínima para mostrar 2 cards por linha (telemóveis médios/maiores). */

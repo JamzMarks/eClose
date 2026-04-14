@@ -1,11 +1,11 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-export type DiscoverListKind = "events" | "venues";
+export type DiscoverListKind = "events" | "venues" | "artists";
 
 export type DiscoverSegmentedKindProps = {
   value: DiscoverListKind;
   onChange: (value: DiscoverListKind) => void;
-  labels: { events: string; venues: string };
+  labels: { events: string; venues: string; artists: string };
   activeBackground: string;
   activeText: string;
   inactiveText: string;
@@ -47,6 +47,15 @@ export function DiscoverSegmentedKind({
         accessibilityState={{ selected: value === "venues" }}>
         <Text style={[styles.label, { color: value === "venues" ? activeText : inactiveText }]}>
           {labels.venues}
+        </Text>
+      </Pressable>
+      <Pressable
+        onPress={() => onChange("artists")}
+        style={[styles.segment, value === "artists" && { backgroundColor: activeBackground }]}
+        accessibilityRole="tab"
+        accessibilityState={{ selected: value === "artists" }}>
+        <Text style={[styles.label, { color: value === "artists" ? activeText : inactiveText }]}>
+          {labels.artists}
         </Text>
       </Pressable>
     </View>

@@ -9,12 +9,15 @@ import { USE_LOCAL_SERVICE_DATA } from "@/services/config/service-data-source";
 import type { IAuthService } from "@/services/auth/auth.service.interface";
 import type {
   AuthTokensResponse,
+  OAuthCallbackRequest,
+  OAuthStartResponse,
   OnboardingStepRequest,
   OnboardingStepResponse,
   SignInRequest,
   SignUpRequest,
   UserProfileResponse,
 } from "@/services/types/auth.types";
+import type { OAuthStartBody } from "@/services/auth/auth.service.interface";
 
 export class AuthService implements IAuthService {
   private readonly client = getApiClient();
@@ -31,6 +34,20 @@ export class AuthService implements IAuthService {
       return Promise.resolve(LOCAL_AUTH_TOKENS);
     }
     return this.client.post<AuthTokensResponse>("/auth/sign-up", _data);
+  }
+
+  oauthStart(_body: OAuthStartBody): Promise<OAuthStartResponse> {
+    if (USE_LOCAL_SERVICE_DATA) {
+      return Promise.reject(new Error("OAUTH_LOCAL"));
+    }
+    return this.client.post<OAuthStartResponse>("/auth/oauth/start", _body);
+  }
+
+  oauthCallback(_body: OAuthCallbackRequest): Promise<AuthTokensResponse> {
+    if (USE_LOCAL_SERVICE_DATA) {
+      return Promise.reject(new Error("OAUTH_LOCAL"));
+    }
+    return this.client.post<AuthTokensResponse>("/auth/oauth/callback", _body);
   }
 
   sendEmailVerification(): Promise<void> {

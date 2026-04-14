@@ -117,7 +117,7 @@ export default function VenueVerifyScreen() {
 
   if (!id?.trim()) {
     return (
-      <Screen>
+      <Screen edges={["bottom"]}>
         <View style={[styles.centered, { backgroundColor: c.background }]}>
           <Text style={{ color: c.text }}>—</Text>
         </View>
@@ -127,7 +127,7 @@ export default function VenueVerifyScreen() {
 
   if (manageLoading) {
     return (
-      <Screen>
+      <Screen edges={["bottom"]}>
         <View style={[styles.centered, { backgroundColor: c.background }]}>
           <ActivityIndicator color={AppPalette.primary} size="large" />
         </View>
@@ -137,7 +137,7 @@ export default function VenueVerifyScreen() {
 
   if (manageError || !manage) {
     return (
-      <Screen>
+      <Screen edges={["bottom"]}>
         <ScrollView contentContainerStyle={[styles.content, { backgroundColor: c.background }]}>
           <Text style={[styles.title, { color: c.text }]}>{t("venueVerifyTitle")}</Text>
           <Text style={[styles.hint, { color: AppPalette.error }]}>{manageError ?? t("venueVerifyNeedAccess")}</Text>
@@ -154,7 +154,7 @@ export default function VenueVerifyScreen() {
 
   if (st === "verified_l2") {
     return (
-      <Screen>
+      <Screen edges={["bottom"]}>
         <ScrollView contentContainerStyle={[styles.content, { backgroundColor: c.background }]}>
           <Text style={[styles.title, { color: c.text }]}>{t("venueVerifyTitle")}</Text>
           <Text style={[styles.hint, { color: c.textSecondary }]}>{t("venueTrustStatus_verified_l2")}</Text>
@@ -167,7 +167,7 @@ export default function VenueVerifyScreen() {
 
   if (st === "pending_review") {
     return (
-      <Screen>
+      <Screen edges={["bottom"]}>
         <ScrollView contentContainerStyle={[styles.content, { backgroundColor: c.background }]}>
           <Text style={[styles.title, { color: c.text }]}>{t("venueVerifyTitle")}</Text>
           <Text style={[styles.hint, { color: c.textSecondary }]}>{t("venueVerifyPendingBody")}</Text>
@@ -183,7 +183,7 @@ export default function VenueVerifyScreen() {
   const showRejectedNote = st === "rejected";
 
   return (
-    <Screen>
+    <Screen edges={["bottom"]}>
       <ScrollView
         style={[styles.scroll, { backgroundColor: c.background }]}
         contentContainerStyle={styles.content}

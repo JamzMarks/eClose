@@ -8,9 +8,10 @@ import {
   Text,
   View,
 } from "react-native";
-import { Redirect, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
+import { AuthRequiredPlaceholder } from "@/components/auth";
 import { Screen } from "@/components/layout/screen";
 import { StackContentPageTitle } from "@/components/navigation/StackContentPageTitle";
 import { AppButton } from "@/components/ui/Button";
@@ -24,6 +25,7 @@ import { VenueService } from "@/services/venue/venue.service";
 
 export default function CreateVenueRoute() {
   const { t } = useTranslation("discover");
+  const { t: tAuth } = useTranslation("auth");
   const router = useRouter();
   const { isSignedIn, user } = useAuth();
   const ownerUserId = user?.id;
@@ -45,7 +47,20 @@ export default function CreateVenueRoute() {
   const [error, setError] = useState<string | null>(null);
 
   if (!isSignedIn || !ownerUserId) {
-    return <Redirect href="/login" />;
+    return (
+      <Screen edges={["bottom"]}>
+        <KeyboardAvoidingView
+          style={styles.flex}
+          behavior={Platform.OS === "ios" ? "padding" : undefined}>
+          <ScrollView
+            contentContainerStyle={[styles.content, { backgroundColor: c.background, flexGrow: 1 }]}
+            keyboardShouldPersistTaps="handled">
+            <StackContentPageTitle color={c.text}>{t("createVenueScreenTitle")}</StackContentPageTitle>
+            <AuthRequiredPlaceholder message={tAuth("authRequiredCreateBody")} insetFromParent />
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </Screen>
+    );
   }
 
   function onNameChange(text: string) {
@@ -91,7 +106,7 @@ export default function CreateVenueRoute() {
   }
 
   return (
-    <Screen>
+    <Screen edges={["bottom"]}>
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === "ios" ? "padding" : undefined}

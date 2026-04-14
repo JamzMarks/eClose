@@ -48,6 +48,8 @@ export const Layout = {
     },
     content: {
       horizontalPadding: Paddings.xl,
+      /** Espaço entre o divisor do header da tab e o primeiro bloco (ex.: campo de pesquisa). */
+      topPaddingAfterHeader: Paddings.md,
     },
   },
 } as const;

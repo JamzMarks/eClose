@@ -9,6 +9,7 @@ import type {
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from "react-native";
 
 import { TabScreenEmptyHint } from "@/components/shared/tab-screen/TabScreenEmptyHint";
+import { Layout } from "@/constants/layout";
 import { AppPalette } from "@/constants/palette";
 
 export type DiscoverPaginatedFlatListProps<T> = {
@@ -66,6 +67,7 @@ export function DiscoverPaginatedFlatList<T>({
     <FlatList
       data={data}
       keyExtractor={keyExtractor}
+      showsVerticalScrollIndicator={false}
       numColumns={cols}
       columnWrapperStyle={cols > 1 ? columnWrapperStyle : undefined}
       ListHeaderComponent={listHeaderComponent ?? null}
@@ -96,7 +98,7 @@ export function DiscoverPaginatedFlatList<T>({
 
 const styles = StyleSheet.create({
   listContent: {
-    paddingHorizontal: 0,
+    paddingHorizontal: Layout.tab.content.horizontalPadding,
     paddingBottom: 32,
     flexGrow: 1,
     paddingTop: 10,

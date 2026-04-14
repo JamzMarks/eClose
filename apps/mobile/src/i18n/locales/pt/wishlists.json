@@ -24,5 +24,11 @@
   "noListsHint": "Cria uma lista no separador Perfil → Listas partilhadas.",
   "roleOwner": "Dono",
   "roleEditor": "Pode editar",
-  "roleViewer": "Só ver"
+  "roleViewer": "Só ver",
+  "membersSection": "Membros",
+  "addMember": "Adicionar membro",
+  "memberUserIdLabel": "ID do utilizador (UUID)",
+  "memberAdded": "Membro adicionado.",
+  "removeMember": "Remover",
+  "memberRolePick": "Papel"
 }

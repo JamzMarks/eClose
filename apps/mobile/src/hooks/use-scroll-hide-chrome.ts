@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 import type { LayoutChangeEvent, NativeScrollEvent, NativeSyntheticEvent } from "react-native";
 import { Animated } from "react-native";
 
@@ -15,19 +15,25 @@ export function useScrollHideChrome() {
   const visible = useRef(true);
   const chromeHeight = useRef(0);
   const maxHeight = useRef(new Animated.Value(0)).current;
+  /** Evita `maxHeight: 0` antes da primeira medição — nesse frame o header ficava colapsado e a lista ocupava o ecrã. */
+  const [chromeMeasured, setChromeMeasured] = useState(false);
 
   const onChromeLayout = useCallback(
     (e: LayoutChangeEvent) => {
       const h = e.nativeEvent.layout.height;
       if (h <= 0) return;
-      const firstMeasure = chromeHeight.current <= 0;
       chromeHeight.current = h;
-      if (firstMeasure || visible.current) {
+      if (!chromeMeasured) {
         maxHeight.setValue(h);
         visible.current = true;
+        setChromeMeasured(true);
+        return;
+      }
+      if (visible.current) {
+        maxHeight.setValue(h);
       }
     },
-    [maxHeight],
+    [maxHeight, chromeMeasured],
   );
 
   const show = useCallback(() => {
@@ -74,10 +80,12 @@ export function useScrollHideChrome() {
     [hide, show],
   );
 
-  const chromeAnimatedStyle = {
-    maxHeight,
-    overflow: "hidden" as const,
-  };
+  const chromeAnimatedStyle = chromeMeasured
+    ? {
+        maxHeight,
+        overflow: "hidden" as const,
+      }
+    : undefined;
 
   return { onChromeLayout, onScroll, chromeAnimatedStyle };
 }

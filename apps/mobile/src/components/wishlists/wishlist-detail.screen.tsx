@@ -3,10 +3,12 @@ import {
   ActivityIndicator,
   Alert,
   FlatList,
+  Modal,
   Pressable,
   RefreshControl,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from "react-native";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
@@ -45,6 +47,9 @@ export function WishlistDetailScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [addMemberOpen, setAddMemberOpen] = useState(false);
+  const [newMemberId, setNewMemberId] = useState("");
+  const [newMemberRole, setNewMemberRole] = useState<"EDITOR" | "VIEWER">("VIEWER");
 
   const canEditEvents = detail?.myRole === "OWNER" || detail?.myRole === "EDITOR";
 
@@ -140,6 +145,37 @@ export function WishlistDetailScreen() {
     }
   }, [load, t]);
 
+  function roleLabel(role: string) {
+    if (role === "OWNER") return t("roleOwner");
+    if (role === "EDITOR") return t("roleEditor");
+    return t("roleViewer");
+  }
+
+  async function handleAddMember() {
+    if (!listId || !newMemberId.trim()) return;
+    try {
+      const svc = new SharedEventListService();
+      await svc.addMember(listId, newMemberId.trim(), newMemberRole);
+      setAddMemberOpen(false);
+      setNewMemberId("");
+      await load();
+      Alert.alert("", t("memberAdded"));
+    } catch (e) {
+      setError(normalizeHttpError(e, t("error")).message);
+    }
+  }
+
+  async function handleRemoveMember(userId: string) {
+    if (!listId) return;
+    try {
+      const svc = new SharedEventListService();
+      await svc.removeMember(listId, userId);
+      await load();
+    } catch (e) {
+      setError(normalizeHttpError(e, t("error")).message);
+    }
+  }
+
   async function handleRemoveEvent(eventId: string) {
     if (!listId) return;
     try {
@@ -156,7 +192,7 @@ export function WishlistDetailScreen() {
 
   if (loading && !detail) {
     return (
-      <Screen>
+      <Screen edges={["bottom"]}>
         <View style={[styles.centered, { backgroundColor: c.background }]}>
           <ActivityIndicator color={AppPalette.primary} size="large" />
         </View>
@@ -166,7 +202,7 @@ export function WishlistDetailScreen() {
 
   if (error && !detail) {
     return (
-      <Screen>
+      <Screen edges={["bottom"]}>
         <TabScreenCenterError message={error} retryLabel={t("retry")} onRetry={() => void load()} />
       </Screen>
     );
@@ -181,10 +217,54 @@ export function WishlistDetailScreen() {
     (row.locationMode === "ONLINE" || row.locationMode === "HYBRID" ? tDiscover("online") : "—");
 
   return (
-    <Screen>
+    <Screen edges={["bottom"]}>
+      <Modal visible={addMemberOpen} animationType="slide" transparent>
+        <View style={styles.modalBackdrop}>
+          <View style={[styles.modalCard, { backgroundColor: c.surface, borderColor: c.border }]}>
+            <Text style={[styles.modalTitle, { color: c.text }]}>{t("addMember")}</Text>
+            <Text style={[styles.modalLabel, { color: c.textSecondary }]}>{t("memberUserIdLabel")}</Text>
+            <TextInput
+              value={newMemberId}
+              onChangeText={setNewMemberId}
+              placeholder={t("memberUserIdLabel")}
+              placeholderTextColor={c.textMuted}
+              autoCapitalize="none"
+              style={[styles.modalInput, { color: c.text, borderColor: c.border }]}
+            />
+            <Text style={[styles.modalLabel, { color: c.textSecondary }]}>{t("memberRolePick")}</Text>
+            <View style={styles.roleRow}>
+              <Pressable
+                onPress={() => setNewMemberRole("EDITOR")}
+                style={[
+                  styles.roleChip,
+                  { borderColor: newMemberRole === "EDITOR" ? AppPalette.primary : c.border },
+                ]}>
+                <Text style={{ color: c.text, fontWeight: "600" }}>{t("roleEditor")}</Text>
+              </Pressable>
+              <Pressable
+                onPress={() => setNewMemberRole("VIEWER")}
+                style={[
+                  styles.roleChip,
+                  { borderColor: newMemberRole === "VIEWER" ? AppPalette.primary : c.border },
+                ]}>
+                <Text style={{ color: c.text, fontWeight: "600" }}>{t("roleViewer")}</Text>
+              </Pressable>
+            </View>
+            <View style={styles.modalActions}>
+              <Pressable onPress={() => setAddMemberOpen(false)} style={styles.modalBtn}>
+                <Text style={{ color: c.textSecondary, fontWeight: "600" }}>{t("cancel")}</Text>
+              </Pressable>
+              <Pressable onPress={() => void handleAddMember()} style={styles.modalBtn}>
+                <Text style={{ color: AppPalette.primary, fontWeight: "700" }}>{t("create")}</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
       <FlatList
         data={events}
         keyExtractor={(it) => it.id}
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={[styles.list, { backgroundColor: c.background }]}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={AppPalette.primary} />
@@ -195,6 +275,41 @@ export function WishlistDetailScreen() {
             <Text style={[styles.meta, { color: c.textSecondary }]}>
               {t("members", { count: detail.memberCount, events: detail.eventCount })}
             </Text>
+            <Text style={[styles.sectionTitle, { color: c.text }]}>{t("membersSection")}</Text>
+            {detail.members.map((m) => (
+              <View
+                key={m.userId}
+                style={[styles.memberRow, { borderColor: c.border, backgroundColor: c.surface }]}>
+                <Text style={[styles.memberId, { color: c.text }]} numberOfLines={1} selectable>
+                  {m.userId}
+                </Text>
+                <Text style={[styles.memberRole, { color: c.textSecondary }]}>
+                  {roleLabel(m.role)}
+                </Text>
+                {detail.myRole === "OWNER" && m.role !== "OWNER" ? (
+                  <Pressable
+                    onPress={() =>
+                      Alert.alert(t("removeMember"), undefined, [
+                        { text: t("cancel"), style: "cancel" },
+                        {
+                          text: t("removeMember"),
+                          style: "destructive",
+                          onPress: () => void handleRemoveMember(m.userId),
+                        },
+                      ])
+                    }>
+                    <Text style={{ color: AppPalette.error, fontSize: 14 }}>{t("removeMember")}</Text>
+                  </Pressable>
+                ) : null}
+              </View>
+            ))}
+            {detail.myRole === "OWNER" ? (
+              <Pressable
+                onPress={() => setAddMemberOpen(true)}
+                style={[styles.addMemberBtn, { borderColor: AppPalette.primary }]}>
+                <Text style={{ color: AppPalette.primary, fontWeight: "700" }}>{t("addMember")}</Text>
+              </Pressable>
+            ) : null}
           </View>
         }
         ListEmptyComponent={
@@ -248,4 +363,60 @@ const styles = StyleSheet.create({
   eventMeta: { fontSize: 14, marginTop: 4 },
   eventLoc: { fontSize: 13, marginTop: 4 },
   removeBtn: { marginTop: 10, alignSelf: "flex-start" },
+  sectionTitle: { fontSize: 16, fontWeight: "700", marginTop: 20, marginBottom: 10 },
+  memberRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 8,
+  },
+  memberId: { flex: 1, fontSize: 13 },
+  memberRole: { fontSize: 13, fontWeight: "600" },
+  addMemberBtn: {
+    alignSelf: "flex-start",
+    marginTop: 8,
+    marginBottom: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 10,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    justifyContent: "center",
+    padding: 24,
+  },
+  modalCard: {
+    borderRadius: 16,
+    borderWidth: StyleSheet.hairlineWidth,
+    padding: 20,
+  },
+  modalTitle: { fontSize: 18, fontWeight: "700", marginBottom: 12 },
+  modalLabel: { fontSize: 13, fontWeight: "600", marginBottom: 6, marginTop: 8 },
+  modalInput: {
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 16,
+  },
+  roleRow: { flexDirection: "row", gap: 10, marginTop: 8 },
+  roleChip: {
+    flex: 1,
+    paddingVertical: 10,
+    alignItems: "center",
+    borderRadius: 10,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  modalActions: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    gap: 16,
+    marginTop: 20,
+  },
+  modalBtn: { paddingVertical: 8, paddingHorizontal: 4 },
 });

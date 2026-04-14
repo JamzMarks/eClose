@@ -178,4 +178,13 @@ export class VenueService implements IVenueService {
       body,
     );
   }
+
+  linkPrimaryMedia(venueId: string, mediaAssetId: string): Promise<VenueDto> {
+    if (USE_LOCAL_SERVICE_DATA) {
+      return this.getById(venueId);
+    }
+    return this.client.patch<VenueDto>(`/venues/${encodeURIComponent(venueId)}/primary-media`, {
+      mediaAssetId,
+    });
+  }
 }

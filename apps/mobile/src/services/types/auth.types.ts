@@ -19,6 +19,23 @@ export type AuthTokensResponse = {
   expiresIn?: number;
 };
 
+/** Alinhado com `OAuthProviderId` na API (`google` | `apple`). */
+export type OAuthProviderId = "google" | "apple";
+
+export type OAuthStartResponse = {
+  authorizationUrl: string;
+  state: string;
+  codeVerifier?: string;
+};
+
+export type OAuthCallbackRequest = {
+  provider: OAuthProviderId;
+  code: string;
+  redirectUri: string;
+  codeVerifier?: string;
+  state?: string;
+};
+
 export type AuthProfileCompletion = "minimal" | "verified" | "full";
 
 export type UserProfileResponse = {

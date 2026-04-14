@@ -18,6 +18,8 @@
   "notificationsPlaceholder": "You don't have notifications yet. Soon you'll see updates from your account and events here.",
   "chatSearchPlaceholder": "Search",
   "chatSearchA11y": "Search conversations",
+  "chatTimeYesterday": "Yesterday",
+  "chatSearchNoResults": "No conversations match your search.",
   "chatNewMessageA11y": "New message",
   "chatNewMessageTitle": "New message"
 }

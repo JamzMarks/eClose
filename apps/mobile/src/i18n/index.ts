@@ -2,10 +2,12 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
+import enAuth from './locales/en/auth.json';
 import enCommon from './locales/en/common.json';
 import enDiscover from './locales/en/discover.json';
 import enSettings from './locales/en/settings.json';
 import enTabs from './locales/en/tabs.json';
+import enProfile from './locales/en/profile.json';
 import enWishlists from './locales/en/wishlists.json';
 import ptAuth from './locales/pt/auth.json';
 import ptCommon from './locales/pt/common.json';
@@ -34,8 +36,10 @@ i18n.use(initReactI18next)
         wishlists: ptWishlists,
       },
       en: {
+        auth: enAuth,
         common: enCommon,
         discover: enDiscover,
+        profile: enProfile,
         settings: enSettings,
         tabs: enTabs,
         wishlists: enWishlists,

@@ -78,7 +78,15 @@ export function HomeFeedTabScreen() {
 
   return (
     <Screen>
-      <Animated.View style={chromeAnimatedStyle}>
+      <Animated.View
+        style={[
+          chromeAnimatedStyle,
+          {
+            zIndex: 1,
+            elevation: 2,
+            backgroundColor: c.background,
+          },
+        ]}>
         <View onLayout={onChromeLayout}>
           <AppTabScreenHeader
             title={tTabs("appName")}
@@ -90,7 +98,7 @@ export function HomeFeedTabScreen() {
           <Text style={[styles.subtitle, { color: c.textSecondary }]}>{t("homeFeedSubtitle")}</Text>
         </View>
       </Animated.View>
-      <TabScreenContent style={{ flex: 1 }}>
+      <TabScreenContent edgeToEdge style={{ flex: 1, zIndex: 0 }}>
         <DiscoverPaginatedFlatList
         data={events.items}
         keyExtractor={(it) => it.event.id}

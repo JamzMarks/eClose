@@ -35,7 +35,7 @@ export default function ChatNewScreen() {
   }, [navigation, c.background, c.text, isDark, tCommon]);
 
   return (
-    <Screen>
+    <Screen edges={["bottom"]}>
       <View style={[styles.body, { backgroundColor: c.background }]}>
         <StackContentPageTitle color={c.text}>{t("chatNewMessageTitle")}</StackContentPageTitle>
       </View>

@@ -1,7 +1,6 @@
 /**
- * Quando `true`, os services devolvem dados estáticos definidos nos ficheiros `*.local-data.ts`
- * junto a cada service. A UI continua a chamar os services normalmente.
- *
- * Defina como `false` para voltar a usar HTTP (chamadas reais no código de cada service).
+ * Quando `true`, os services devolvem dados estáticos (`*.local-data.ts`). Por omissão usa a API HTTP.
+ * Expo: `EXPO_PUBLIC_USE_LOCAL_SERVICE_DATA=true` para demos offline.
  */
-export const USE_LOCAL_SERVICE_DATA = true;
+export const USE_LOCAL_SERVICE_DATA =
+  process.env.EXPO_PUBLIC_USE_LOCAL_SERVICE_DATA === "true";

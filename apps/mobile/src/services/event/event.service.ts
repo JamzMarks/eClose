@@ -68,6 +68,22 @@ export class EventService implements IEventService {
     return this.client.get<EventDto>(`/events/${encodeURIComponent(id)}`);
   }
 
+  getOrganizerView(id: string): Promise<EventDto> {
+    if (USE_LOCAL_SERVICE_DATA) {
+      return this.getPublicById(id);
+    }
+    return this.client.get<EventDto>(`/events/${encodeURIComponent(id)}/organizer`);
+  }
+
+  linkPrimaryMedia(eventId: string, mediaAssetId: string): Promise<EventDto> {
+    if (USE_LOCAL_SERVICE_DATA) {
+      return this.getPublicById(eventId);
+    }
+    return this.client.patch<EventDto>(`/events/${encodeURIComponent(eventId)}/primary-media`, {
+      mediaAssetId,
+    });
+  }
+
   create(body: CreateEventRequest): Promise<EventDto> {
     if (USE_LOCAL_SERVICE_DATA) {
       return Promise.resolve(buildLocalCreatedEvent(body));

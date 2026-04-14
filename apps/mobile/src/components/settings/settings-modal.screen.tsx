@@ -181,7 +181,7 @@ export function SettingsModalScreen() {
 
   async function handleSignOut() {
     await signOut();
-    router.replace("/login");
+    router.replace("/(tabs)");
   }
 
   function confirmSignOut() {

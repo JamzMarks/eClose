@@ -20,6 +20,8 @@ import {
   Undo2,
   ChevronLeft,
   X,
+  Mail,
+  Lock,
 } from "lucide-react-native";
 
 import { IconSizes, AppIcon } from "../icon.types";
@@ -47,6 +49,8 @@ const map = {
   [AppIcon.Undo]: Undo2,
   [AppIcon.ChevronLeft]: ChevronLeft,
   [AppIcon.Close]: X,
+  [AppIcon.Mail]: Mail,
+  [AppIcon.Lock]: Lock,
 };
 
 export const lucideProvider: IconProvider = ({

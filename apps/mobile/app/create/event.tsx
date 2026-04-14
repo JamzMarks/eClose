@@ -9,9 +9,10 @@ import {
   Text,
   View,
 } from "react-native";
-import { Redirect, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
+import { AuthRequiredPlaceholder } from "@/components/auth";
 import { Screen } from "@/components/layout/screen";
 import { StackContentPageTitle } from "@/components/navigation/StackContentPageTitle";
 import { AppButton } from "@/components/ui/Button";
@@ -30,6 +31,7 @@ type LocMode = "PHYSICAL" | "ONLINE" | "HYBRID";
 
 export default function CreateEventRoute() {
   const { t } = useTranslation("discover");
+  const { t: tAuth } = useTranslation("auth");
   const router = useRouter();
   const { isSignedIn, user } = useAuth();
   const ownerUserId = user?.id;
@@ -93,7 +95,16 @@ export default function CreateEventRoute() {
   }, [loadLinked]);
 
   if (!isSignedIn || !ownerUserId) {
-    return <Redirect href="/login" />;
+    return (
+      <Screen edges={["bottom"]}>
+        <ScrollView
+          contentContainerStyle={[styles.content, { backgroundColor: c.background, flexGrow: 1 }]}
+          keyboardShouldPersistTaps="handled">
+          <StackContentPageTitle color={c.text}>{t("createEventScreenTitle")}</StackContentPageTitle>
+          <AuthRequiredPlaceholder message={tAuth("authRequiredCreateBody")} insetFromParent />
+        </ScrollView>
+      </Screen>
+    );
   }
 
   function onTitleChange(text: string) {
@@ -183,7 +194,7 @@ export default function CreateEventRoute() {
   };
 
   return (
-    <Screen>
+    <Screen edges={["bottom"]}>
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === "ios" ? "padding" : undefined}

@@ -125,7 +125,7 @@ export function WishlistsIndexScreen({ hrefBase = "/wishlists" }: WishlistsIndex
 
   if (loading && items.length === 0 && !error) {
     return (
-      <Screen>
+      <Screen edges={["bottom"]}>
         <View style={styles.titleWrap}>{titleEl}</View>
         <TabScreenCenterLoading message={t("loading")} subtitleColor={c.textSecondary} />
       </Screen>
@@ -134,7 +134,7 @@ export function WishlistsIndexScreen({ hrefBase = "/wishlists" }: WishlistsIndex
 
   if (error && items.length === 0) {
     return (
-      <Screen>
+      <Screen edges={["bottom"]}>
         <View style={styles.titleWrap}>{titleEl}</View>
         <TabScreenCenterError message={error} retryLabel={t("retry")} onRetry={retryInitial} />
       </Screen>
@@ -142,10 +142,11 @@ export function WishlistsIndexScreen({ hrefBase = "/wishlists" }: WishlistsIndex
   }
 
   return (
-    <Screen>
+    <Screen edges={["bottom"]}>
       <FlatList
         data={items}
         keyExtractor={(it) => it.id}
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={[styles.list, { backgroundColor: c.background }]}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={AppPalette.primary} />

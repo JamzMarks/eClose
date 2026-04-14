@@ -9,6 +9,7 @@ import { AppTabScreenHeader } from "@/components/shared/tab-screen/AppTabScreenH
 import { TabScreenContent } from "@/components/shared/tab-screen/TabScreenContent";
 import { TabHeaderSettingsButton } from "@/components/shared/tab-screen/TabHeaderChrome";
 import { ProfileIdentityBlock } from "@/components/tabs/profile/components/ProfileIdentityBlock";
+import { ProfileMyCalendarPreview } from "@/components/tabs/profile/components/ProfileMyCalendarPreview";
 import {
   displayNameFromEmail,
   handleFromEmail,
@@ -72,6 +73,14 @@ export function ProfileTabScreen() {
             surfaceColor={c.surface}
             textColor={c.text}
             mutedColor={c.textSecondary}
+          />
+          <ProfileMyCalendarPreview
+            textColor={c.text}
+            subtitleColor={c.textSecondary}
+            mutedColor={c.textMuted}
+            borderColor={c.border}
+            surfaceColor={c.surface}
+            chipBorderColor={c.borderStrong}
           />
         </ScrollView>
       </TabScreenContent>

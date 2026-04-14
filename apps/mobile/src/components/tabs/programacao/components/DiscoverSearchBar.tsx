@@ -8,9 +8,15 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 export type DiscoverSearchBarProps = {
   value: string;
   onChangeText: (text: string) => void;
+  /** Chave i18n em `discover` (por omissão `discoverSearchPlaceholder`). */
+  placeholderKey?: string;
 };
 
-export function DiscoverSearchBar({ value, onChangeText }: DiscoverSearchBarProps) {
+export function DiscoverSearchBar({
+  value,
+  onChangeText,
+  placeholderKey = "discoverSearchPlaceholder",
+}: DiscoverSearchBarProps) {
   const { t } = useTranslation("discover");
   const scheme = useColorScheme() ?? "light";
   const c = getSchemeColors(scheme);
@@ -20,7 +26,7 @@ export function DiscoverSearchBar({ value, onChangeText }: DiscoverSearchBarProp
       <TextInput
         value={value}
         onChangeText={onChangeText}
-        placeholder={t("discoverSearchPlaceholder")}
+        placeholder={t(placeholderKey)}
         placeholderTextColor={c.textMuted}
         style={[styles.input, { color: c.text }]}
         returnKeyType="search"

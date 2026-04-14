@@ -20,6 +20,8 @@ export type AppButtonProps = Omit<PressableProps, "children"> & {
   variant?: AppButtonVariant;
   loading?: boolean;
   fullWidth?: boolean;
+  /** Altura e tipografia reduzidas (ex.: CTA secundário em blocos compactos). */
+  compact?: boolean;
 };
 
 export function AppButton({
@@ -27,6 +29,7 @@ export function AppButton({
   variant = "primary",
   loading = false,
   fullWidth = false,
+  compact = false,
   disabled,
   style,
   ...rest
@@ -41,6 +44,7 @@ export function AppButton({
       disabled={isDisabled}
       style={({ pressed }) => [
         styles.base,
+        compact && styles.baseCompact,
         fullWidth && styles.fullWidth,
         variantStyles.container,
         pressed && !isDisabled && variantStyles.pressed,
@@ -52,7 +56,9 @@ export function AppButton({
       {loading ? (
         <ActivityIndicator color={variantStyles.spinnerColor} size="small" />
       ) : (
-        <Text style={[styles.label, variantStyles.label]} numberOfLines={1}>
+        <Text
+          style={[styles.label, compact && styles.labelCompact, variantStyles.label]}
+          numberOfLines={1}>
           {title}
         </Text>
       )}
@@ -125,6 +131,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  baseCompact: {
+    minHeight: 40,
+    paddingHorizontal: 16,
+    paddingVertical: 9,
+  },
   fullWidth: {
     alignSelf: "stretch",
   },
@@ -134,5 +145,8 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: "600",
+  },
+  labelCompact: {
+    fontSize: 15,
   },
 });

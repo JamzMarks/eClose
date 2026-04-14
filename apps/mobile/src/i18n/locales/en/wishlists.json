@@ -24,5 +24,11 @@
   "noListsHint": "Create a list from Profile → Shared lists.",
   "roleOwner": "Owner",
   "roleEditor": "Can edit",
-  "roleViewer": "View only"
+  "roleViewer": "View only",
+  "membersSection": "Members",
+  "addMember": "Add member",
+  "memberUserIdLabel": "User ID (UUID)",
+  "memberAdded": "Member added.",
+  "removeMember": "Remove",
+  "memberRolePick": "Role"
 }

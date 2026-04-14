@@ -29,7 +29,7 @@ export function CreateHubScreen() {
   }
 
   return (
-    <Screen>
+    <Screen edges={["bottom"]}>
       {!isSignedIn ? (
         <AuthRequiredPlaceholder message={tAuth("authRequiredCreateBody")} />
       ) : (

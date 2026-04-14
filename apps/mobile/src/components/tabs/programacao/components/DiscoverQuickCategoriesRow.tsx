@@ -9,9 +9,11 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import {
   getDiscoverQuickCategories,
   type DiscoverQuickCategory,
+  type DiscoverQuickCategoryListKind,
 } from "@/services/discover/discover-quick-categories.mock";
 
 export type DiscoverQuickCategoriesRowProps = {
+  listKind: DiscoverQuickCategoryListKind;
   selectedId: string | null;
   onSelect: (cat: DiscoverQuickCategory | null) => void;
 };
@@ -27,7 +29,17 @@ function useCategoryRowLayout(listLength: number) {
   return { slotCount, needsMoreTile, categorySlots };
 }
 
-export function DiscoverQuickCategoriesRow({ selectedId, onSelect }: DiscoverQuickCategoriesRowProps) {
+function categoryLabel(cat: DiscoverQuickCategory, t: (k: string) => string): string {
+  const fromApi = cat.label?.trim();
+  if (fromApi) return fromApi;
+  return t(cat.labelKey);
+}
+
+export function DiscoverQuickCategoriesRow({
+  listKind,
+  selectedId,
+  onSelect,
+}: DiscoverQuickCategoriesRowProps) {
   const { t } = useTranslation("discover");
   const scheme = useColorScheme() ?? "light";
   const c = getSchemeColors(scheme);
@@ -36,8 +48,8 @@ export function DiscoverQuickCategoriesRow({ selectedId, onSelect }: DiscoverQui
   const [seeAllOpen, setSeeAllOpen] = useState(false);
 
   useEffect(() => {
-    void getDiscoverQuickCategories().then(setItems);
-  }, []);
+    void getDiscoverQuickCategories(listKind).then(setItems);
+  }, [listKind]);
 
   const { needsMoreTile, categorySlots } = useCategoryRowLayout(items.length);
 
@@ -54,6 +66,7 @@ export function DiscoverQuickCategoriesRow({ selectedId, onSelect }: DiscoverQui
       <View style={styles.row}>
         {visibleCategories.map((cat) => {
           const selected = selectedId === cat.id;
+          const label = categoryLabel(cat, t);
           return (
             <Pressable
               key={cat.id}
@@ -69,11 +82,11 @@ export function DiscoverQuickCategoriesRow({ selectedId, onSelect }: DiscoverQui
                 },
               ]}
               accessibilityRole="button"
-              accessibilityLabel={t(cat.labelKey)}
+              accessibilityLabel={label}
               accessibilityState={{ selected }}>
               <Text style={styles.emoji}>{cat.emoji}</Text>
               <Text style={[styles.cardLabel, { color: c.text }]} numberOfLines={2}>
-                {t(cat.labelKey)}
+                {label}
               </Text>
             </Pressable>
           );
@@ -118,6 +131,7 @@ export function DiscoverQuickCategoriesRow({ selectedId, onSelect }: DiscoverQui
           <ScrollView contentContainerStyle={styles.modalGrid} keyboardShouldPersistTaps="handled">
             {items.map((cat) => {
               const selected = selectedId === cat.id;
+              const label = categoryLabel(cat, t);
               return (
                 <Pressable
                   key={cat.id}
@@ -133,7 +147,7 @@ export function DiscoverQuickCategoriesRow({ selectedId, onSelect }: DiscoverQui
                     },
                   ]}>
                   <Text style={styles.emoji}>{cat.emoji}</Text>
-                  <Text style={[styles.cardLabel, { color: c.text }]}>{t(cat.labelKey)}</Text>
+                  <Text style={[styles.cardLabel, { color: c.text }]}>{label}</Text>
                 </Pressable>
               );
             })}

@@ -28,7 +28,11 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ]
     },
     "web": {
       "output": "static",
@@ -50,9 +54,15 @@
       ],
       "expo-localization",
       [
+        "react-native-permissions",
+        {
+          "iosPermissions": ["LocationWhenInUse"]
+        }
+      ],
+      [
         "expo-location",
         {
-          "locationWhenInUsePermission": "A eClose pode usar a tua localização para mostrar eventos e espaços por perto."
+          "locationWhenInUsePermission": "A eClose usa a tua localização enquanto a app está em uso para sugerir eventos e espaços por perto (opcional). Ao permitir, o tratamento baseia-se no teu consentimento (LGPD, art. 7.º, I), conforme a política de privacidade."
         }
       ],
       "expo-notifications"
