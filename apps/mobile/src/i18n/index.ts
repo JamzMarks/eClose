@@ -5,6 +5,7 @@ import { initReactI18next } from 'react-i18next';
 import enAuth from './locales/en/auth.json';
 import enCommon from './locales/en/common.json';
 import enDiscover from './locales/en/discover.json';
+import enExplore from './locales/en/explore.json';
 import enSettings from './locales/en/settings.json';
 import enTabs from './locales/en/tabs.json';
 import enProfile from './locales/en/profile.json';
@@ -12,6 +13,7 @@ import enWishlists from './locales/en/wishlists.json';
 import ptAuth from './locales/pt/auth.json';
 import ptCommon from './locales/pt/common.json';
 import ptDiscover from './locales/pt/discover.json';
+import ptExplore from './locales/pt/explore.json';
 import ptOnboarding from './locales/pt/onboarding.json';
 import ptProfile from './locales/pt/profile.json';
 import ptSettings from './locales/pt/settings.json';
@@ -29,6 +31,7 @@ i18n.use(initReactI18next)
         auth: ptAuth,
         common: ptCommon,
         discover: ptDiscover,
+        explore: ptExplore,
         onboarding: ptOnboarding,
         profile: ptProfile,
         settings: ptSettings,
@@ -39,6 +42,7 @@ i18n.use(initReactI18next)
         auth: enAuth,
         common: enCommon,
         discover: enDiscover,
+        explore: enExplore,
         profile: enProfile,
         settings: enSettings,
         tabs: enTabs,
@@ -46,7 +50,7 @@ i18n.use(initReactI18next)
       },
     },
 
-    ns: ['common', 'tabs', 'auth', 'onboarding', 'discover', 'profile', 'settings', 'wishlists'],
+    ns: ['common', 'tabs', 'auth', 'onboarding', 'discover', 'explore', 'profile', 'settings', 'wishlists'],
     defaultNS: 'common',
 
     interpolation: {

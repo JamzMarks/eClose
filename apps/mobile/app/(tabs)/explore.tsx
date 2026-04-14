@@ -1,4 +1,4 @@
-import { ExploreTabScreen } from "@/components/tabs/explore/explore-tab.screen";
+import { ExploreTabScreen } from "@/components/tabs/explore";
 
 export default function ExploreRoute() {
   return <ExploreTabScreen />;

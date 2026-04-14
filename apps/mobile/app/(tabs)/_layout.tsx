@@ -8,6 +8,7 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 
 export default function TabLayout() {
   const { t } = useTranslation("tabs");
+  const { t: tExplore } = useTranslation("explore");
   const colorScheme = useColorScheme();
 
   return (
@@ -78,7 +79,7 @@ export default function TabLayout() {
                 filled={focused}
               />
             ),
-            tabBarAccessibilityLabel: t("mapTab"),
+            tabBarAccessibilityLabel: tExplore("tabA11y"),
           }}
         />
 

@@ -1,26 +1,29 @@
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import * as WebBrowser from "expo-web-browser";
-import "@/infrastructure/http/setup";
-
-WebBrowser.maybeCompleteAuthSession();
 import type { ReactNode } from "react";
+
 import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import * as WebBrowser from "expo-web-browser";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-reanimated";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+
+import "@/infrastructure/http/setup";
 import "@/i18n";
 
-import { AppIntroProvider } from "@/features/app-intro";
-import { AccountSetupProvider } from "@/features/account-setup";
+import { SplashScreenGate } from "@/components/splash/splash-screen-gate";
+import { Radius } from "@/constants/layout";
+import { AppPalette, getSchemeColors } from "@/constants/palette";
 import { AuthProvider } from "@/contexts/auth-context";
 import { LocalePreferenceProvider } from "@/contexts/locale-preference-context";
 import { LocationProvider } from "@/contexts/location-context";
 import { ThemePreferenceProvider } from "@/contexts/theme-preference-context";
-import { SplashScreenGate } from "@/components/splash/splash-screen-gate";
+import { AccountSetupProvider } from "@/features/account-setup";
+import { AppIntroProvider } from "@/features/app-intro";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { AppPalette, getSchemeColors } from "@/constants/palette";
-import { Radius } from "@/constants/layout";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { MapViewportProvider } from "@/lib/maps";
+
+WebBrowser.maybeCompleteAuthSession();
 
 function NavigationThemeBridge({ children }: { children: ReactNode }) {
   const colorScheme = useColorScheme() ?? "light";
@@ -129,17 +132,19 @@ export default function RootLayout() {
         <LocalePreferenceProvider>
           <SafeAreaProvider>
             <LocationProvider requestOnFirstLaunch>
-              <AppIntroProvider>
-                <AuthProvider>
-                  <SplashScreenGate>
-                    <NavigationThemeBridge>
-                      <AccountSetupProvider>
-                        <AppStack />
-                      </AccountSetupProvider>
-                    </NavigationThemeBridge>
-                  </SplashScreenGate>
-                </AuthProvider>
-              </AppIntroProvider>
+              <MapViewportProvider>
+                <AppIntroProvider>
+                  <AuthProvider>
+                    <SplashScreenGate>
+                      <NavigationThemeBridge>
+                        <AccountSetupProvider>
+                          <AppStack />
+                        </AccountSetupProvider>
+                      </NavigationThemeBridge>
+                    </SplashScreenGate>
+                  </AuthProvider>
+                </AppIntroProvider>
+              </MapViewportProvider>
             </LocationProvider>
           </SafeAreaProvider>
         </LocalePreferenceProvider>

@@ -4,25 +4,30 @@ import { useTranslation } from "react-i18next";
 import { Screen } from "@/components/layout/screen";
 import { AppTabScreenHeader } from "@/components/shared/tab-screen/AppTabScreenHeader";
 import { TabScreenContent } from "@/components/shared/tab-screen/TabScreenContent";
+import { Paddings } from "@/constants/layout";
 import { getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useSuggestedExploreRegion } from "@/lib/maps";
 
-/** Tab Mapa — `react-native-maps` foi removido por instabilidade; mapa interactivo volta quando reinstalarmos a lib (ou alternativa). */
+import { ExploreMapView } from "./explore-map-view";
+
+/** Tab Explorar — `react-native-maps` + `MapViewportProvider` para bounds à API. */
 export function ExploreTabScreen() {
-  const { t } = useTranslation("discover");
+  const { t } = useTranslation("explore");
   const scheme = useColorScheme() ?? "light";
   const c = getSchemeColors(scheme);
+  const initialRegion = useSuggestedExploreRegion();
 
   return (
     <Screen>
-      <AppTabScreenHeader title={t("mapExploreTitle")} borderColor={c.border} titleColor={c.text} />
+      <AppTabScreenHeader title={t("screenTitle")} borderColor={c.border} titleColor={c.text} />
       <TabScreenContent edgeToEdge>
-        <View style={[styles.mapHost, { backgroundColor: c.surface }]}>
-          <View style={styles.mapPlaceholderInner}>
-            <Text style={[styles.mockTitle, { color: c.text }]}>{t("mapTabPlaceholderTitle")}</Text>
-            <Text style={[styles.mockBody, { color: c.textSecondary }]}>
-              {t("mapTabPlaceholderBody")}
-            </Text>
+        <View style={styles.column}>
+          <Text style={[styles.screenSubtitle, { color: c.textSecondary }]}>
+            {t("screenSubtitle")}
+          </Text>
+          <View style={[styles.mapHost, { backgroundColor: c.surface }]}>
+            <ExploreMapView initialRegion={initialRegion} />
           </View>
         </View>
       </TabScreenContent>
@@ -31,23 +36,18 @@ export function ExploreTabScreen() {
 }
 
 const styles = StyleSheet.create({
-  mapHost: {
+  column: {
     flex: 1,
   },
-  mapPlaceholderInner: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  mockTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    marginBottom: 8,
-    textAlign: "center",
-  },
-  mockBody: {
+  screenSubtitle: {
     fontSize: 15,
     lineHeight: 22,
-    textAlign: "center",
+    paddingHorizontal: Paddings.xl,
+    paddingTop: Paddings.sm,
+    paddingBottom: Paddings.md,
+  },
+  mapHost: {
+    flex: 1,
+    position: "relative",
   },
 });

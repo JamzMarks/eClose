@@ -6,7 +6,7 @@ import {
   localRefreshTokens,
 } from "@/services/auth/auth.local-data";
 import { USE_LOCAL_SERVICE_DATA } from "@/services/config/service-data-source";
-import type { IAuthService } from "@/services/auth/auth.service.interface";
+import type { IAuthService, OAuthStartBody } from "@/services/auth/auth.service.interface";
 import type {
   AuthTokensResponse,
   OAuthCallbackRequest,
@@ -17,7 +17,6 @@ import type {
   SignUpRequest,
   UserProfileResponse,
 } from "@/services/types/auth.types";
-import type { OAuthStartBody } from "@/services/auth/auth.service.interface";
 
 export class AuthService implements IAuthService {
   private readonly client = getApiClient();
