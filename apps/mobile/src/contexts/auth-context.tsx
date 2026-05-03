@@ -12,7 +12,7 @@ import {
 import { runOAuthBrowserFlow } from "@/features/auth/run-oauth-login";
 import { AuthService } from "@/services/auth/auth.service";
 import type { IAuthService } from "@/services/auth/auth.service.interface";
-import type { OAuthProviderId, SignUpRequest, UserProfileResponse } from "@/services/types/auth.types";
+import type { OAuthProviderId, SignUpRequest, UserProfileResponse } from "@/contracts/auth.types";
 import {
   clearAuthAccessToken,
   setAuthAccessToken,

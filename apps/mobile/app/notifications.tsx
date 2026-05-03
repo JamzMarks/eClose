@@ -1,14 +1,13 @@
-import { useLayoutEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, ScrollView } from "react-native";
 import { useNavigation } from "expo-router";
 import { useTranslation } from "react-i18next";
 
 import { Screen } from "@/components/layout/screen";
 import {
-  buildMinimalStackHeaderOptions,
-  minimalStackBackCircleBackground,
-} from "@/components/navigation/minimal-stack-header";
-import { StackContentPageTitle } from "@/components/navigation/StackContentPageTitle";
+  CollapsingStackLargeTitle,
+  collapsingScrollProps,
+} from "@/components/navigation/collapsing-stack-header-title";
+import { useStandardCollapsingTitle } from "@/components/navigation/use-standard-collapsing-title";
 import { getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
@@ -20,25 +19,30 @@ export default function NotificationsScreen() {
   const c = getSchemeColors(scheme);
   const isDark = scheme === "dark";
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      ...buildMinimalStackHeaderOptions({
-        headerBackgroundColor: c.background,
-        tintColor: c.text,
-        circleBackgroundColor: minimalStackBackCircleBackground(isDark ? "dark" : "light"),
-        backAccessibilityLabel: tCommon("backA11y"),
-      }),
-    });
-  }, [navigation, c.background, c.text, isDark, tCommon]);
+  const collapse = useStandardCollapsingTitle({
+    navigation,
+    title: t("notificationsTitle"),
+    headerTitleColor: c.text,
+    headerBackgroundColor: c.background,
+    tintColor: c.text,
+    scheme: isDark ? "dark" : "light",
+    backAccessibilityLabel: tCommon("backA11y"),
+  });
 
   return (
     <Screen edges={["bottom"]}>
-      <View style={styles.body}>
-        <StackContentPageTitle color={c.text}>{t("notificationsTitle")}</StackContentPageTitle>
+      <ScrollView
+        contentContainerStyle={[styles.body, { backgroundColor: c.background }]}
+        showsVerticalScrollIndicator={false}
+        {...collapsingScrollProps(collapse)}
+      >
+        <CollapsingStackLargeTitle color={c.text} collapse={collapse}>
+          {t("notificationsTitle")}
+        </CollapsingStackLargeTitle>
         <Text style={[styles.placeholder, { color: c.textSecondary }]}>
           {t("notificationsPlaceholder")}
         </Text>
-      </View>
+      </ScrollView>
     </Screen>
   );
 }

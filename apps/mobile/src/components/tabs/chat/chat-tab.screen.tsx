@@ -15,7 +15,7 @@ import { getSchemeColors } from "@/constants/palette";
 import { useAuth } from "@/contexts/auth-context";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { LOCAL_CHAT_CONVERSATIONS } from "@/services/chat/chat.local-data";
-import type { ChatConversationListItem } from "@/services/chat/chat-list.types";
+import type { ChatConversationListItem } from "@/types/entities/chat.types";
 
 function sortByRecent(a: ChatConversationListItem, b: ChatConversationListItem): number {
   return new Date(b.lastMessageAt).getTime() - new Date(a.lastMessageAt).getTime();

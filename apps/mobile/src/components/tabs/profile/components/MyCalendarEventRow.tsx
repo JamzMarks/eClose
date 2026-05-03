@@ -2,7 +2,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { Paddings, Radii } from "@/constants/layout";
 import { formatMyCalendarCompactLine } from "@/lib/format-date";
-import type { MyCalendarSavedEvent } from "@/services/my-calendar/my-calendar.types";
+import type { MyCalendarSavedEvent } from "@/types/entities/my-calendar.types";
 
 export type MyCalendarEventRowProps = {
   row: MyCalendarSavedEvent;

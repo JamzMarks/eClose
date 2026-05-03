@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -16,10 +16,10 @@ import { useTranslation } from "react-i18next";
 
 import { Screen } from "@/components/layout/screen";
 import {
-  buildMinimalStackHeaderOptions,
-  minimalStackBackCircleBackground,
-} from "@/components/navigation/minimal-stack-header";
-import { StackContentPageTitle } from "@/components/navigation/StackContentPageTitle";
+  CollapsingStackLargeTitle,
+  collapsingScrollProps,
+} from "@/components/navigation/collapsing-stack-header-title";
+import { useStandardCollapsingTitle } from "@/components/navigation/use-standard-collapsing-title";
 import { TabScreenCenterError } from "@/components/shared/tab-screen/TabScreenCenterError";
 import { AppPalette, getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -27,7 +27,7 @@ import { SharedEventListService } from "@/services/shared-event-list/shared-even
 import type {
   SharedEventListDetailDto,
   SharedListEventRowDto,
-} from "@/services/shared-event-list/shared-event-list.types";
+} from "@/contracts/shared-event-list.types";
 import { normalizeHttpError } from "@/infrastructure/http/error-handler";
 import { formatEventRange } from "@/lib/format-date";
 
@@ -41,6 +41,7 @@ export function WishlistDetailScreen() {
   const navigation = useNavigation();
   const scheme = useColorScheme() ?? "light";
   const c = getSchemeColors(scheme);
+  const isDark = scheme === "dark";
 
   const [detail, setDetail] = useState<SharedEventListDetailDto | null>(null);
   const [events, setEvents] = useState<SharedListEventRowDto[]>([]);
@@ -95,43 +96,40 @@ export function WishlistDetailScreen() {
     };
   }, [listId, load, t]);
 
-  const isDark = scheme === "dark";
-
-  useLayoutEffect(() => {
-    navigation.setOptions(
-      buildMinimalStackHeaderOptions(
-        {
-          headerBackgroundColor: c.background,
-          tintColor: c.text,
-          circleBackgroundColor: minimalStackBackCircleBackground(isDark ? "dark" : "light"),
-          backAccessibilityLabel: tCommon("backA11y"),
-        },
-        {
-          headerRight:
-            detail?.myRole === "OWNER"
-              ? () => (
-                  <Pressable
-                    onPress={() =>
-                      Alert.alert(t("deleteList"), t("deleteListConfirm"), [
-                        { text: t("cancel"), style: "cancel" },
-                        {
-                          text: t("deleteList"),
-                          style: "destructive",
-                          onPress: () => void handleDeleteList(),
-                        },
-                      ])
-                    }
-                    hitSlop={12}
-                    accessibilityRole="button"
-                    accessibilityLabel={t("deleteList")}>
-                    <Text style={{ color: AppPalette.error, fontWeight: "600" }}>{t("deleteList")}</Text>
-                  </Pressable>
-                )
-              : undefined,
-        },
-      ),
+  const headerRight = useMemo(() => {
+    if (detail?.myRole !== "OWNER") return undefined;
+    const HeaderRight = () => (
+      <Pressable
+        onPress={() =>
+          Alert.alert(t("deleteList"), t("deleteListConfirm"), [
+            { text: t("cancel"), style: "cancel" },
+            {
+              text: t("deleteList"),
+              style: "destructive",
+              onPress: () => void handleDeleteList(),
+            },
+          ])
+        }
+        hitSlop={12}
+        accessibilityRole="button"
+        accessibilityLabel={t("deleteList")}>
+        <Text style={{ color: AppPalette.error, fontWeight: "600" }}>{t("deleteList")}</Text>
+      </Pressable>
     );
-  }, [navigation, c.background, c.text, isDark, tCommon, detail?.myRole, t, handleDeleteList]);
+    HeaderRight.displayName = "WishlistDetailHeaderRight";
+    return HeaderRight;
+  }, [detail?.myRole, handleDeleteList, t]);
+
+  const collapse = useStandardCollapsingTitle({
+    navigation,
+    title: detail?.title ?? t("title"),
+    headerTitleColor: c.text,
+    headerBackgroundColor: c.background,
+    tintColor: c.text,
+    scheme: isDark ? "dark" : "light",
+    backAccessibilityLabel: tCommon("backA11y"),
+    minimalHeaderOptions: { headerRight },
+  });
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -266,12 +264,15 @@ export function WishlistDetailScreen() {
         keyExtractor={(it) => it.id}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[styles.list, { backgroundColor: c.background }]}
+        {...collapsingScrollProps(collapse)}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={AppPalette.primary} />
         }
         ListHeaderComponent={
           <View style={styles.headerBlock}>
-            <StackContentPageTitle color={c.text}>{detail.title}</StackContentPageTitle>
+            <CollapsingStackLargeTitle color={c.text} collapse={collapse}>
+              {detail.title}
+            </CollapsingStackLargeTitle>
             <Text style={[styles.meta, { color: c.textSecondary }]}>
               {t("members", { count: detail.memberCount, events: detail.eventCount })}
             </Text>

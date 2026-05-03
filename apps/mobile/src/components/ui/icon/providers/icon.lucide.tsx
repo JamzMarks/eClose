@@ -3,6 +3,8 @@ import {
   Compass,
   User,
   Heart,
+  Share2,
+  Ellipsis,
   SlidersHorizontal,
   CalendarDays,
   Bookmark,
@@ -51,6 +53,8 @@ const map = {
   [AppIcon.Close]: X,
   [AppIcon.Mail]: Mail,
   [AppIcon.Lock]: Lock,
+  [AppIcon.Share]: Share2,
+  [AppIcon.More]: Ellipsis,
 };
 
 export const lucideProvider: IconProvider = ({

@@ -1,6 +1,6 @@
 import { USE_LOCAL_SERVICE_DATA } from "@/services/config/service-data-source";
 import { TaxonomyService } from "@/services/taxonomy/taxonomy.service";
-import type { TaxonomyTermDto } from "@/services/taxonomy/taxonomy.types";
+import type { TaxonomyTermDto } from "@/contracts/taxonomy.types";
 
 /**
  * Atalhos na descoberta — com API: termos de taxonomia; offline: lista estática.

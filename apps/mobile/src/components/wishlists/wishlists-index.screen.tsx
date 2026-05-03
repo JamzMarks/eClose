@@ -5,11 +5,15 @@ import BottomSheet, {
   type BottomSheetBackdropProps,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
-import { useFocusEffect, useRouter } from "expo-router";
+import { useFocusEffect, useNavigation, useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
 import { Screen } from "@/components/layout/screen";
-import { StackContentPageTitle } from "@/components/navigation/StackContentPageTitle";
+import {
+  CollapsingStackLargeTitle,
+  collapsingScrollProps,
+} from "@/components/navigation/collapsing-stack-header-title";
+import { useStandardCollapsingTitle } from "@/components/navigation/use-standard-collapsing-title";
 import { TabScreenCenterError } from "@/components/shared/tab-screen/TabScreenCenterError";
 import { TabScreenCenterLoading } from "@/components/shared/tab-screen/TabScreenCenterLoading";
 import { TabScreenEmptyHint } from "@/components/shared/tab-screen/TabScreenEmptyHint";
@@ -17,7 +21,7 @@ import { AppPalette, getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { normalizeHttpError } from "@/infrastructure/http/error-handler";
 import { SharedEventListService } from "@/services/shared-event-list/shared-event-list.service";
-import type { SharedEventListSummaryDto } from "@/services/shared-event-list/shared-event-list.types";
+import type { SharedEventListSummaryDto } from "@/contracts/shared-event-list.types";
 
 export type WishlistsIndexScreenProps = {
   /** Base path for list/detail routes (ex.: `/wishlists` ou `/settings/wishlists`). */
@@ -26,10 +30,23 @@ export type WishlistsIndexScreenProps = {
 
 export function WishlistsIndexScreen({ hrefBase = "/wishlists" }: WishlistsIndexScreenProps) {
   const { t } = useTranslation("wishlists");
+  const { t: tCommon } = useTranslation("common");
+  const navigation = useNavigation();
   const router = useRouter();
   const scheme = useColorScheme() ?? "light";
   const c = getSchemeColors(scheme);
+  const isDark = scheme === "dark";
   const snapPoints = useMemo(() => ["38%", "55%"], []);
+
+  const collapse = useStandardCollapsingTitle({
+    navigation,
+    title: t("title"),
+    headerTitleColor: c.text,
+    headerBackgroundColor: c.background,
+    tintColor: c.text,
+    scheme: isDark ? "dark" : "light",
+    backAccessibilityLabel: tCommon("backA11y"),
+  });
 
   const [items, setItems] = useState<SharedEventListSummaryDto[]>([]);
   const [loading, setLoading] = useState(true);
@@ -121,7 +138,11 @@ export function WishlistsIndexScreen({ hrefBase = "/wishlists" }: WishlistsIndex
     }
   }
 
-  const titleEl = <StackContentPageTitle color={c.text}>{t("title")}</StackContentPageTitle>;
+  const titleEl = (
+    <CollapsingStackLargeTitle color={c.text} collapse={collapse}>
+      {t("title")}
+    </CollapsingStackLargeTitle>
+  );
 
   if (loading && items.length === 0 && !error) {
     return (
@@ -148,6 +169,7 @@ export function WishlistsIndexScreen({ hrefBase = "/wishlists" }: WishlistsIndex
         keyExtractor={(it) => it.id}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[styles.list, { backgroundColor: c.background }]}
+        {...collapsingScrollProps(collapse)}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={AppPalette.primary} />
         }

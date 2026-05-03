@@ -1,4 +1,4 @@
-import type { MyCalendarSavedEvent } from "@/services/my-calendar/my-calendar.types";
+import type { MyCalendarSavedEvent } from "@/types/entities/my-calendar.types";
 
 const iso = (d: Date) => d.toISOString();
 

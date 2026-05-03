@@ -1,6 +1,6 @@
 import { View } from "react-native";
 
-import type { MarketplaceVenueCardDto } from "@/services/types/venue.types";
+import type { MarketplaceVenueCardDto } from "@/contracts/venue.types";
 
 import { ListingCardShell } from "./listing-card-shell";
 import { ListingTypeChip } from "./listing-type-chip";

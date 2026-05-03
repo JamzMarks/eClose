@@ -1,4 +1,4 @@
-import type { ChatConversationListItem } from "@/services/chat/chat-list.types";
+import type { ChatConversationListItem } from "@/types/entities/chat.types";
 
 const u = (path: string) =>
   `https://images.unsplash.com/${path}?auto=format&w=256&q=75`;

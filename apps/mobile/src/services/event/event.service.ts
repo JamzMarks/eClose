@@ -1,5 +1,5 @@
 import { USE_LOCAL_SERVICE_DATA } from "@/services/config/service-data-source";
-import type { PublishedEventListItem } from "@/services/discover/discover-list.types";
+import type { PublishedEventListItem } from "@/types/entities/discover.types";
 import { paginateLocalPublishedEvents } from "@/services/discover/discover.stub-pagination";
 import { getApiClient } from "@/services/api-client";
 import {
@@ -8,8 +8,8 @@ import {
   findPublishedEventRowById,
 } from "@/services/event/event.local-data";
 import type { IEventService } from "@/services/event/event.service.interface";
-import type { CreateEventRequest, EventDto, ListPublishedEventsParams } from "@/services/types/event.types";
-import type { PaginatedResponse } from "@/services/types/pagination.types";
+import type { CreateEventRequest, EventDto, ListPublishedEventsParams } from "@/contracts/event.types";
+import type { PaginatedResponse } from "@/types/common/pagination.types";
 import { toQueryString } from "@/services/utils/query-string";
 
 export class EventService implements IEventService {

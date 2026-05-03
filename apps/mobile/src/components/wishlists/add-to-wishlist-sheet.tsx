@@ -18,7 +18,7 @@ import { AppPalette, getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { normalizeHttpError } from "@/infrastructure/http/error-handler";
 import { SharedEventListService } from "@/services/shared-event-list/shared-event-list.service";
-import type { SharedEventListSummaryDto } from "@/services/shared-event-list/shared-event-list.types";
+import type { SharedEventListSummaryDto } from "@/contracts/shared-event-list.types";
 
 export type AddToWishlistSheetProps = {
   visible: boolean;

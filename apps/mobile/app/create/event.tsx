@@ -9,12 +9,16 @@ import {
   Text,
   View,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
 import { AuthRequiredPlaceholder } from "@/components/auth";
 import { Screen } from "@/components/layout/screen";
-import { StackContentPageTitle } from "@/components/navigation/StackContentPageTitle";
+import {
+  CollapsingStackLargeTitle,
+  collapsingScrollProps,
+} from "@/components/navigation/collapsing-stack-header-title";
+import { useStandardCollapsingTitle } from "@/components/navigation/use-standard-collapsing-title";
 import { AppButton } from "@/components/ui/Button";
 import { AppTextField } from "@/components/ui/Input";
 import { AppPalette, getSchemeColors } from "@/constants/palette";
@@ -25,18 +29,31 @@ import { normalizeHttpError } from "@/infrastructure/http/error-handler";
 import { ArtistService } from "@/services/artist/artist.service";
 import { EventService } from "@/services/event/event.service";
 import { LinkedEntitiesService } from "@/services/user/linked-entities.service";
-import type { LinkedArtistSummary, LinkedVenueSummary } from "@/services/types/linked-entities.types";
+import type { LinkedArtistSummary, LinkedVenueSummary } from "@/contracts/linked-entities.types";
 
 type LocMode = "PHYSICAL" | "ONLINE" | "HYBRID";
 
 export default function CreateEventRoute() {
   const { t } = useTranslation("discover");
   const { t: tAuth } = useTranslation("auth");
+  const { t: tCommon } = useTranslation("common");
+  const navigation = useNavigation();
   const router = useRouter();
   const { isSignedIn, user } = useAuth();
   const ownerUserId = user?.id;
   const scheme = useColorScheme() ?? "light";
   const c = getSchemeColors(scheme);
+  const isDark = scheme === "dark";
+
+  const collapse = useStandardCollapsingTitle({
+    navigation,
+    title: t("createEventScreenTitle"),
+    headerTitleColor: c.text,
+    headerBackgroundColor: c.background,
+    tintColor: c.text,
+    scheme: isDark ? "dark" : "light",
+    backAccessibilityLabel: tCommon("backA11y"),
+  });
 
   const [artists, setArtists] = useState<LinkedArtistSummary[]>([]);
   const [venues, setVenues] = useState<LinkedVenueSummary[]>([]);
@@ -99,8 +116,11 @@ export default function CreateEventRoute() {
       <Screen edges={["bottom"]}>
         <ScrollView
           contentContainerStyle={[styles.content, { backgroundColor: c.background, flexGrow: 1 }]}
-          keyboardShouldPersistTaps="handled">
-          <StackContentPageTitle color={c.text}>{t("createEventScreenTitle")}</StackContentPageTitle>
+          keyboardShouldPersistTaps="handled"
+          {...collapsingScrollProps(collapse)}>
+          <CollapsingStackLargeTitle color={c.text} collapse={collapse}>
+            {t("createEventScreenTitle")}
+          </CollapsingStackLargeTitle>
           <AuthRequiredPlaceholder message={tAuth("authRequiredCreateBody")} insetFromParent />
         </ScrollView>
       </Screen>
@@ -201,8 +221,11 @@ export default function CreateEventRoute() {
         keyboardVerticalOffset={64}>
         <ScrollView
           contentContainerStyle={[styles.content, { backgroundColor: c.background }]}
-          keyboardShouldPersistTaps="handled">
-          <StackContentPageTitle color={c.text}>{t("createEventScreenTitle")}</StackContentPageTitle>
+          keyboardShouldPersistTaps="handled"
+          {...collapsingScrollProps(collapse)}>
+          <CollapsingStackLargeTitle color={c.text} collapse={collapse}>
+            {t("createEventScreenTitle")}
+          </CollapsingStackLargeTitle>
           {linkedLoading ? (
             <Text style={{ color: c.textSecondary }}>{t("loading")}</Text>
           ) : null}

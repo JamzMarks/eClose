@@ -32,7 +32,7 @@ import { Layout, Paddings, Radii } from "@/constants/layout";
 import { AppIcon } from "@/components/ui/icon/icon.types";
 import { AppPalette, getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import type { OAuthProviderId } from "@/services/types/auth.types";
+import { OAuthProviderId } from "@/contracts/auth.types";
 
 const USERNAME_MIN = 2;
 const USERNAME_MAX = 80;

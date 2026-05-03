@@ -9,7 +9,7 @@ import { getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import type { IAuthService } from "@/services/auth/auth.service.interface";
 import { AuthService } from "@/services/auth/auth.service";
-import type { UserProfileResponse } from "@/services/types/auth.types";
+import type { UserProfileResponse } from "@/contracts/auth.types";
 import { normalizeHttpError } from "@/infrastructure/http/error-handler";
 
 export type EmailVerificationSetupSheetProps = {

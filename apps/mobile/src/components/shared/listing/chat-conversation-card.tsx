@@ -3,7 +3,7 @@ import { Image } from "expo-image";
 
 import { Radii } from "@/constants/layout";
 import { formatChatListTime } from "@/lib/format-date";
-import type { ChatConversationListItem } from "@/services/chat/chat-list.types";
+import type { ChatConversationListItem } from "@/types/entities/chat.types";
 
 const AVATAR = 52;
 

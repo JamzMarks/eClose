@@ -1,4 +1,4 @@
-import type { RegisteredMediaAssetDto } from "@/services/media/media.types";
+import type { RegisteredMediaAssetDto } from "@/contracts/media.types";
 
 export type LocalRegisterMediaInput = {
   parentType: "VENUE" | "EVENT" | "ARTIST" | "USER";

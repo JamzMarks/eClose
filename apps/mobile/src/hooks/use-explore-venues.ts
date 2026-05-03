@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
-import type { DiscoverVenueListFilters } from "@/services/discover/discover-list-filters.types";
-import type { MarketplaceVenueListItem } from "@/services/discover/discover-list.types";
+import type { DiscoverVenueListFilters, MarketplaceVenueListItem } from "@/types/entities/discover.types";
 import { MarketplaceService } from "@/services/marketplace/marketplace.service";
 import { DISCOVER_PAGE_SIZE } from "@/services/config/discover-mode";
 import { normalizeHttpError } from "@/infrastructure/http/error-handler";

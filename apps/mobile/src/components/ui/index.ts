@@ -19,5 +19,6 @@ export {
   type AppPressableProps,
   type NavigationPressableProps,
 } from "./Pressable";
+export { ExpandableInlineSearch, type ExpandableInlineSearchProps } from "./expandable-inline-search";
 export { AppSearchField, type AppSearchFieldProps } from "./SearchField";
 export { AppTextField, type AppTextFieldProps } from "./Input";

@@ -16,7 +16,7 @@ import type {
   SignInRequest,
   SignUpRequest,
   UserProfileResponse,
-} from "@/services/types/auth.types";
+} from "@/contracts/auth.types";
 
 export class AuthService implements IAuthService {
   private readonly client = getApiClient();

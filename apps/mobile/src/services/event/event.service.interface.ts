@@ -1,6 +1,6 @@
-import type { PublishedEventListItem } from "@/services/discover/discover-list.types";
-import type { CreateEventRequest, EventDto, ListPublishedEventsParams } from "@/services/types/event.types";
-import type { PaginatedResponse } from "@/services/types/pagination.types";
+import type { PublishedEventListItem } from "@/types/entities/discover.types";
+import type { CreateEventRequest, EventDto, ListPublishedEventsParams } from "@/contracts/event.types";
+import type { PaginatedResponse } from "@/types/common/pagination.types";
 
 export interface IEventService {
   listPublished(

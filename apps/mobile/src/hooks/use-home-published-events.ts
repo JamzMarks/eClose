@@ -1,14 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 
-import type { DiscoverEventListFilters } from "@/services/discover/discover-list-filters.types";
-import type { PublishedEventListItem } from "@/services/discover/discover-list.types";
+import type { HomePublishedEventsFilters, PublishedEventListItem } from "@/types/entities/discover.types";
 import { EventService } from "@/services/event/event.service";
 import { DISCOVER_PAGE_SIZE } from "@/services/config/discover-mode";
 import { normalizeHttpError } from "@/infrastructure/http/error-handler";
 
 export function useHomePublishedEvents(
   tError: (key: string) => string,
-  filters: DiscoverEventListFilters,
+  filters: HomePublishedEventsFilters,
   enabled = true,
 ) {
   const [items, setItems] = useState<PublishedEventListItem[]>([]);
@@ -29,6 +28,9 @@ export function useHomePublishedEvents(
         order: "ASC",
         city: filters.city.trim() || undefined,
         q: filters.query.trim() || undefined,
+        from: filters.from.trim() || undefined,
+        to: filters.to.trim() || undefined,
+        taxonomyTermIds: filters.taxonomyTermIds?.trim() || undefined,
         discoveryLocationMode: filters.locationMode,
       });
       setTotal(res.total);

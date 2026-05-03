@@ -1,20 +1,21 @@
 /**
  * Paginação em memória sobre dados locais dos services — apenas consumo interno.
  */
-import type { DiscoverEventListFilters, DiscoverVenueListFilters } from "@/services/discover/discover-list-filters.types";
 import type {
+  DiscoverEventListFilters,
+  DiscoverVenueListFilters,
   MarketplaceArtistListItem,
   MarketplaceVenueListItem,
   PublishedEventListItem,
-} from "@/services/discover/discover-list.types";
+} from "@/types/entities/discover.types";
 import { LOCAL_PUBLISHED_EVENTS } from "@/services/event/event.local-data";
 import { LOCAL_MARKETPLACE_VENUES } from "@/services/venue/venue.local-data";
 import type {
   ListMarketplaceArtistsParams,
   ListMarketplaceVenuesParams,
 } from "@/services/marketplace/marketplace.service.interface";
-import type { ListPublishedEventsParams } from "@/services/types/event.types";
-import type { PaginatedResponse } from "@/services/types/pagination.types";
+import type { ListPublishedEventsParams } from "@/contracts/event.types";
+import type { PaginatedResponse } from "@/types/common/pagination.types";
 
 function slicePage<T>(all: T[], page: number, limit: number): PaginatedResponse<T> {
   const start = (page - 1) * limit;
@@ -49,7 +50,11 @@ function applyVenueFilters(all: MarketplaceVenueListItem[], f: DiscoverVenueList
   return rows;
 }
 
-function applyEventFilters(all: PublishedEventListItem[], f: DiscoverEventListFilters): PublishedEventListItem[] {
+function applyEventFilters(
+  all: PublishedEventListItem[],
+  f: DiscoverEventListFilters,
+  taxonomyCsv?: string,
+): PublishedEventListItem[] {
   let rows = [...all];
   if (f.city.trim()) {
     const c = f.city.trim().toLowerCase();
@@ -73,6 +78,23 @@ function applyEventFilters(all: PublishedEventListItem[], f: DiscoverEventListFi
     const q = f.query.trim().toLowerCase();
     rows = rows.filter((r) => r.event.title.toLowerCase().includes(q));
   }
+  const fromMs = f.from.trim() ? new Date(f.from).getTime() : null;
+  const toMs = f.to.trim() ? new Date(f.to).getTime() : null;
+  if (fromMs !== null && !Number.isNaN(fromMs)) {
+    rows = rows.filter((r) => new Date(r.event.startsAt).getTime() >= fromMs);
+  }
+  if (toMs !== null && !Number.isNaN(toMs)) {
+    rows = rows.filter((r) => new Date(r.event.startsAt).getTime() <= toMs);
+  }
+  if (taxonomyCsv?.trim()) {
+    const ids = taxonomyCsv
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+    if (ids.length) {
+      rows = rows.filter((r) => ids.some((id) => r.event.taxonomyTermIds.includes(id)));
+    }
+  }
   rows.sort(
     (a, b) => new Date(a.event.startsAt).getTime() - new Date(b.event.startsAt).getTime(),
   );
@@ -84,6 +106,8 @@ function eventFiltersFromListParams(p?: ListPublishedEventsParams): DiscoverEven
     city: (p?.city ?? "").trim(),
     query: (p?.q ?? "").trim(),
     locationMode: p?.discoveryLocationMode ?? "ALL",
+    from: (p?.from ?? "").trim(),
+    to: (p?.to ?? "").trim(),
   };
 }
 
@@ -101,7 +125,11 @@ export async function paginateLocalPublishedEvents(
   await stubDelay();
   const page = params?.page ?? 1;
   const limit = params?.limit ?? 15;
-  const filtered = applyEventFilters(LOCAL_PUBLISHED_EVENTS, eventFiltersFromListParams(params));
+  const filtered = applyEventFilters(
+    LOCAL_PUBLISHED_EVENTS,
+    eventFiltersFromListParams(params),
+    params?.taxonomyTermIds,
+  );
   return slicePage(filtered, page, limit);
 }
 

@@ -20,7 +20,7 @@ import { useHomePublishedEvents } from "@/hooks/use-home-published-events";
 import { getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useScrollHideChrome } from "@/hooks/use-scroll-hide-chrome";
-import { defaultDiscoverEventFilters } from "@/services/discover/discover-list-filters.types";
+import { defaultDiscoverEventFilters } from "@/types/entities/discover.types";
 
 /** Início — próximos eventos publicados via `EventService`. */
 export function HomeFeedTabScreen() {

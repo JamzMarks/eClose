@@ -1,5 +1,5 @@
-import type { PublishedEventListItem } from "@/services/discover/discover-list.types";
-import type { CreateEventRequest, EventDto } from "@/services/types/event.types";
+import type { PublishedEventListItem } from "@/types/entities/discover.types";
+import type { CreateEventRequest, EventDto } from "@/contracts/event.types";
 
 const iso = (d: Date) => d.toISOString();
 

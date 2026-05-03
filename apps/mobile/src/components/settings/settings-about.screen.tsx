@@ -8,9 +8,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   CollapsingStackLargeTitle,
   collapsingScrollProps,
-  useCollapsingStackHeaderTitle,
 } from "@/components/navigation/collapsing-stack-header-title";
-import { minimalStackBackCircleBackground } from "@/components/navigation/minimal-stack-header";
+import { useStandardCollapsingTitle } from "@/components/navigation/use-standard-collapsing-title";
 import { SettingsNavigationRow } from "@/components/settings/components/SettingsNavigationRow";
 import { SettingsSectionHeader } from "@/components/settings/components/SettingsSectionHeader";
 import { SettingsScreenGroup } from "@/components/settings/components/SettingsScreenGroup";
@@ -33,17 +32,14 @@ export function SettingsAboutScreen() {
   const c = getSchemeColors(scheme);
   const isDark = scheme === "dark";
 
-  const collapse = useCollapsingStackHeaderTitle({
-    enabled: true,
+  const collapse = useStandardCollapsingTitle({
     navigation,
-    collapsedTitle: t("aboutScreenTitle"),
+    title: t("aboutScreenTitle"),
     headerTitleColor: c.text,
-    chrome: {
-      headerBackgroundColor: c.background,
-      tintColor: c.text,
-      circleBackgroundColor: minimalStackBackCircleBackground(isDark ? "dark" : "light"),
-      backAccessibilityLabel: tCommon("backA11y"),
-    },
+    headerBackgroundColor: c.background,
+    tintColor: c.text,
+    scheme: isDark ? "dark" : "light",
+    backAccessibilityLabel: tCommon("backA11y"),
   });
   const extra = (Constants.expoConfig?.extra ?? {}) as Extra;
   const version =

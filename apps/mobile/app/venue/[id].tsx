@@ -1,21 +1,30 @@
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Pressable,
+  Share,
   ScrollView,
   StyleSheet,
   Text,
   View,
+  useWindowDimensions,
 } from "react-native";
 import { useLocalSearchParams, useNavigation, useRouter, type Href } from "expo-router";
 import { useTranslation } from "react-i18next";
+import { Image } from "expo-image";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { AppPalette, getSchemeColors } from "@/constants/palette";
 import { useAuth } from "@/contexts/auth-context";
-import type { VenueDto, VenueManageDto, VenueVerificationStatus } from "@/services/types/venue.types";
+
 import { VenueService } from "@/services/venue/venue.service";
 import { normalizeHttpError } from "@/infrastructure/http/error-handler";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { findMarketplaceVenueRowById } from "@/services/venue/venue.local-data";
+import { Icon } from "@/components/ui/icon/icon";
+import { AppIcon } from "@/components/ui/icon/icon.types";
+import type { VenueDto, VenueManageDto, VenueVerificationStatus } from "@/contracts/venue.types";
 
 function trustStatusLabel(
   t: (k: string) => string,
@@ -44,20 +53,20 @@ export default function VenueDetailScreen() {
   const { isSignedIn } = useAuth();
   const scheme = useColorScheme() ?? "light";
   const c = getSchemeColors(scheme);
+  const insets = useSafeAreaInsets();
+  const { width: screenW } = useWindowDimensions();
 
   const [venue, setVenue] = useState<VenueDto | null>(null);
   const [manage, setManage] = useState<VenueManageDto | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [saved, setSaved] = useState(false);
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: venue?.name ?? t("venueDetail"),
-      headerTintColor: AppPalette.primary,
-      headerStyle: { backgroundColor: c.surface },
-      headerTitleStyle: { color: c.text },
+      headerShown: false,
     });
-  }, [navigation, venue?.name, t, c.surface, c.text]);
+  }, [navigation]);
 
   useEffect(() => {
     if (!id) {
@@ -95,6 +104,44 @@ export default function VenueDetailScreen() {
     };
   }, [id, t, isSignedIn]);
 
+  const marketplaceRow = id ? findMarketplaceVenueRowById(id) : undefined;
+  const gallery = useMemo(() => {
+    const urls = [
+      marketplaceRow?.primaryMediaUrl ?? null,
+      ...(marketplaceRow?.galleryUrls ?? []),
+    ].filter((u): u is string => Boolean(u));
+    if (urls.length > 0) return urls;
+    return ["https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&w=1280&q=75"];
+  }, [marketplaceRow?.primaryMediaUrl, marketplaceRow?.galleryUrls]);
+
+  const onPressBack = useCallback(() => {
+    router.back();
+  }, [router]);
+
+  const onPressShare = useCallback(() => {
+    if (!venue) return;
+    void Share.share({
+      message: `${venue.name}\n/venue/${venue.id}`,
+    });
+  }, [venue]);
+
+  const onPressMore = useCallback(() => {
+    Alert.alert(
+      venue?.name ?? t("venueDetail"),
+      undefined,
+      [
+        { text: "Convidar alguém", onPress: () => {} },
+        { text: "Adicionar ao grupo", onPress: () => {} },
+        { text: "Cancelar", style: "cancel" },
+      ],
+      { cancelable: true },
+    );
+  }, [venue?.name, t]);
+
+  const onToggleSaved = useCallback(() => {
+    setSaved((s) => !s);
+  }, []);
+
   if (loading) {
     return (
       <View style={[styles.centered, { backgroundColor: c.background }]}>
@@ -112,9 +159,7 @@ export default function VenueDetailScreen() {
   }
 
   const addr = venue.address;
-  const addressLine = [addr.line1, addr.postalCode, addr.city, addr.region]
-    .filter(Boolean)
-    .join(", ");
+  const addressLine = [addr.neighborhood, addr.city, addr.region].filter(Boolean).join(" · ");
 
   const showOwnerTools = Boolean(manage);
   const canStartVerification =
@@ -123,68 +168,183 @@ export default function VenueDetailScreen() {
     manage!.verificationStatus !== "verified_l2";
 
   return (
-    <ScrollView
-      style={[styles.scroll, { backgroundColor: c.background }]}
-      contentContainerStyle={styles.content}
-    >
-      <Text style={[styles.title, { color: c.text }]}>{venue.name}</Text>
-      {venue.isVerifiedL2 ? (
-        <Text style={[styles.trustBadge, { color: AppPalette.success, borderColor: AppPalette.success }]}>
-          {t("trustSemiReliable")}
-        </Text>
-      ) : null}
-      {venue.isVerifiedL2 ? (
-        <Text style={[styles.trustBody, { color: c.textSecondary }]}>
-          {t("trustVerifiedDetail")}
-        </Text>
-      ) : null}
-      {showOwnerTools ? (
-        <View style={[styles.ownerBox, { borderColor: c.border, backgroundColor: c.surface }]}>
-          <Text style={[styles.ownerLabel, { color: c.textMuted }]}>{t("venueViewAsOwner")}</Text>
-          <Text style={[styles.ownerStatus, { color: c.text }]}>
-            {trustStatusLabel(t, manage!.verificationStatus)}
-          </Text>
-          {canStartVerification ? (
+    <View style={[styles.root, { backgroundColor: c.background }]}>
+      <View style={styles.carouselWrap}>
+        <ScrollView
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          bounces={false}
+          contentContainerStyle={styles.carouselContent}
+        >
+          {gallery.map((url) => (
+            <Image
+              key={url}
+              source={{ uri: url }}
+              style={[styles.carouselImage, { width: screenW }]}
+              contentFit="cover"
+              transition={120}
+            />
+          ))}
+        </ScrollView>
+
+        <View style={[styles.headerOverlay, { paddingTop: insets.top + 10 }]}>
+          <Pressable
+            onPress={onPressBack}
+            style={({ pressed }) => [
+              styles.iconBtn,
+              { backgroundColor: c.surface, borderColor: c.border },
+              pressed && styles.pressed,
+            ]}
+            accessibilityRole="button"
+            accessibilityLabel="Voltar"
+          >
+            <Icon name={AppIcon.ChevronLeft} size="lg" color={c.text} />
+          </Pressable>
+
+          <View style={styles.headerRight}>
             <Pressable
-              onPress={() => router.push(`/venue/${encodeURIComponent(id!)}/verify`)}
-              style={({ pressed }) => [styles.ownerCta, pressed && { opacity: 0.85 }]}
+              onPress={onPressShare}
+              style={({ pressed }) => [
+                styles.iconBtn,
+                { backgroundColor: c.surface, borderColor: c.border },
+                pressed && styles.pressed,
+              ]}
+              accessibilityRole="button"
+              accessibilityLabel="Compartilhar"
             >
-              <Text style={styles.ownerCtaText}>{t("venueManageVerification")}</Text>
+              <Icon name={AppIcon.Share} size="lg" color={c.text} />
+            </Pressable>
+            <Pressable
+              onPress={onPressMore}
+              style={({ pressed }) => [
+                styles.iconBtn,
+                { backgroundColor: c.surface, borderColor: c.border },
+                pressed && styles.pressed,
+              ]}
+              accessibilityRole="button"
+              accessibilityLabel="Ações"
+            >
+              <Icon name={AppIcon.More} size="lg" color={c.text} />
+            </Pressable>
+            <Pressable
+              onPress={onToggleSaved}
+              style={({ pressed }) => [
+                styles.iconBtn,
+                { backgroundColor: c.surface, borderColor: c.border },
+                pressed && styles.pressed,
+              ]}
+              accessibilityRole="button"
+              accessibilityLabel="Salvar na wishlist"
+            >
+              <Icon name={AppIcon.Wishlist} size="lg" color={c.text} filled={saved} />
+            </Pressable>
+          </View>
+        </View>
+      </View>
+
+      <View style={[styles.bodyShell, { backgroundColor: c.background, borderTopColor: c.border }]}>
+        <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+          <Text style={[styles.title, { color: c.text }]}>{venue.name}</Text>
+          {marketplaceRow?.categoryLabel ? (
+            <Text style={[styles.subTitle, { color: c.textSecondary }]}>{marketplaceRow.categoryLabel}</Text>
+          ) : null}
+
+          <Text style={[styles.meta, { color: c.textSecondary }]}>{addressLine || "—"}</Text>
+
+          {venue.isVerifiedL2 ? (
+            <Text style={[styles.trustBadge, { color: AppPalette.success, borderColor: AppPalette.success }]}>
+              {t("trustSemiReliable")}
+            </Text>
+          ) : null}
+
+          {showOwnerTools ? (
+            <View style={[styles.ownerBox, { borderColor: c.border, backgroundColor: c.surface }]}>
+              <Text style={[styles.ownerLabel, { color: c.textMuted }]}>{t("venueViewAsOwner")}</Text>
+              <Text style={[styles.ownerStatus, { color: c.text }]}>
+                {trustStatusLabel(t, manage!.verificationStatus)}
+              </Text>
+              {canStartVerification ? (
+                <Pressable
+                  onPress={() => router.push(`/venue/${encodeURIComponent(id!)}/verify`)}
+                  style={({ pressed }) => [styles.ownerCta, pressed && { opacity: 0.85 }]}
+                >
+                  <Text style={styles.ownerCtaText}>{t("venueManageVerification")}</Text>
+                </Pressable>
+              ) : null}
+            </View>
+          ) : null}
+
+          {venue.description?.trim() ? (
+            <>
+              <Text style={[styles.section, { color: c.textMuted }]}>{t("description")}</Text>
+              <Text style={[styles.body, { color: c.text }]}>{venue.description}</Text>
+            </>
+          ) : null}
+
+          {isSignedIn && venue.openToArtistInquiries && !showOwnerTools ? (
+            <Pressable
+              onPress={() =>
+                router.push({
+                  pathname: "/booking/new-inquiry",
+                  params: { venueId: venue.id },
+                } as Href)
+              }
+              style={[styles.bookingCta, { backgroundColor: AppPalette.primary }]}
+            >
+              <Text style={styles.bookingCtaText}>{t("bookingInquiryTitle")}</Text>
             </Pressable>
           ) : null}
-        </View>
-      ) : null}
-      <Text style={[styles.section, { color: c.textMuted }]}>{t("location")}</Text>
-      <Text style={[styles.body, { color: c.text }]}>{addressLine}</Text>
-      {venue.description?.trim() ? (
-        <>
-          <Text style={[styles.section, { color: c.textMuted }]}>
-            {t("description")}
-          </Text>
-          <Text style={[styles.body, { color: c.text }]}>{venue.description}</Text>
-        </>
-      ) : null}
-      {isSignedIn && venue.openToArtistInquiries && !showOwnerTools ? (
-        <Pressable
-          onPress={() =>
-            router.push({
-              pathname: "/booking/new-inquiry",
-              params: { venueId: venue.id },
-            } as Href)
-          }
-          style={[styles.bookingCta, { backgroundColor: AppPalette.primary }]}>
-          <Text style={styles.bookingCtaText}>{t("bookingInquiryTitle")}</Text>
-        </Pressable>
-      ) : null}
-    </ScrollView>
+        </ScrollView>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  root: { flex: 1 },
+  carouselWrap: { height: 320, backgroundColor: "#000" },
+  carouselContent: { height: "100%" },
+  carouselImage: { height: "100%" },
+  bodyShell: {
+    flex: 1,
+    marginTop: -18,
+    borderTopLeftRadius: 18,
+    borderTopRightRadius: 18,
+    overflow: "hidden",
+    borderTopWidth: StyleSheet.hairlineWidth,
+  },
+  headerOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  headerRight: { flexDirection: "row", alignItems: "center", gap: 10 },
+  iconBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    borderWidth: StyleSheet.hairlineWidth,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+  pressed: { opacity: 0.86 },
   scroll: { flex: 1 },
   content: { padding: 20, paddingBottom: 40 },
   centered: { flex: 1, justifyContent: "center", alignItems: "center" },
-  title: { fontSize: 24, fontWeight: "700", marginBottom: 12 },
+  title: { fontSize: 26, fontWeight: "800", letterSpacing: -0.3, marginTop: 14 },
+  subTitle: { marginTop: 6, fontSize: 15, fontWeight: "600" },
+  meta: { marginTop: 10, fontSize: 14 },
   trustBadge: {
     alignSelf: "flex-start",
     fontSize: 13,
@@ -193,9 +353,8 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 8,
     borderWidth: StyleSheet.hairlineWidth,
-    marginBottom: 8,
+    marginTop: 12,
   },
-  trustBody: { fontSize: 14, lineHeight: 20, marginBottom: 8 },
   ownerBox: {
     borderWidth: StyleSheet.hairlineWidth,
     borderRadius: 12,

@@ -4,7 +4,7 @@ import type {
   SharedEventListDetailDto,
   SharedEventListSummaryDto,
   SharedListEventRowDto,
-} from "./shared-event-list.types";
+} from "@/contracts/shared-event-list.types";
 
 export class SharedEventListService {
   private readonly client = getApiClient();

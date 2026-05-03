@@ -3,7 +3,7 @@ import * as Linking from "expo-linking";
 import * as WebBrowser from "expo-web-browser";
 
 import type { IAuthService } from "@/services/auth/auth.service.interface";
-import type { AuthTokensResponse, OAuthProviderId } from "@/services/types/auth.types";
+import type { AuthTokensResponse, OAuthProviderId } from "@/contracts/auth.types";
 
 export function getOAuthRedirectUri(): string {
   return AuthSession.makeRedirectUri({

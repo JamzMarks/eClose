@@ -1,4 +1,4 @@
-import type { EventDto } from "@/services/types/event.types";
+import type { EventDto } from "@/contracts/event.types";
 import { formatEventRange } from "@/lib/format-date";
 
 import { ListingCardShell } from "./listing-card-shell";

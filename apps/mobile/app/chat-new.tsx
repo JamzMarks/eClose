@@ -1,52 +1,5 @@
-import { useLayoutEffect } from "react";
-import { StyleSheet, View } from "react-native";
-import { useNavigation } from "expo-router";
-import { useTranslation } from "react-i18next";
+import { ChatNewMessageScreen } from "@/components/tabs/chat/chat-new-message.screen";
 
-import { Screen } from "@/components/layout/screen";
-import {
-  buildMinimalStackHeaderOptions,
-  minimalStackBackCircleBackground,
-} from "@/components/navigation/minimal-stack-header";
-import { StackContentPageTitle } from "@/components/navigation/StackContentPageTitle";
-import { getSchemeColors } from "@/constants/palette";
-import { useColorScheme } from "@/hooks/use-color-scheme";
-
-/**
- * Nova mensagem — ecrã na stack (push como Notificações); placeholder até existir fluxo de destinatário / grupo.
- */
-export default function ChatNewScreen() {
-  const { t } = useTranslation("tabs");
-  const { t: tCommon } = useTranslation("common");
-  const navigation = useNavigation();
-  const scheme = useColorScheme() ?? "light";
-  const c = getSchemeColors(scheme);
-  const isDark = scheme === "dark";
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      ...buildMinimalStackHeaderOptions({
-        headerBackgroundColor: c.background,
-        tintColor: c.text,
-        circleBackgroundColor: minimalStackBackCircleBackground(isDark ? "dark" : "light"),
-        backAccessibilityLabel: tCommon("backA11y"),
-      }),
-    });
-  }, [navigation, c.background, c.text, isDark, tCommon]);
-
-  return (
-    <Screen edges={["bottom"]}>
-      <View style={[styles.body, { backgroundColor: c.background }]}>
-        <StackContentPageTitle color={c.text}>{t("chatNewMessageTitle")}</StackContentPageTitle>
-      </View>
-    </Screen>
-  );
+export default function ChatNewRoute() {
+  return <ChatNewMessageScreen />;
 }
-
-const styles = StyleSheet.create({
-  body: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 8,
-  },
-});

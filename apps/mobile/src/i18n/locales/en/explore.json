@@ -1,7 +1,33 @@
 {
   "tabA11y": "Explore",
   "screenTitle": "Explore",
-  "screenSubtitle": "Gigs, festivals, and venues in the area you show on the map.",
-  "placeholderTitle": "Interactive map on the way",
-  "placeholderBody": "Soon you'll pan the map and see events and venues pinned here. For now, use Schedule to browse lists."
+  "sheetTitle": "In this area",
+  "sheetCount": "{{count}} venues",
+  "sheetEmpty": "No venues in this view. Zoom or pan the map.",
+  "filtersTitle": "Map filters",
+  "filtersLead": "Show only the venue types you pick. With none selected, everything in the visible area is shown.",
+  "filtersKindSection": "Venue type",
+  "filtersAllKinds": "All types",
+  "filtersAllKindsA11y": "Show all venue types",
+  "filtersApply": "Apply",
+  "filtersApplyA11y": "Apply filters",
+  "filtersReset": "Clear",
+  "filtersResetA11y": "Reset filters",
+  "filtersOpenA11y": "Open map filters",
+  "citySearchPlaceholder": "City or name",
+  "citySearchExpandA11y": "Search by city or venue name",
+  "citySearchInputA11y": "City or venue name search",
+  "citySearchCollapseA11y": "Close city search",
+  "markers": {
+    "bar": "Bar",
+    "restaurant": "Restaurant",
+    "cafe": "Café",
+    "club": "Club",
+    "theater": "Theater / hall",
+    "studio": "Studio",
+    "festival": "Festival",
+    "train": "Train / rail station",
+    "bus": "Bus stop",
+    "default": "Venue"
+  }
 }

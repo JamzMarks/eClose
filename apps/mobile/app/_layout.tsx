@@ -104,6 +104,7 @@ function AppStack() {
       <Stack.Screen name="notifications" options={{ headerShown: true }} />
       <Stack.Screen name="profile-my-calendar" options={{ headerShown: true, headerBackTitle: "Voltar" }} />
       <Stack.Screen name="chat-new" options={{ headerShown: true }} />
+      <Stack.Screen name="chat-new-group" options={{ headerShown: true, headerBackTitle: "Voltar" }} />
       <Stack.Screen name="settings" options={{ headerShown: false }} />
       <Stack.Screen
         name="profile-legal"

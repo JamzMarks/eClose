@@ -6,12 +6,12 @@ import type {
   RegisteredMediaAssetDto,
   RequestUploadIntentBody,
   SignedUploadIntentResult,
-} from "@/services/media/media.types";
+} from "@/contracts/media.types";
 
 /** @deprecated Use `RegisterMediaAssetBody` com `parentType: "VENUE"`. */
 export type RegisterVenueMediaBody = Extract<RegisterMediaAssetBody, { parentType: "VENUE" }>;
 
-export type { RegisteredMediaAssetDto, SignedUploadIntentResult } from "@/services/media/media.types";
+export type { RegisteredMediaAssetDto, SignedUploadIntentResult } from "@/contracts/media.types";
 
 /**
  * Completa o upload para o destino assinado (PUT multipart ou POST conforme `intent`).

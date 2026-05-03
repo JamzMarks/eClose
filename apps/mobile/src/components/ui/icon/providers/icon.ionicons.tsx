@@ -58,6 +58,12 @@ function map(name: AppIcon, filled?: boolean) {
     case AppIcon.ChevronLeft:
       return "chevron-back";
 
+    case AppIcon.Share:
+      return filled ? "share-social" : "share-social-outline";
+
+    case AppIcon.More:
+      return "ellipsis-horizontal";
+
     default:
       return "help-circle";
   }

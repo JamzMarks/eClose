@@ -1,5 +1,5 @@
-import type { MarketplaceArtistListItem, MarketplaceVenueListItem } from "@/services/discover/discover-list.types";
-import type { PaginatedResponse } from "@/services/types/pagination.types";
+import type { MarketplaceArtistListItem, MarketplaceVenueListItem } from "@/types/entities/discover.types";
+import type { PaginatedResponse } from "@/types/common/pagination.types";
 
 export type ListMarketplaceVenuesParams = {
   city?: string;

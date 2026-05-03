@@ -1,6 +1,6 @@
 import { getApiClient } from "@/services/api-client";
 import type { IArtistService } from "@/services/artist/artist.service.interface";
-import type { ArtistDto, CreateArtistRequest } from "@/services/types/artist.types";
+import type { ArtistDto, CreateArtistRequest } from "@/contracts/artist.types";
 
 export class ArtistService implements IArtistService {
   private readonly client = getApiClient();

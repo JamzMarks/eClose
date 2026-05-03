@@ -1,5 +1,5 @@
-import type { MarketplaceVenueListItem } from "@/services/discover/discover-list.types";
-import type { MarketplaceVenueCardDto } from "@/services/types/venue.types";
+import type { MarketplaceVenueListItem } from "@/types/entities/discover.types";
+import type { MarketplaceVenueCardDto } from "@/contracts/venue.types";
 
 const iso = (d: Date) => d.toISOString();
 

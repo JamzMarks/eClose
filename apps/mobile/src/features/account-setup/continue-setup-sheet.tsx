@@ -19,7 +19,7 @@ import type { IAuthService } from "@/services/auth/auth.service.interface";
 import { AuthService } from "@/services/auth/auth.service";
 import type { INotificationPreferencesService } from "@/services/user/notification-preferences.service.interface";
 import { NotificationPreferencesService } from "@/services/user/notification-preferences.service";
-import type { NotificationPreferencesDto } from "@/services/types/notification-preferences.types";
+import type { NotificationPreferencesDto } from "@/contracts/notification-preferences.types";
 import { normalizeHttpError } from "@/infrastructure/http/error-handler";
 
 /** `account_flow`: após registo; permite saltar e grava estado local. `manual`: aberto pelas definições. */

@@ -3,7 +3,7 @@ import type { INotificationPreferencesService } from "@/services/user/notificati
 import type {
   NotificationPreferencesDto,
   PatchNotificationPreferencesDto,
-} from "@/services/types/notification-preferences.types";
+} from "@/contracts/notification-preferences.types";
 
 export class NotificationPreferencesService implements INotificationPreferencesService {
   private readonly client = getApiClient();

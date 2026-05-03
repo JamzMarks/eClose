@@ -6,9 +6,8 @@ import { useTranslation } from "react-i18next";
 import {
   CollapsingStackLargeTitle,
   collapsingScrollProps,
-  useCollapsingStackHeaderTitle,
 } from "@/components/navigation/collapsing-stack-header-title";
-import { minimalStackBackCircleBackground } from "@/components/navigation/minimal-stack-header";
+import { useStandardCollapsingTitle } from "@/components/navigation/use-standard-collapsing-title";
 import { SettingsAccountExpandableRow } from "@/components/settings/components/SettingsAccountExpandableRow";
 import { SettingsSectionHeader } from "@/components/settings/components/SettingsSectionHeader";
 import { SettingsScreenGroup } from "@/components/settings/components/SettingsScreenGroup";
@@ -44,17 +43,14 @@ export function SettingsAccountScreen() {
   const [lastName, setLastName] = useState("");
   const [savingName, setSavingName] = useState(false);
 
-  const collapse = useCollapsingStackHeaderTitle({
-    enabled: true,
+  const collapse = useStandardCollapsingTitle({
     navigation,
-    collapsedTitle: t("sectionAccount"),
+    title: t("sectionAccount"),
     headerTitleColor: c.text,
-    chrome: {
-      headerBackgroundColor: c.background,
-      tintColor: c.text,
-      circleBackgroundColor: minimalStackBackCircleBackground(isDark ? "dark" : "light"),
-      backAccessibilityLabel: tCommon("backA11y"),
-    },
+    headerBackgroundColor: c.background,
+    tintColor: c.text,
+    scheme: isDark ? "dark" : "light",
+    backAccessibilityLabel: tCommon("backA11y"),
   });
 
   useEffect(() => {

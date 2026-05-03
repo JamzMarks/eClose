@@ -1,6 +1,6 @@
 import Constants from "expo-constants";
 
-import type { UserProfileResponse } from "@/services/types/auth.types";
+import type { UserProfileResponse } from "@/contracts/auth.types";
 
 const MOCK_TOKEN = "mock-access-token-eclose";
 

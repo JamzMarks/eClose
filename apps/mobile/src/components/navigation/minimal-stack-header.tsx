@@ -121,9 +121,10 @@ export function buildMinimalStackHeaderOptions(
 
 const styles = StyleSheet.create({
   headerSide: {
-    paddingLeft: Layout.tab.header.horizontalPadding,
+    // paddingLeft: Layout.tab.header.horizontalPadding,
     flexDirection: "row",
     alignItems: "center",
+    marginBottom: 12,
   },
   headerSideEnd: {
     paddingRight: Layout.tab.header.horizontalPadding,

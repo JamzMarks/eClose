@@ -1,5 +1,5 @@
 import { getApiClient } from "@/services/api-client";
-import type { BookingInquiryDto, CreateBookingInquiryBody } from "@/services/booking/booking.types";
+import type { BookingInquiryDto, CreateBookingInquiryBody } from "@/contracts/booking.types";
 
 export class BookingService {
   private readonly client = getApiClient();

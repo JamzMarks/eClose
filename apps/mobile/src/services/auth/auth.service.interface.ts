@@ -8,7 +8,7 @@ import type {
   SignInRequest,
   SignUpRequest,
   UserProfileResponse,
-} from "@/services/types/auth.types";
+} from "@/contracts/auth.types";
 
 export type OAuthStartBody = {
   provider: OAuthProviderId;

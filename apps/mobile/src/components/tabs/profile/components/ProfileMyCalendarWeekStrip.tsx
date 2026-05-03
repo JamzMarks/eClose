@@ -2,7 +2,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { Paddings, Radii } from "@/constants/layout";
 import { AppPalette } from "@/constants/palette";
-import type { MyCalendarSavedEvent } from "@/services/my-calendar/my-calendar.types";
+import type { MyCalendarSavedEvent } from "@/types/entities/my-calendar.types";
 import {
   eventCountByLocalDayKey,
   isTodayLocal,

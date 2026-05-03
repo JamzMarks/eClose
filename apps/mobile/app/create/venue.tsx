@@ -8,12 +8,16 @@ import {
   Text,
   View,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
 import { AuthRequiredPlaceholder } from "@/components/auth";
 import { Screen } from "@/components/layout/screen";
-import { StackContentPageTitle } from "@/components/navigation/StackContentPageTitle";
+import {
+  CollapsingStackLargeTitle,
+  collapsingScrollProps,
+} from "@/components/navigation/collapsing-stack-header-title";
+import { useStandardCollapsingTitle } from "@/components/navigation/use-standard-collapsing-title";
 import { AppButton } from "@/components/ui/Button";
 import { AppTextField } from "@/components/ui/Input";
 import { AppPalette, getSchemeColors } from "@/constants/palette";
@@ -26,11 +30,24 @@ import { VenueService } from "@/services/venue/venue.service";
 export default function CreateVenueRoute() {
   const { t } = useTranslation("discover");
   const { t: tAuth } = useTranslation("auth");
+  const { t: tCommon } = useTranslation("common");
+  const navigation = useNavigation();
   const router = useRouter();
   const { isSignedIn, user } = useAuth();
   const ownerUserId = user?.id;
   const scheme = useColorScheme() ?? "light";
   const c = getSchemeColors(scheme);
+  const isDark = scheme === "dark";
+
+  const collapse = useStandardCollapsingTitle({
+    navigation,
+    title: t("createVenueScreenTitle"),
+    headerTitleColor: c.text,
+    headerBackgroundColor: c.background,
+    tintColor: c.text,
+    scheme: isDark ? "dark" : "light",
+    backAccessibilityLabel: tCommon("backA11y"),
+  });
 
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
@@ -54,8 +71,11 @@ export default function CreateVenueRoute() {
           behavior={Platform.OS === "ios" ? "padding" : undefined}>
           <ScrollView
             contentContainerStyle={[styles.content, { backgroundColor: c.background, flexGrow: 1 }]}
-            keyboardShouldPersistTaps="handled">
-            <StackContentPageTitle color={c.text}>{t("createVenueScreenTitle")}</StackContentPageTitle>
+            keyboardShouldPersistTaps="handled"
+            {...collapsingScrollProps(collapse)}>
+            <CollapsingStackLargeTitle color={c.text} collapse={collapse}>
+              {t("createVenueScreenTitle")}
+            </CollapsingStackLargeTitle>
             <AuthRequiredPlaceholder message={tAuth("authRequiredCreateBody")} insetFromParent />
           </ScrollView>
         </KeyboardAvoidingView>
@@ -113,8 +133,11 @@ export default function CreateVenueRoute() {
         keyboardVerticalOffset={64}>
         <ScrollView
           contentContainerStyle={[styles.content, { backgroundColor: c.background }]}
-          keyboardShouldPersistTaps="handled">
-          <StackContentPageTitle color={c.text}>{t("createVenueScreenTitle")}</StackContentPageTitle>
+          keyboardShouldPersistTaps="handled"
+          {...collapsingScrollProps(collapse)}>
+          <CollapsingStackLargeTitle color={c.text} collapse={collapse}>
+            {t("createVenueScreenTitle")}
+          </CollapsingStackLargeTitle>
           <Text style={[styles.lead, { color: c.textSecondary }]}>{t("createVenueHint")}</Text>
 
           <AppTextField label={t("createVenueName")} value={name} onChangeText={onNameChange} />

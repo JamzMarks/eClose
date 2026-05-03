@@ -1,5 +1,5 @@
 import { USE_LOCAL_SERVICE_DATA } from "@/services/config/service-data-source";
-import type { MarketplaceArtistListItem, MarketplaceVenueListItem } from "@/services/discover/discover-list.types";
+import type { MarketplaceArtistListItem, MarketplaceVenueListItem } from "@/types/entities/discover.types";
 import { paginateLocalArtists, paginateLocalVenues } from "@/services/discover/discover.stub-pagination";
 import { getApiClient } from "@/services/api-client";
 import type {
@@ -7,9 +7,9 @@ import type {
   ListMarketplaceArtistsParams,
   ListMarketplaceVenuesParams,
 } from "@/services/marketplace/marketplace.service.interface";
-import type { PaginatedResponse } from "@/services/types/pagination.types";
-import type { ArtistDto } from "@/services/types/artist.types";
-import type { MarketplaceVenueCardDto } from "@/services/types/venue.types";
+import type { PaginatedResponse } from "@/types/common/pagination.types";
+import type { ArtistDto } from "@/contracts/artist.types";
+import type { MarketplaceVenueCardDto } from "@/contracts/venue.types";
 import { toQueryString } from "@/services/utils/query-string";
 
 export class MarketplaceService implements IMarketplaceService {

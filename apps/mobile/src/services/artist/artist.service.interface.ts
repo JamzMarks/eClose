@@ -1,4 +1,4 @@
-import type { ArtistDto, CreateArtistRequest } from "@/services/types/artist.types";
+import type { ArtistDto, CreateArtistRequest } from "@/contracts/artist.types";
 
 export interface IArtistService {
   create(body: CreateArtistRequest): Promise<ArtistDto>;

@@ -2,7 +2,15 @@ import { getApiClient } from "@/services/api-client";
 import { USE_LOCAL_SERVICE_DATA } from "@/services/config/service-data-source";
 import { findMarketplaceVenueRowById } from "@/services/venue/venue.local-data";
 import type { IVenueService } from "@/services/venue/venue.service.interface";
-import type { CreateVenueRequest, VenueDto, VenueManageDto } from "@/services/types/venue.types";
+import type { CreateVenueRequest, VenueDto, VenueManageDto } from "@/contracts/venue.types";
+import { MOCK_EXPLORE_MAP_VENUES_RESPONSE } from "@/services/explore/mock/explore-map-venues.response.mock";
+
+function findExploreMockVenueById(id: string): VenueDto | null {
+  const item = MOCK_EXPLORE_MAP_VENUES_RESPONSE.items.find((it) => it.venue.id === id);
+  if (!item) return null;
+  // O mock de explore já tem a forma base de VenueDto em `item.venue`.
+  return { ...item.venue };
+}
 
 export class VenueService implements IVenueService {
   private readonly client = getApiClient();
@@ -36,12 +44,7 @@ export class VenueService implements IVenueService {
   }
 
   getById(id: string): Promise<VenueDto> {
-    if (USE_LOCAL_SERVICE_DATA) {
-      const row = findMarketplaceVenueRowById(id);
-      if (row) {
-        return Promise.resolve({ ...row.venue });
-      }
-      const now = new Date().toISOString();
+     const now = new Date().toISOString();
       return Promise.resolve({
         id,
         name: "Espaço (dados locais)",
@@ -70,9 +73,47 @@ export class VenueService implements IVenueService {
         createdAt: now,
         updatedAt: now,
       });
-    }
+    // if (USE_LOCAL_SERVICE_DATA) {
+    //   const row = findMarketplaceVenueRowById(id);
+    //   if (row) {
+    //     return Promise.resolve({ ...row.venue });
+    //   }
+    //   const exploreVenue = findExploreMockVenueById(id);
+    //   if (exploreVenue) {
+    //     return Promise.resolve(exploreVenue);
+    //   }
+    //   const now = new Date().toISOString();
+    //   return Promise.resolve({
+    //     id,
+    //     name: "Espaço (dados locais)",
+    //     slug: "espaco-local",
+    //     description: "Sem entrada neste id na lista local.",
+    //     ownerUserId: null,
+    //     address: {
+    //       line1: "—",
+    //       line2: null,
+    //       neighborhood: null,
+    //       city: "—",
+    //       region: "—",
+    //       countryCode: "PT",
+    //       postalCode: null,
+    //     },
+    //     geoLat: null,
+    //     geoLng: null,
+    //     timezone: "Europe/Lisbon",
+    //     openingHours: [],
+    //     taxonomyTermIds: [],
+    //     marketplaceListed: true,
+    //     openToArtistInquiries: true,
+    //     primaryMediaAssetId: null,
+    //     isActive: true,
+    //     isVerifiedL2: false,
+    //     createdAt: now,
+    //     updatedAt: now,
+    //   });
+    // }
 
-    return this.client.get<VenueDto>(`/venues/${encodeURIComponent(id)}`);
+    // return this.client.get<VenueDto>(`/venues/${encodeURIComponent(id)}`);
   }
 
   getManage(id: string): Promise<VenueManageDto> {

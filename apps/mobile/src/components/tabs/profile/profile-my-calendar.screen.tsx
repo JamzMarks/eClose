@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   FlatList,
   Pressable,
@@ -12,11 +12,8 @@ import i18n from "i18next";
 import { useTranslation } from "react-i18next";
 
 import { Screen } from "@/components/layout/screen";
-import {
-  buildMinimalStackHeaderOptions,
-  minimalStackBackCircleBackground,
-} from "@/components/navigation/minimal-stack-header";
-import { StackContentPageTitle } from "@/components/navigation/StackContentPageTitle";
+
+import { useStandardCollapsingTitle } from "@/components/navigation/use-standard-collapsing-title";
 import { MyCalendarEventRow } from "@/components/tabs/profile/components/MyCalendarEventRow";
 import { MyCalendarMonthGrid } from "@/components/tabs/profile/components/MyCalendarMonthGrid";
 import { Layout, Paddings, Radii } from "@/constants/layout";
@@ -26,7 +23,7 @@ import { LOCAL_MY_CALENDAR_EVENTS } from "@/services/my-calendar/my-calendar.loc
 import type {
   MyCalendarFilterId,
   MyCalendarSavedEvent,
-} from "@/services/my-calendar/my-calendar.types";
+} from "@/types/entities/my-calendar.types";
 import {
   applySourceFilter,
   eventsInLocalMonth,
@@ -34,6 +31,7 @@ import {
   localDayKey,
   parseLocalDayKey,
 } from "@/services/my-calendar/my-calendar.utils";
+import { collapsingScrollProps, CollapsingStackLargeTitle } from "@/components/navigation/collapsing-stack-header-title";
 
 const FILTERS: MyCalendarFilterId[] = ["all", "mine", "group", "direct"];
 
@@ -75,6 +73,16 @@ export function ProfileMyCalendarScreen() {
   const c = getSchemeColors(scheme);
   const isDark = scheme === "dark";
   const locale = i18n.language?.startsWith("en") ? "en-GB" : "pt-PT";
+
+  const collapse = useStandardCollapsingTitle({
+    navigation,
+    title: t("myCalendarTitle"),
+    headerTitleColor: c.text,
+    headerBackgroundColor: c.background,
+    tintColor: c.text,
+    scheme: isDark ? "dark" : "light",
+    backAccessibilityLabel: tCommon("backA11y"),
+  });
 
   const [calendarFilter, setCalendarFilter] = useState<MyCalendarFilterId>("all");
   const [monthYear, setMonthYear] = useState(() => {
@@ -164,21 +172,12 @@ export function ProfileMyCalendarScreen() {
     return t("myCalendarMultiDaySection", { count: selectedDayKeys.length });
   }, [selectedDayKeys, monthTitleLong, locale, t]);
 
-  useLayoutEffect(() => {
-    navigation.setOptions(
-      buildMinimalStackHeaderOptions({
-        headerBackgroundColor: c.background,
-        tintColor: c.text,
-        circleBackgroundColor: minimalStackBackCircleBackground(isDark ? "dark" : "light"),
-        backAccessibilityLabel: tCommon("backA11y"),
-      }),
-    );
-  }, [navigation, c.background, c.text, isDark, tCommon]);
-
   const renderListHeader = useCallback(
     () => (
       <View style={styles.headerBlock}>
-        <StackContentPageTitle color={c.text}>{t("myCalendarTitle")}</StackContentPageTitle>
+        <CollapsingStackLargeTitle color={c.text} collapse={collapse}>
+          {t("myCalendarTitle")}
+        </CollapsingStackLargeTitle>
         <Text style={[styles.lead, { color: c.textSecondary }]}>{t("myCalendarScreenHint")}</Text>
 
         <MyCalendarMonthGrid
@@ -248,6 +247,7 @@ export function ProfileMyCalendarScreen() {
       </View>
     ),
     [
+      collapse,
       c.text,
       c.textSecondary,
       c.textMuted,
@@ -281,6 +281,7 @@ export function ProfileMyCalendarScreen() {
         contentContainerStyle={styles.listContent}
         style={styles.list}
         showsVerticalScrollIndicator={false}
+        {...collapsingScrollProps(collapse)}
         ListEmptyComponent={
           <Text style={[styles.empty, { color: c.textSecondary }]}>{emptyMessage}</Text>
         }

@@ -1,4 +1,4 @@
-import type { MyCalendarFilterId, MyCalendarSavedEvent } from "@/services/my-calendar/my-calendar.types";
+import type { MyCalendarFilterId, MyCalendarSavedEvent } from "@/types/entities/my-calendar.types";
 
 /** Filtra só por origem (inclui passados — útil para o calendário mensal). */
 export function applySourceFilter(

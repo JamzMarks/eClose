@@ -22,6 +22,8 @@ export enum AppIcon {
   Close = "close",
   Mail = "mail",
   Lock = "lock",
+  Share = "share",
+  More = "more",
 }
 
 export const IconSizes = {

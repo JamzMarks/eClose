@@ -1,4 +1,4 @@
-import type { CreateVenueRequest, VenueDto, VenueManageDto } from "@/services/types/venue.types";
+import type { CreateVenueRequest, VenueDto, VenueManageDto } from "@/contracts/venue.types";
 
 export interface IVenueService {
   create(body: CreateVenueRequest): Promise<VenueDto>;

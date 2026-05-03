@@ -3,7 +3,7 @@ import type {
   OnboardingStepRequest,
   OnboardingStepResponse,
   UserProfileResponse,
-} from "@/services/types/auth.types";
+} from "@/contracts/auth.types";
 
 export const LOCAL_AUTH_TOKENS: AuthTokensResponse = {
   accessToken: "local_access_token",

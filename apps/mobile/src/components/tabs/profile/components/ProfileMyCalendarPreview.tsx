@@ -12,7 +12,7 @@ import { Paddings, Radii } from "@/constants/layout";
 import { AppPalette, getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { LOCAL_MY_CALENDAR_EVENTS } from "@/services/my-calendar/my-calendar.local-data";
-import type { MyCalendarSavedEvent } from "@/services/my-calendar/my-calendar.types";
+import type { MyCalendarSavedEvent } from "@/types/entities/my-calendar.types";
 import {
   dateFromLocalDayKey,
   eventsOnLocalDay,

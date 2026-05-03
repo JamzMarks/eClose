@@ -1,7 +1,7 @@
 import type {
   NotificationPreferencesDto,
   PatchNotificationPreferencesDto,
-} from "@/services/types/notification-preferences.types";
+} from "@/contracts/notification-preferences.types";
 
 export interface INotificationPreferencesService {
   get(): Promise<NotificationPreferencesDto>;

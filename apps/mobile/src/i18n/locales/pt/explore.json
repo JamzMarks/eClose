@@ -1,7 +1,33 @@
 {
   "tabA11y": "Explorar",
   "screenTitle": "Explorar",
-  "screenSubtitle": "Concertos, festivais e espaços na região que vês no mapa.",
-  "placeholderTitle": "Mapa interactivo em preparação",
-  "placeholderBody": "Em breve vais poder mover o mapa e ver eventos e espaços marcados aqui. Até lá, usa Programação para descobrir em lista."
+  "sheetTitle": "Nesta região",
+  "sheetCount": "{{count}} espaços",
+  "sheetEmpty": "Sem espaços visíveis nesta área. Aproxima ou move o mapa.",
+  "filtersTitle": "Filtros do mapa",
+  "filtersLead": "Mostra só os tipos de espaço que escolheres. Sem selecção, vês todos na região visível.",
+  "filtersKindSection": "Tipo de espaço",
+  "filtersAllKinds": "Todos os tipos",
+  "filtersAllKindsA11y": "Mostrar todos os tipos de espaço",
+  "filtersApply": "Aplicar",
+  "filtersApplyA11y": "Aplicar filtros",
+  "filtersReset": "Limpar",
+  "filtersResetA11y": "Repor filtros",
+  "filtersOpenA11y": "Abrir filtros do mapa",
+  "citySearchPlaceholder": "Cidade ou nome",
+  "citySearchExpandA11y": "Pesquisar por cidade ou nome do espaço",
+  "citySearchInputA11y": "Campo de pesquisa por cidade ou nome",
+  "citySearchCollapseA11y": "Fechar pesquisa de cidade",
+  "markers": {
+    "bar": "Bar",
+    "restaurant": "Restaurante",
+    "cafe": "Café",
+    "club": "Clube",
+    "theater": "Salão / teatro",
+    "studio": "Estúdio",
+    "festival": "Festival",
+    "train": "Trem / estação ferroviária",
+    "bus": "Paragem de autocarro",
+    "default": "Espaço"
+  }
 }

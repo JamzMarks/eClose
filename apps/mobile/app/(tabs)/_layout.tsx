@@ -54,7 +54,7 @@ export default function TabLayout() {
         />
 
         <Tabs.Screen
-          name="programacao"
+          name="discover"
           options={{
             tabBarIcon: ({ color, focused }) => (
               <Icon
