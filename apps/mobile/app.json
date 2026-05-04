@@ -70,6 +70,13 @@
           "locationWhenInUsePermission": "A eClose usa a tua localização enquanto a app está em uso para sugerir eventos e espaços por perto (opcional). Ao permitir, o tratamento baseia-se no teu consentimento (LGPD, art. 7.º, I), conforme a política de privacidade."
         }
       ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "A eClose acede às tuas fotos para escolheres a imagem de perfil.",
+          "cameraPermission": "A eClose usa a câmara para tirares a foto de perfil."
+        }
+      ],
       "expo-notifications"
     ],
     "experiments": {

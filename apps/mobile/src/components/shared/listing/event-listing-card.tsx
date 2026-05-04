@@ -4,6 +4,9 @@ import { formatEventRange } from "@/lib/format-date";
 import { ListingCardShell } from "./listing-card-shell";
 import { ListingTypeChip } from "./listing-type-chip";
 
+/** `compact` = grelha; `hero` = destaque no feed (imagem mais alta). */
+export type EventListingCardVariant = "list" | "compact" | "hero";
+
 export type EventListingCardProps = {
   event: EventDto;
   primaryMediaUrl?: string | null;
@@ -20,7 +23,9 @@ export type EventListingCardProps = {
   onPress: () => void;
   /** Grelha 2 colunas: imagem mais baixa e cartão mais compacto. */
   cardInnerWidth?: number;
+  /** @deprecated Prefer `variant`. */
   gridMode?: boolean;
+  variant?: EventListingCardVariant;
 };
 
 function eventLocationLine(event: EventDto, onlineLabel: string): string {
@@ -55,9 +60,15 @@ export function EventListingCard({
   onPress,
   cardInnerWidth,
   gridMode = false,
+  variant: variantProp,
 }: EventListingCardProps) {
+  const variant: EventListingCardVariant = variantProp ?? (gridMode ? "compact" : "list");
   const dateLine = formatEventRange(event.startsAt, event.endsAt);
   const placeLine = eventLocationLine(event, onlineLabel);
+
+  const carouselHeight = variant === "compact" ? 104 : undefined;
+  const marginBottom = variant === "compact" ? 12 : 18;
+  const emphasis = variant === "hero" ? "hero" : "default";
 
   return (
     <ListingCardShell
@@ -68,8 +79,9 @@ export function EventListingCard({
       meta={placeLine}
       onPress={onPress}
       cardInnerWidth={cardInnerWidth}
-      carouselHeight={gridMode ? 104 : undefined}
-      marginBottom={gridMode ? 12 : 18}
+      carouselHeight={carouselHeight}
+      marginBottom={marginBottom}
+      emphasis={emphasis}
       imageOverlay={
         categoryLabel ? (
           <ListingTypeChip

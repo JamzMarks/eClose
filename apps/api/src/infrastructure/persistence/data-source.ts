@@ -1,7 +1,6 @@
 import "reflect-metadata";
-import { config } from "dotenv";
-import { join } from "path";
 import { DataSource } from "typeorm";
+import { loadAppEnv } from "../config/load-env";
 import { Initial1730200000000 } from "./migrations/1730200000000-Initial";
 import { FeaturesPhases2To61740100000000 } from "./migrations/1740100000000-FeaturesPhases2To6";
 import { BookingRequesterOrganizerArtist1740200000000 } from "./migrations/1740200000000-BookingRequesterOrganizerArtist";
@@ -16,7 +15,7 @@ import { LegalConsentVenueTrustEvidenceAudit1741000000000 } from "./migrations/1
 import { SnakeNamingStrategy } from "./snake-naming.strategy";
 import { ALL_TYPEORM_ENTITIES } from "./typeorm-entities.registry";
 
-config({ path: [join(__dirname, "../../../.env.local"), join(__dirname, "../../../.env")] });
+loadAppEnv();
 
 export default new DataSource({
   type: "postgres",

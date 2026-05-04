@@ -116,7 +116,7 @@ export function DiscoverQuickCategoriesRow({
       </View>
 
       <Modal visible={seeAllOpen} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setSeeAllOpen(false)}>
-        <View style={[styles.modalRoot, { backgroundColor: c.background, paddingTop: insets.top + 8 }]}>
+        <View style={[styles.modalRoot, { backgroundColor: c.surface, paddingTop: insets.top + 8 }]}>
           <View style={[styles.modalHeader, { borderBottomColor: c.border }]}>
             <View style={styles.modalHeaderSide}>
               <Pressable onPress={() => setSeeAllOpen(false)} hitSlop={12}>

@@ -44,7 +44,7 @@ export function PartnerProgramSheet({ visible, onClose }: PartnerProgramSheetPro
         if (i === -1) onClose();
       }}
       backdropComponent={renderBackdrop}
-      backgroundStyle={{ backgroundColor: c.background }}
+      backgroundStyle={{ backgroundColor: c.surface }}
       handleIndicatorStyle={{ backgroundColor: c.border }}>
       <BottomSheetScrollView contentContainerStyle={styles.body}>
         <Text style={[styles.title, { color: c.text }]}>{t("partnerSheetTitle")}</Text>

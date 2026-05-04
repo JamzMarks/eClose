@@ -1,3 +1,4 @@
+import { forwardRef, type ElementRef } from "react";
 import {
   Platform,
   StyleSheet,
@@ -25,12 +26,11 @@ export type AppSearchFieldProps = Omit<TextInputProps, "style" | "placeholderTex
 /**
  * Campo de pesquisa padronizado — ícone à esquerda, fundo e borda do tema.
  */
-export function AppSearchField({
-  containerStyle,
-  inputStyle,
-  editable = true,
-  ...rest
-}: AppSearchFieldProps) {
+export const AppSearchField = forwardRef<ElementRef<typeof TextInput>, AppSearchFieldProps>(
+  function AppSearchField(
+  { containerStyle, inputStyle, editable = true, ...rest },
+  ref,
+) {
   const scheme = useColorScheme() ?? "light";
   const c = getSchemeColors(scheme);
 
@@ -39,7 +39,7 @@ export function AppSearchField({
       style={[
         styles.container,
         {
-          backgroundColor: c.inputBackground,
+          backgroundColor: c.surface,
           borderColor: c.border,
         },
         !editable && styles.containerDisabled,
@@ -47,6 +47,7 @@ export function AppSearchField({
       ]}>
       <Icon name={AppIcon.Search} size="sm" color={c.icon} />
       <TextInput
+        ref={ref}
         placeholderTextColor={c.textMuted}
         style={[styles.input, { color: c.text }, !editable && styles.inputDisabled, inputStyle]}
         editable={editable}
@@ -56,7 +57,8 @@ export function AppSearchField({
       />
     </View>
   );
-}
+  },
+);
 
 const styles = StyleSheet.create({
   container: {

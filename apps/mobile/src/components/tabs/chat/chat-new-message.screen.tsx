@@ -1,13 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import {
-  FlatList,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { FlatList, KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 import { useNavigation, useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
@@ -18,12 +10,13 @@ import {
 } from "@/components/navigation/collapsing-stack-header-title";
 import { useStandardCollapsingTitle } from "@/components/navigation/use-standard-collapsing-title";
 import { SettingsSectionHeader } from "@/components/settings/components/SettingsSectionHeader";
+import { ChatInlineEmpty } from "@/components/tabs/chat/chat-inline-empty";
+import { ChatPlainLinkRow } from "@/components/tabs/chat/chat-plain-link-row";
 import { ChatUserSuggestionRow } from "@/components/tabs/chat/chat-user-suggestion-row";
 import { AppSearchField } from "@/components/ui/SearchField";
-import { Icon } from "@/components/ui/icon/icon";
 import { AppIcon } from "@/components/ui/icon/icon.types";
-import { Paddings, Radii } from "@/constants/layout";
-import { AppPalette, getSchemeColors } from "@/constants/palette";
+import { Paddings } from "@/constants/layout";
+import { getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { LOCAL_CHAT_NEW_MESSAGE_SUGGESTIONS } from "@/services/chat/chat.new-message-suggestions.mock";
 import type { ChatNewMessageUserSuggestion } from "@/types/entities/chat.types";
@@ -76,31 +69,16 @@ export function ChatNewMessageScreen() {
           accessibilityLabel={t("chatNewMessageSearchA11y")}
           containerStyle={styles.search}
         />
-        <Pressable
+        <ChatPlainLinkRow
+          icon={AppIcon.Create}
+          title={t("chatNewGroupCtaTitle")}
           onPress={() => router.push("/chat-new-group")}
-          style={({ pressed }) => [
-            styles.createGroupCard,
-            {
-              borderColor: c.border,
-              backgroundColor: c.surface,
-              opacity: pressed ? 0.92 : 1,
-            },
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel={t("chatNewGroupCtaA11y")}>
-          <View style={[styles.createIconWrap, { backgroundColor: c.inputBackground }]}>
-            <Icon name={AppIcon.Create} size="md" color={AppPalette.primary} filled />
-          </View>
-          <View style={styles.createGroupText}>
-            <Text style={[styles.createGroupTitle, { color: c.text }]}>
-              {t("chatNewGroupCtaTitle")}
-            </Text>
-            <Text style={[styles.createGroupHint, { color: c.textSecondary }]}>
-              {t("chatNewGroupCtaSubtitle")}
-            </Text>
-          </View>
-          <Text style={[styles.chevronFwd, { color: c.textMuted }]}>›</Text>
-        </Pressable>
+          titleColor={c.text}
+          mutedColor={c.textMuted}
+          iconFilled
+          showChevron
+          accessibilityLabel={t("chatNewGroupCtaA11y")}
+        />
         <SettingsSectionHeader title={t("chatNewMessageSuggestionsSection")} color={c.textSecondary} />
       </View>
     ),
@@ -109,11 +87,12 @@ export function ChatNewMessageScreen() {
 
   const empty =
     filtered.length === 0 ? (
-      <View style={[styles.emptyCard, { borderColor: c.border, backgroundColor: c.surface }]}>
-        <Text style={[styles.emptyText, { color: c.textSecondary }]}>
-          {t("chatNewMessageEmpty")}
-        </Text>
-      </View>
+      <ChatInlineEmpty
+        message={t("chatNewMessageEmpty")}
+        textColor={c.textSecondary}
+        backgroundColor={c.surface}
+        style={{ marginTop: Paddings.sm }}
+      />
     ) : null;
 
   return (
@@ -124,13 +103,12 @@ export function ChatNewMessageScreen() {
         <FlatList
           data={filtered}
           keyExtractor={(item) => item.id}
-          renderItem={({ item, index }) => (
+          renderItem={({ item }) => (
             <ChatUserSuggestionRow
               user={item}
               textColor={c.text}
               subtitleColor={c.textSecondary}
-              borderColor={c.border}
-              showDivider={index < filtered.length - 1}
+              placeholderSurfaceColor={c.border}
               onPress={() => undefined}
             />
           )}
@@ -156,52 +134,6 @@ const styles = StyleSheet.create({
     paddingTop: 0,
   },
   search: {
-    marginBottom: Paddings.lg,
-  },
-  createGroupCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: Radii.md,
-    borderWidth: StyleSheet.hairlineWidth,
-    paddingVertical: Paddings.md,
-    paddingHorizontal: Paddings.lg,
-    marginBottom: Paddings.xl,
-    gap: Paddings.md,
-  },
-  createIconWrap: {
-    width: 44,
-    height: 44,
-    borderRadius: Radii.sm,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  createGroupText: {
-    flex: 1,
-    minWidth: 0,
-  },
-  createGroupTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-  },
-  createGroupHint: {
-    fontSize: 14,
-    marginTop: 2,
-  },
-  emptyCard: {
-    borderRadius: Radii.md,
-    borderWidth: StyleSheet.hairlineWidth,
-    paddingVertical: Paddings.xl,
-    paddingHorizontal: Paddings.lg,
-    marginTop: Paddings.sm,
-  },
-  emptyText: {
-    fontSize: 15,
-    lineHeight: 22,
-    textAlign: "center",
-  },
-  chevronFwd: {
-    fontSize: 28,
-    fontWeight: "300",
-    marginTop: -2,
+    marginBottom: Paddings.md,
   },
 });

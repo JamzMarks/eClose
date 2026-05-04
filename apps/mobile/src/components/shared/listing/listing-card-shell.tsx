@@ -36,6 +36,8 @@ export type ListingCardShellProps = {
   /** Altura do carrossel; em grelha usar mais baixo. */
   carouselHeight?: number;
   marginBottom?: number;
+  /** Destaque visual para a primeira posição do feed. */
+  emphasis?: "default" | "hero";
 };
 
 /**
@@ -53,13 +55,15 @@ export function ListingCardShell({
   cardInnerWidth: cardInnerWidthProp,
   carouselHeight: carouselHeightProp,
   marginBottom = 18,
+  emphasis = "default",
 }: ListingCardShellProps) {
   const { width: windowWidth } = useWindowDimensions();
   const slideWidth = Math.max(
     0,
     cardInnerWidthProp ?? Math.max(0, windowWidth - LIST_HORIZONTAL_INSET),
   );
-  const carouselHeight = carouselHeightProp ?? CAROUSEL_HEIGHT;
+  const carouselHeight =
+    carouselHeightProp ?? (emphasis === "hero" ? 200 : CAROUSEL_HEIGHT);
   const urls = useMemo(
     () => mediaUrls.map((u) => u.trim()).filter((u) => u.length > 0),
     [mediaUrls],
@@ -141,10 +145,22 @@ export function ListingCardShell({
         {imageOverlay ? <View style={styles.overlay}>{imageOverlay}</View> : null}
       </View>
       <View style={styles.body}>
-        <Text style={[styles.title, { color: colors.text }]} numberOfLines={2}>
+        <Text
+          style={[
+            styles.title,
+            emphasis === "hero" && styles.titleHero,
+            { color: colors.text },
+          ]}
+          numberOfLines={2}>
           {title}
         </Text>
-        <Text style={[styles.subtitle, { color: colors.subtitle }]} numberOfLines={2}>
+        <Text
+          style={[
+            styles.subtitle,
+            emphasis === "hero" && styles.subtitleHero,
+            { color: colors.subtitle },
+          ]}
+          numberOfLines={2}>
           {subtitle}
         </Text>
         {meta ? (
@@ -203,9 +219,18 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     letterSpacing: -0.2,
   },
+  titleHero: {
+    fontSize: 18,
+    fontWeight: "700",
+    letterSpacing: -0.25,
+  },
   subtitle: {
     fontSize: 14,
     lineHeight: 19,
+  },
+  subtitleHero: {
+    fontSize: 15,
+    lineHeight: 21,
   },
   meta: {
     fontSize: 13,

@@ -1,12 +1,5 @@
-import { useMemo } from "react";
-import {
-  ActionSheetIOS,
-  Alert,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  View,
-} from "react-native";
+import { useMemo, useState } from "react";
+import { Alert, ScrollView, StyleSheet, View } from "react-native";
 import { useNavigation, useRouter, type Href } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -18,6 +11,10 @@ import {
 } from "@/components/navigation/collapsing-stack-header-title";
 import { minimalStackBackCircleBackground } from "@/components/navigation/minimal-stack-header";
 import { SettingsNavigationRow } from "@/components/settings/components/SettingsNavigationRow";
+import {
+  SettingsPreferencePickerSheet,
+  type SettingsPickerOption,
+} from "@/components/settings/components/SettingsPreferencePickerSheet";
 import { SettingsScreenGroup } from "@/components/settings/components/SettingsScreenGroup";
 import { AppIcon } from "@/components/ui/icon/icon.types";
 import { getSchemeColors } from "@/constants/palette";
@@ -47,7 +44,7 @@ export function SettingsModalScreen() {
     collapsedTitle: t("title"),
     headerTitleColor: c.text,
     chrome: {
-      headerBackgroundColor: c.background,
+      headerBackgroundColor: c.surface,
       tintColor: c.text,
       circleBackgroundColor: minimalStackBackCircleBackground(isDark ? "dark" : "light"),
       backAccessibilityLabel: tCommon("backA11y"),
@@ -57,6 +54,7 @@ export function SettingsModalScreen() {
   const { openNotificationPreferencesSetup } = useAccountSetup();
   const { preference, setPreference } = useThemePreference();
   const { locale, setLocale } = useLocalePreference();
+  const [pickerKind, setPickerKind] = useState<"appearance" | "language" | null>(null);
 
   const appearanceSubtitleKey = useMemo(() => {
     const map: Record<ThemePreference, string> = {
@@ -67,42 +65,14 @@ export function SettingsModalScreen() {
     return map[preference];
   }, [preference]);
 
-  function openAppearancePicker() {
-    const options: { key: ThemePreference; labelKey: string }[] = [
-      { key: "system", labelKey: "appearanceOptionSystem" },
-      { key: "light", labelKey: "appearanceOptionLight" },
-      { key: "dark", labelKey: "appearanceOptionDark" },
-    ];
-
-    if (Platform.OS === "ios") {
-      ActionSheetIOS.showActionSheetWithOptions(
-        {
-          options: [t("cancel"), ...options.map((o) => t(o.labelKey))],
-          cancelButtonIndex: 0,
-          title: t("appearance"),
-        },
-        (index) => {
-          if (index === 0) return;
-          const opt = options[index - 1];
-          if (opt) void setPreference(opt.key);
-        },
-      );
-      return;
-    }
-
-    Alert.alert(
-      t("appearance"),
-      undefined,
-      [
-        ...options.map((o) => ({
-          text: t(o.labelKey),
-          onPress: () => void setPreference(o.key),
-        })),
-        { text: t("cancel"), style: "cancel" as const },
-      ],
-      { cancelable: true },
-    );
-  }
+  const appearanceOptions = useMemo<SettingsPickerOption[]>(
+    () => [
+      { key: "system", icon: AppIcon.Contrast, label: t("appearanceOptionSystem") },
+      { key: "light", icon: AppIcon.Sun, label: t("appearanceOptionLight") },
+      { key: "dark", icon: AppIcon.Moon, label: t("appearanceOptionDark") },
+    ],
+    [t],
+  );
 
   const languageSubtitleKey = useMemo(() => {
     const map: Record<AppLocale, string> = {
@@ -112,41 +82,13 @@ export function SettingsModalScreen() {
     return map[locale];
   }, [locale]);
 
-  function openLanguagePicker() {
-    const options: { key: AppLocale; labelKey: string }[] = [
-      { key: "pt", labelKey: "languageOptionPt" },
-      { key: "en", labelKey: "languageOptionEn" },
-    ];
-
-    if (Platform.OS === "ios") {
-      ActionSheetIOS.showActionSheetWithOptions(
-        {
-          options: [t("cancel"), ...options.map((o) => t(o.labelKey))],
-          cancelButtonIndex: 0,
-          title: t("language"),
-        },
-        (index) => {
-          if (index === 0) return;
-          const opt = options[index - 1];
-          if (opt) void setLocale(opt.key);
-        },
-      );
-      return;
-    }
-
-    Alert.alert(
-      t("language"),
-      undefined,
-      [
-        ...options.map((o) => ({
-          text: t(o.labelKey),
-          onPress: () => void setLocale(o.key),
-        })),
-        { text: t("cancel"), style: "cancel" as const },
-      ],
-      { cancelable: true },
-    );
-  }
+  const languageOptions = useMemo<SettingsPickerOption[]>(
+    () => [
+      { key: "pt", icon: AppIcon.Globe, label: t("languageOptionPt") },
+      { key: "en", icon: AppIcon.Globe, label: t("languageOptionEn") },
+    ],
+    [t],
+  );
 
   const legalItems = useMemo(
     () =>
@@ -196,7 +138,7 @@ export function SettingsModalScreen() {
   }
 
   return (
-    <View style={[styles.root, { backgroundColor: c.background }]}>
+    <View style={[styles.root, { backgroundColor: c.surface }]}>
       <ScrollView
         contentContainerStyle={[
           styles.scrollContent,
@@ -240,14 +182,14 @@ export function SettingsModalScreen() {
             icon={AppIcon.Settings}
             title={t("appearance")}
             subtitle={t(appearanceSubtitleKey)}
-            onPress={openAppearancePicker}
+            onPress={() => setPickerKind("appearance")}
             {...navProps}
           />
           <SettingsNavigationRow
-            icon={AppIcon.Explore}
+            icon={AppIcon.Globe}
             title={t("language")}
             subtitle={t(languageSubtitleKey)}
-            onPress={openLanguagePicker}
+            onPress={() => setPickerKind("language")}
             {...navProps}
           />
         </SettingsScreenGroup>
@@ -289,6 +231,19 @@ export function SettingsModalScreen() {
           />
         </SettingsScreenGroup>
       </ScrollView>
+      <SettingsPreferencePickerSheet
+        visible={pickerKind !== null}
+        title={pickerKind === "language" ? t("language") : t("appearance")}
+        titleIcon={pickerKind === "language" ? AppIcon.Globe : AppIcon.Settings}
+        options={pickerKind === "language" ? languageOptions : appearanceOptions}
+        selectedKey={pickerKind === "language" ? locale : preference}
+        onSelect={(k) => {
+          if (pickerKind === "language") void setLocale(k as AppLocale);
+          else void setPreference(k as ThemePreference);
+        }}
+        onClose={() => setPickerKind(null)}
+        cancelLabel={t("cancel")}
+      />
     </View>
   );
 }

@@ -19,11 +19,12 @@ export const AppPalette = {
   black: "#0F172A",
 
   light: {
-    background: "#FAFAF9",
+    /** Tela base — branco; cartões/inputs usam o mesmo `surface` ou borda para separação. */
+    background: "#FFFFFF",
     surface: "#FFFFFF",
-    surfaceElevated: "#FFFFFF",
-    border: "#E7E5E4",
-    borderStrong: "#D6D3D1",
+    surfaceElevated: "#F4F4F5",
+    border: "#D8D6D3",
+    borderStrong: "#CAC6C1",
     text: "#1C1917",
     textSecondary: "#57534E",
     textMuted: "#A8A29E",
@@ -31,14 +32,16 @@ export const AppPalette = {
     icon: "#78716C",
     tabIconDefault: "#A8A29E",
     tabIconSelected: "#C2410C",
+    /** Alinhado a `surface` — campos e cartões partilham o mesmo token de preenchimento. */
     inputBackground: "#FFFFFF",
     overlay: "rgba(15, 23, 42, 0.45)",
   },
 
   dark: {
-    background: "#0C0A09",
-    surface: "#1C1917",
-    surfaceElevated: "#292524",
+    /** Canvas próximo do preto; `surface` um degrau acima para cartões e campos. */
+    background: "#000000",
+    surface: "#141312",
+    surfaceElevated: "#1C1917",
     border: "#44403C",
     borderStrong: "#57534E",
     text: "#FAFAF9",
@@ -48,7 +51,8 @@ export const AppPalette = {
     icon: "#A8A29E",
     tabIconDefault: "#78716C",
     tabIconSelected: "#FB923C",
-    inputBackground: "#292524",
+    /** Igual a `surface`: inputs e cartões no mesmo cinza base (borda define o limite). */
+    inputBackground: "#141312",
     overlay: "rgba(0, 0, 0, 0.6)",
   },
 } as const;

@@ -24,6 +24,8 @@ import {
 } from "@/components/navigation/minimal-stack-header";
 import { useStandardCollapsingTitle } from "@/components/navigation/use-standard-collapsing-title";
 import { SettingsSectionHeader } from "@/components/settings/components/SettingsSectionHeader";
+import { ChatInlineEmpty } from "@/components/tabs/chat/chat-inline-empty";
+import { ChatPlainLinkRow } from "@/components/tabs/chat/chat-plain-link-row";
 import { ChatUserSuggestionRow } from "@/components/tabs/chat/chat-user-suggestion-row";
 import { GroupInviteLinkModal } from "@/components/tabs/chat/group-invite-link-modal";
 import { GroupSettingsModal } from "@/components/tabs/chat/group-settings-modal";
@@ -32,7 +34,7 @@ import { AppSearchField } from "@/components/ui/SearchField";
 import { Icon } from "@/components/ui/icon/icon";
 import { AppIcon } from "@/components/ui/icon/icon.types";
 import { Paddings, Radii } from "@/constants/layout";
-import { AppPalette, getSchemeColors } from "@/constants/palette";
+import { getSchemeColors } from "@/constants/palette";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { LOCAL_CHAT_NEW_MESSAGE_SUGGESTIONS } from "@/services/chat/chat.new-message-suggestions.mock";
 import type { ChatNewMessageUserSuggestion } from "@/types/entities/chat.types";
@@ -140,7 +142,7 @@ export function ChatNewGroupScreen() {
           placeholderTextColor={c.textMuted}
           style={[
             styles.nameInput,
-            { color: c.text, borderColor: c.border, backgroundColor: c.inputBackground },
+            { color: c.text, borderColor: c.border, backgroundColor: c.surface },
           ]}
           accessibilityLabel={t("chatNewGroupNameA11y")}
         />
@@ -154,23 +156,15 @@ export function ChatNewGroupScreen() {
           containerStyle={styles.search}
         />
         {selectedIds.length === 0 ? (
-          <Pressable
+          <ChatPlainLinkRow
+            icon={AppIcon.Share}
+            title={t("chatNewGroupInviteLinkCta")}
             onPress={() => setInviteOpen(true)}
-            style={({ pressed }) => [
-              styles.linkRow,
-              {
-                borderColor: c.border,
-                backgroundColor: c.surface,
-                opacity: pressed ? 0.9 : 1,
-              },
-            ]}
-            accessibilityRole="button"
-            accessibilityLabel={t("chatNewGroupInviteLinkCta")}>
-            <Icon name={AppIcon.Share} size="sm" color={AppPalette.primary} />
-            <Text style={[styles.linkRowLabel, { color: AppPalette.primary }]}>
-              {t("chatNewGroupInviteLinkCta")}
-            </Text>
-          </Pressable>
+            titleColor={c.text}
+            iconSize="sm"
+            accentTitle
+            accessibilityLabel={t("chatNewGroupInviteLinkCta")}
+          />
         ) : null}
         <SettingsSectionHeader title={t("chatNewGroupMembersSection")} color={c.textSecondary} />
       </View>
@@ -186,15 +180,14 @@ export function ChatNewGroupScreen() {
         <FlatList
           data={filteredMembers}
           keyExtractor={(item) => item.id}
-          renderItem={({ item, index }) => {
+          renderItem={({ item }) => {
             const checked = selectedIds.includes(item.id);
             return (
               <ChatUserSuggestionRow
                 user={item}
                 textColor={c.text}
                 subtitleColor={c.textSecondary}
-                borderColor={c.border}
-                showDivider={index < filteredMembers.length - 1}
+                placeholderSurfaceColor={c.border}
                 selection={checked ? "checked" : "unchecked"}
                 onPress={() => toggleUser(item.id)}
               />
@@ -209,15 +202,12 @@ export function ChatNewGroupScreen() {
             },
           ]}
           ListEmptyComponent={
-            <View
-              style={[
-                styles.emptyCard,
-                { borderColor: c.border, backgroundColor: c.surface, marginTop: Paddings.sm },
-              ]}>
-              <Text style={[styles.emptyText, { color: c.textSecondary }]}>
-                {t("chatNewGroupMembersEmpty")}
-              </Text>
-            </View>
+            <ChatInlineEmpty
+              message={t("chatNewGroupMembersEmpty")}
+              textColor={c.textSecondary}
+              backgroundColor={c.surface}
+              style={{ marginTop: Paddings.sm }}
+            />
           }
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
@@ -269,21 +259,6 @@ const styles = StyleSheet.create({
   search: {
     marginBottom: Paddings.md,
   },
-  linkRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Paddings.sm,
-    paddingVertical: Paddings.md,
-    paddingHorizontal: Paddings.md,
-    borderRadius: Radii.sm,
-    borderWidth: StyleSheet.hairlineWidth,
-    marginBottom: Paddings.lg,
-  },
-  linkRowLabel: {
-    flex: 1,
-    fontSize: 15,
-    fontWeight: "600",
-  },
   headerIconCircle: {
     width: 36,
     height: 36,
@@ -299,16 +274,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: Paddings.xl,
     paddingTop: Paddings.md,
     borderTopWidth: StyleSheet.hairlineWidth,
-  },
-  emptyCard: {
-    borderRadius: Radii.md,
-    borderWidth: StyleSheet.hairlineWidth,
-    paddingVertical: Paddings.xl,
-    paddingHorizontal: Paddings.lg,
-  },
-  emptyText: {
-    fontSize: 15,
-    lineHeight: 22,
-    textAlign: "center",
   },
 });

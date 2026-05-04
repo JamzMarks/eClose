@@ -153,5 +153,12 @@
   "venueTrustStatus_verified_l2": "Verificado (semi confiável)",
   "venueTrustStatus_rejected": "Rejeitado — podes reenviar",
   "venueManageVerification": "Completar verificação",
-  "venueViewAsOwner": "Gerir este espaço"
+  "venueViewAsOwner": "Gerir este espaço",
+  "venueUpcomingEventsSection": "Próximos eventos aqui",
+  "venueUpcomingEventsMockHint": "Listagens de demonstração — filtrar por espaço quando a API ligar.",
+  "venuePracticalSection": "Informação prática",
+  "venueOpeningHoursPlaceholder": "Horários aparecem aqui quando configurados.",
+  "venueTimezoneLabel": "Fuso horário",
+  "venueVerificationSoonTitle": "Brevemente",
+  "venueVerificationSoonBody": "A verificação do espaço abrirá aqui numa próxima versão."
 }

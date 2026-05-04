@@ -22,9 +22,11 @@ import { VenueService } from "@/services/venue/venue.service";
 import { normalizeHttpError } from "@/infrastructure/http/error-handler";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { findMarketplaceVenueRowById } from "@/services/venue/venue.local-data";
+import { EventListingCard } from "@/components/shared/listing/event-listing-card";
 import { Icon } from "@/components/ui/icon/icon";
 import { AppIcon } from "@/components/ui/icon/icon.types";
 import type { VenueDto, VenueManageDto, VenueVerificationStatus } from "@/contracts/venue.types";
+import { LOCAL_PUBLISHED_EVENTS } from "@/services/event/event.local-data";
 
 function trustStatusLabel(
   t: (k: string) => string,
@@ -266,7 +268,9 @@ export default function VenueDetailScreen() {
               </Text>
               {canStartVerification ? (
                 <Pressable
-                  onPress={() => router.push(`/venue/${encodeURIComponent(id!)}/verify`)}
+                  onPress={() =>
+                    Alert.alert(t("venueVerificationSoonTitle"), t("venueVerificationSoonBody"))
+                  }
                   style={({ pressed }) => [styles.ownerCta, pressed && { opacity: 0.85 }]}
                 >
                   <Text style={styles.ownerCtaText}>{t("venueManageVerification")}</Text>
@@ -281,6 +285,37 @@ export default function VenueDetailScreen() {
               <Text style={[styles.body, { color: c.text }]}>{venue.description}</Text>
             </>
           ) : null}
+
+          <Text style={[styles.section, { color: c.textMuted, marginTop: 8 }]}>{t("venueUpcomingEventsSection")}</Text>
+          <Text style={[styles.subTitle, { color: c.textSecondary, marginTop: 4, marginBottom: 12 }]}>
+            {t("venueUpcomingEventsMockHint")}
+          </Text>
+          {LOCAL_PUBLISHED_EVENTS.slice(0, 3).map((item) => (
+            <View key={item.event.id} style={{ marginBottom: 14 }}>
+              <EventListingCard
+                event={item.event}
+                primaryMediaUrl={item.primaryMediaUrl}
+                galleryUrls={item.galleryUrls}
+                categoryLabel={item.categoryLabel}
+                textColor={c.text}
+                subtitleColor={c.textSecondary}
+                imagePlaceholderColor={c.border}
+                onlineLabel={t("online")}
+                onPress={() => router.push(`/event/${item.event.id}`)}
+                variant="compact"
+              />
+            </View>
+          ))}
+
+          <Text style={[styles.section, { color: c.textMuted, marginTop: 8 }]}>{t("venuePracticalSection")}</Text>
+          <Text style={[styles.body, { color: c.text }]}>{addr.line1}</Text>
+          <Text style={[styles.meta, { color: c.textSecondary }]}>{addressLine || "—"}</Text>
+          <Text style={[styles.meta, { color: c.textSecondary }]}>
+            {t("venueTimezoneLabel")}: {venue.timezone}
+          </Text>
+          <Text style={[styles.body, { color: c.textSecondary, marginTop: 10, lineHeight: 22 }]}>
+            {t("venueOpeningHoursPlaceholder")}
+          </Text>
 
           {isSignedIn && venue.openToArtistInquiries && !showOwnerTools ? (
             <Pressable

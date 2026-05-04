@@ -1,28 +1,34 @@
+import { Platform, StyleSheet } from "react-native";
 import { Tabs } from "expo-router";
 import { useTranslation } from "react-i18next";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Icon } from "@/components/ui/icon/icon";
 import { AppIcon } from "@/components/ui/icon/icon.types";
+import { getSchemeColors } from "@/constants/palette";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+
+/** Altura útil da barra (acima do home indicator / gestos); ícones centrados nessa faixa. */
+const TAB_BAR_CONTENT_HEIGHT = Platform.select({ ios: 48, default: 56 });
 
 export default function TabLayout() {
   const { t } = useTranslation("tabs");
   const { t: tExplore } = useTranslation("explore");
   const colorScheme = useColorScheme();
+  const scheme = colorScheme ?? "light";
+  const c = getSchemeColors(scheme);
+  const insets = useSafeAreaInsets();
 
   return (
     <Tabs
         screenOptions={{
-          tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
+          tabBarActiveTintColor: Colors[scheme].tint,
           headerShown: false,
           tabBarShowLabel: false,
           tabBarIconStyle: {
-            flex: 1,
             justifyContent: "center",
             alignItems: "center",
-            marginTop: 0,
-            marginBottom: 0,
           },
           tabBarItemStyle: {
             justifyContent: "center",
@@ -32,9 +38,13 @@ export default function TabLayout() {
           },
           tabBarLabelStyle: { display: "none" },
           tabBarStyle: {
-            backgroundColor: Colors[colorScheme ?? "light"].background,
-            borderTopWidth: 0,
+            backgroundColor: Colors[scheme].background,
+            borderTopWidth: StyleSheet.hairlineWidth,
+            borderTopColor: c.border,
             elevation: 0,
+            height: TAB_BAR_CONTENT_HEIGHT + insets.bottom,
+            paddingTop: 0,
+            paddingBottom: insets.bottom,
           },
         }}
       >

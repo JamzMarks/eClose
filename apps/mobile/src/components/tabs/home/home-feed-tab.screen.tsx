@@ -112,7 +112,7 @@ export function HomeFeedTabScreen() {
         canLoadMore={events.canLoadMore}
         onScroll={onScroll}
         scrollEventThrottle={16}
-        renderItem={({ item }) => (
+        renderItem={({ item, index }) => (
           <EventListingCard
             event={item.event}
             primaryMediaUrl={item.primaryMediaUrl}
@@ -123,6 +123,7 @@ export function HomeFeedTabScreen() {
             imagePlaceholderColor={c.border}
             onlineLabel={t("online")}
             onPress={() => router.push(`/event/${item.event.id}`)}
+            variant={index === 0 ? "hero" : "list"}
           />
         )}
         />
@@ -134,8 +135,8 @@ export function HomeFeedTabScreen() {
 const styles = StyleSheet.create({
   subtitle: {
     paddingHorizontal: Layout.tab.content.horizontalPadding,
-    paddingTop: 8,
-    paddingBottom: 4,
+    paddingTop: 4,
+    paddingBottom: 2,
     fontSize: 15,
     lineHeight: 22,
   },

@@ -103,7 +103,9 @@ function AppStack() {
       <Stack.Screen name="create" options={{ headerShown: false }} />
       <Stack.Screen name="notifications" options={{ headerShown: true }} />
       <Stack.Screen name="profile-my-calendar" options={{ headerShown: true, headerBackTitle: "Voltar" }} />
+      <Stack.Screen name="profile-achievements" options={{ headerShown: true, headerBackTitle: "Voltar" }} />
       <Stack.Screen name="chat-new" options={{ headerShown: true }} />
+      <Stack.Screen name="chat/[id]" options={{ headerShown: true, headerBackTitle: "Voltar" }} />
       <Stack.Screen name="chat-new-group" options={{ headerShown: true, headerBackTitle: "Voltar" }} />
       <Stack.Screen name="settings" options={{ headerShown: false }} />
       <Stack.Screen

@@ -64,6 +64,36 @@ function map(name: AppIcon, filled?: boolean) {
     case AppIcon.More:
       return "ellipsis-horizontal";
 
+    case AppIcon.Camera:
+      return filled ? "camera" : "camera-outline";
+
+    case AppIcon.ImageLibrary:
+      return "images";
+
+    case AppIcon.BellOff:
+      return "notifications-off-outline";
+
+    case AppIcon.Ban:
+      return "ban-outline";
+
+    case AppIcon.Trash:
+      return "trash-outline";
+
+    case AppIcon.Sun:
+      return filled ? "sunny" : "sunny-outline";
+
+    case AppIcon.Moon:
+      return filled ? "moon" : "moon-outline";
+
+    case AppIcon.Contrast:
+      return "contrast-outline";
+
+    case AppIcon.Globe:
+      return "globe-outline";
+
+    case AppIcon.Send:
+      return filled ? "paper-plane" : "paper-plane-outline";
+
     default:
       return "help-circle";
   }

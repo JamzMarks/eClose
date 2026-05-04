@@ -1,0 +1,40 @@
+# Infra DEV local: PostgreSQL + Redis.
+# Uso rápido (apps/api): pnpm infra:up:dev
+# UAT paralelo: pnpm infra:up:uat  → docker.compose.uat.yaml (portas 5433 / 6380)
+# Dados: volumes `eclose_pg_data` e `eclose_redis_data`.
+
+name: eclose-api
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-eclose}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-eclose_dev}
+      POSTGRES_DB: ${POSTGRES_DB:-eclose}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - eclose_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-eclose} -d ${POSTGRES_DB:-eclose}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - eclose_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  eclose_pg_data:
+  eclose_redis_data:

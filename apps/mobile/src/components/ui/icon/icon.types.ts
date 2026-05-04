@@ -24,6 +24,26 @@ export enum AppIcon {
   Lock = "lock",
   Share = "share",
   More = "more",
+  /** Câmara (foto de perfil, etc.). */
+  Camera = "camera",
+  /** Galeria / biblioteca de fotos. */
+  ImageLibrary = "imageLibrary",
+  /** Silenciar notificações (chat, etc.). */
+  BellOff = "bellOff",
+  /** Bloquear utilizador / conversa. */
+  Ban = "ban",
+  /** Eliminar (conversa, item). */
+  Trash = "trash",
+  /** Tema claro. */
+  Sun = "sun",
+  /** Tema escuro. */
+  Moon = "moon",
+  /** Seguir sistema (contraste / dispositivo). */
+  Contrast = "contrast",
+  /** Idioma / região. */
+  Globe = "globe",
+  /** Enviar mensagem (avião de papel). */
+  Send = "send",
 }
 
 export const IconSizes = {

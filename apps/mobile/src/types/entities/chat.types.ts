@@ -19,3 +19,11 @@ export type ChatConversationListItem = {
   unreadCount?: number;
 };
 
+/** Mensagem na vista de conversa (mock local / futura API). */
+export type ChatMessageBubble = {
+  id: string;
+  /** ISO 8601 */
+  sentAt: string;
+  body: string;
+  from: "me" | "peer";
+};

@@ -71,3 +71,14 @@ export function formatChatListTime(
     return "";
   }
 }
+
+/** Hora curta na bolha de conversa. */
+export function formatChatBubbleTime(iso: string, locale = "pt-PT"): string {
+  try {
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return "";
+    return d.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" });
+  } catch {
+    return "";
+  }
+}

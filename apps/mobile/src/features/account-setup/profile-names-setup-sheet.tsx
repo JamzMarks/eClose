@@ -100,7 +100,7 @@ export function ProfileNamesSetupSheet({
           style={[
             styles.sheet,
             {
-              backgroundColor: c.surfaceElevated,
+              backgroundColor: c.surface,
               paddingBottom: Math.max(insets.bottom, 20),
             },
           ]}

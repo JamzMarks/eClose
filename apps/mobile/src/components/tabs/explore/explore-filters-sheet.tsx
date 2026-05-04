@@ -92,7 +92,7 @@ export function ExploreFiltersSheet({ visible, onClose, value, onApply }: Explor
         if (i === -1) onClose();
       }}
       backdropComponent={renderBackdrop}
-      backgroundStyle={{ backgroundColor: c.background }}
+      backgroundStyle={{ backgroundColor: c.surface }}
       handleIndicatorStyle={{ backgroundColor: c.border }}>
       <BottomSheetScrollView
         contentContainerStyle={[styles.scroll, { paddingBottom: insets.bottom + 24 }]}

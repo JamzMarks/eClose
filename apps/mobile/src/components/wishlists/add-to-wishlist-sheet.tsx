@@ -102,7 +102,7 @@ export function AddToWishlistSheet({ visible, eventId, onClose, onAdded }: AddTo
         if (i === -1) onClose();
       }}
       backdropComponent={renderBackdrop}
-      backgroundStyle={{ backgroundColor: c.background }}
+      backgroundStyle={{ backgroundColor: c.surface }}
       handleIndicatorStyle={{ backgroundColor: c.border }}>
       <BottomSheetFlatList
         data={loading ? [] : lists}

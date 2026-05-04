@@ -17,9 +17,9 @@ export type AppTextFieldProps = TextInputProps & {
   label: string;
   error?: string;
   /**
-   * "above" shows a visible label (default).
-   * "placeholder" uses the label string as the input placeholder; set accessibilityLabel
-   * (defaults to label) so screen readers still announce the field when the placeholder is empty.
+   * "placeholder" uses the label string as the input placeholder (default).
+   * "above" shows a visible label above the field.
+   * With placeholder layout, accessibilityLabel defaults to `label` so screen readers still announce the field.
    */
   labelLayout?: "above" | "placeholder";
   /** Ícone à esquerda dentro do campo. */
@@ -31,7 +31,7 @@ export type AppTextFieldProps = TextInputProps & {
 export function AppTextField({
   label,
   error,
-  labelLayout = "above",
+  labelLayout = "placeholder",
   startIcon,
   startAccessory,
   style,
@@ -73,7 +73,7 @@ export function AppTextField({
           style={[
             styles.inputShell,
             {
-              backgroundColor: c.inputBackground,
+              backgroundColor: c.surface,
               borderColor,
             },
             !editable && styles.inputShellDisabled,
@@ -102,7 +102,7 @@ export function AppTextField({
             styles.input,
             {
               color: c.text,
-              backgroundColor: c.inputBackground,
+              backgroundColor: c.surface,
               borderColor,
             },
             !editable && styles.inputDisabled,

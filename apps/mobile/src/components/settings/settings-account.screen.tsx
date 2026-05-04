@@ -47,7 +47,7 @@ export function SettingsAccountScreen() {
     navigation,
     title: t("sectionAccount"),
     headerTitleColor: c.text,
-    headerBackgroundColor: c.background,
+    headerBackgroundColor: c.surface,
     tintColor: c.text,
     scheme: isDark ? "dark" : "light",
     backAccessibilityLabel: tCommon("backA11y"),
@@ -128,7 +128,7 @@ export function SettingsAccountScreen() {
   }
 
   return (
-    <View style={[styles.root, { backgroundColor: c.background }]}>
+    <View style={[styles.root, { backgroundColor: c.surface }]}>
       <ScrollView
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}

@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Image } from "expo-image";
 
-import { Radii } from "@/constants/layout";
+import { Layout, Radii } from "@/constants/layout";
 import { formatChatListTime } from "@/lib/format-date";
 import type { ChatConversationListItem } from "@/types/entities/chat.types";
 
@@ -15,7 +15,12 @@ export type ChatConversationCardProps = {
   accentColor: string;
   yesterdayLabel: string;
   showDivider?: boolean;
+  selected?: boolean;
+  /** Usado quando `selected` é true (ex.: overlay do tema). */
+  selectedBackgroundColor?: string;
   onPress: () => void;
+  /** Segurar para opções (silenciar, bloquear…). */
+  onLongPress?: () => void;
 };
 
 export function ChatConversationCard({
@@ -25,20 +30,36 @@ export function ChatConversationCard({
   borderColor,
   accentColor,
   yesterdayLabel,
-  showDivider = true,
+  showDivider = false,
+  selected = false,
+  selectedBackgroundColor,
   onPress,
+  onLongPress,
 }: ChatConversationCardProps) {
   const timeLabel = formatChatListTime(conversation.lastMessageAt, yesterdayLabel);
   const unread = conversation.unreadCount ?? 0;
 
+  const padX = Layout.tab.content.horizontalPadding;
+
   return (
     <Pressable
       onPress={onPress}
+      onLongPress={onLongPress}
+      delayLongPress={420}
       accessibilityRole="button"
-      accessibilityLabel={`${conversation.title}. ${conversation.lastMessagePreview}`}>
+      accessibilityLabel={`${conversation.title}. ${conversation.lastMessagePreview}`}
+      accessibilityState={{ selected }}>
       <View
         style={[
           styles.row,
+          selected && selectedBackgroundColor
+            ? {
+                backgroundColor: selectedBackgroundColor,
+                borderRadius: Radii.sm,
+                marginHorizontal: -padX,
+                paddingHorizontal: padX,
+              }
+            : null,
           showDivider && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: borderColor },
         ]}>
         <View style={[styles.avatarWrap, { backgroundColor: borderColor }]}>
@@ -83,7 +104,7 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 12,
+    paddingVertical: 8,
   },
   avatarWrap: {
     width: AVATAR,
@@ -110,7 +131,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    marginBottom: 4,
+    marginBottom: 3,
   },
   title: {
     flex: 1,

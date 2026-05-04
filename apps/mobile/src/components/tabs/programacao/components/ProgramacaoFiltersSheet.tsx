@@ -123,7 +123,7 @@ export function ProgramacaoFiltersSheet({
         if (i === -1) onClose();
       }}
       backdropComponent={renderBackdrop}
-      backgroundStyle={{ backgroundColor: c.background }}
+      backgroundStyle={{ backgroundColor: c.surface }}
       handleIndicatorStyle={{ backgroundColor: c.border }}>
       <BottomSheetScrollView
         contentContainerStyle={[styles.scrollContent, { paddingBottom: 28 }]}

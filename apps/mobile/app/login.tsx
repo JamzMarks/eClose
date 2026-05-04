@@ -235,7 +235,6 @@ export default function LoginScreen() {
               {isSignup ? (
                 <AppTextField
                   label={t("username")}
-                  labelLayout="placeholder"
                   startIcon={AppIcon.Profile}
                   value={username}
                   onChangeText={setUsername}
@@ -249,7 +248,6 @@ export default function LoginScreen() {
 
               <AppTextField
                 label={t("email")}
-                labelLayout="placeholder"
                 startIcon={AppIcon.Mail}
                 value={email}
                 onChangeText={setEmail}
@@ -262,7 +260,6 @@ export default function LoginScreen() {
               />
               <AppTextField
                 label={t("password")}
-                labelLayout="placeholder"
                 startIcon={AppIcon.Lock}
                 value={password}
                 onChangeText={setPassword}

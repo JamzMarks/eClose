@@ -92,7 +92,7 @@ export function ExploreVenuesSheet({
           styles.webPanel,
           {
             height: webPanelHeight,
-            backgroundColor: c.background,
+            backgroundColor: c.surface,
             borderTopColor: c.border,
             paddingBottom: insets.bottom + 8,
           },
@@ -123,7 +123,7 @@ export function ExploreVenuesSheet({
       enableOverDrag={false}
       animateOnMount
       backgroundStyle={{
-        backgroundColor: c.background,
+        backgroundColor: c.surface,
         borderTopLeftRadius: Radii.xl,
         borderTopRightRadius: Radii.xl,
       }}

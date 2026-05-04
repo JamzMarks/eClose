@@ -24,6 +24,16 @@ import {
   X,
   Mail,
   Lock,
+  Camera,
+  Images,
+  BellOff,
+  Ban,
+  Trash2,
+  Sun,
+  Moon,
+  Contrast,
+  Globe,
+  Send,
 } from "lucide-react-native";
 
 import { IconSizes, AppIcon } from "../icon.types";
@@ -55,6 +65,16 @@ const map = {
   [AppIcon.Lock]: Lock,
   [AppIcon.Share]: Share2,
   [AppIcon.More]: Ellipsis,
+  [AppIcon.Camera]: Camera,
+  [AppIcon.ImageLibrary]: Images,
+  [AppIcon.BellOff]: BellOff,
+  [AppIcon.Ban]: Ban,
+  [AppIcon.Trash]: Trash2,
+  [AppIcon.Sun]: Sun,
+  [AppIcon.Moon]: Moon,
+  [AppIcon.Contrast]: Contrast,
+  [AppIcon.Globe]: Globe,
+  [AppIcon.Send]: Send,
 };
 
 export const lucideProvider: IconProvider = ({

@@ -143,7 +143,7 @@ export function ProfileLegalModalScreen({ kind }: ProfileLegalModalScreenProps) 
       {config.requiresWebView ? (
         <LegalWebDocumentViewer
           uri={resolvedWebUri}
-          backgroundColor={c.background}
+          backgroundColor={c.surface}
           fallbackFileUri={fallbackFileUri}
           retryLabel={t("legalWebRetry")}
           openInBrowserLabel={t("legalWebOpenInBrowser")}
@@ -154,7 +154,7 @@ export function ProfileLegalModalScreen({ kind }: ProfileLegalModalScreenProps) 
         <LegalHelpScrollBody
           textColor={c.textSecondary}
           insetsBottom={insets.bottom}
-          backgroundColor={c.background}
+          backgroundColor={c.surface}
           onOpenMail={() => void openExternalUrl()}
         />
       )}
@@ -223,12 +223,12 @@ export function ProfileLegalStackScreen({ kind }: ProfileLegalStackScreenProps) 
 
   const chrome = useMemo(
     () => ({
-      headerBackgroundColor: c.background,
+      headerBackgroundColor: c.surface,
       tintColor: c.text,
       circleBackgroundColor: minimalStackBackCircleBackground(isDark ? "dark" : "light"),
       backAccessibilityLabel: tCommon("backA11y"),
     }),
-    [c.background, c.text, isDark, tCommon],
+    [c.surface, c.text, isDark, tCommon],
   );
 
   const isHelp = validKind === "help";
@@ -265,7 +265,7 @@ export function ProfileLegalStackScreen({ kind }: ProfileLegalStackScreenProps) 
   }
 
   return (
-    <View style={[styles.stackRoot, { backgroundColor: c.background }]}>
+    <View style={[styles.stackRoot, { backgroundColor: c.surface }]}>
       {config.requiresWebView ? (
         <>
           {versionLine ? (
@@ -283,7 +283,7 @@ export function ProfileLegalStackScreen({ kind }: ProfileLegalStackScreenProps) 
           ) : null}
           <LegalWebDocumentViewer
             uri={resolvedWebUri}
-            backgroundColor={c.background}
+            backgroundColor={c.surface}
             fallbackFileUri={fallbackFileUri}
             retryLabel={t("legalWebRetry")}
             openInBrowserLabel={t("legalWebOpenInBrowser")}

@@ -119,11 +119,11 @@ export function ExpandableInlineSearch({
     const w = interpolate(progress.value, [0, 1], [COLLAPSED_SIZE, expandedTargetW.value]);
     return {
       width: w,
-      backgroundColor: interpolateColor(progress.value, [0, 0.22], ["transparent", c.inputBackground]),
+      backgroundColor: interpolateColor(progress.value, [0, 0.22], ["transparent", c.surface]),
       borderColor: interpolateColor(progress.value, [0, 0.18], ["transparent", c.border]),
       borderWidth: interpolate(progress.value, [0, 0.14], [0, BORDER_W]),
     };
-  }, [c.inputBackground, c.border]);
+  }, [c.surface, c.border]);
 
   const innerPadStyle = useAnimatedStyle(() => ({
     paddingLeft: interpolate(progress.value, [0, 1], [8, 12]),

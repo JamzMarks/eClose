@@ -176,7 +176,7 @@ export function ProgramacaoTabScreen() {
                 onlineLabel={t("online")}
                 onPress={() => router.push(`/event/${item.event.id}`)}
                 cardInnerWidth={cardWidth}
-                gridMode={gridMode}
+                variant={gridMode ? "compact" : "list"}
               />
             </View>
           )}

@@ -1,0 +1,38 @@
+# Stack UAT local — portas e volumes separados do DEV para poder correr os dois em paralelo.
+# Uso: pnpm --filter api infra:up:uat   (ou docker compose -f docker.compose.uat.yaml up -d)
+
+name: eclose-api-uat
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-eclose}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-eclose_uat}
+      POSTGRES_DB: ${POSTGRES_DB:-eclose_uat}
+    ports:
+      - "${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - eclose_pg_data_uat:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-eclose} -d ${POSTGRES_DB:-eclose_uat}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "${REDIS_PORT:-6380}:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - eclose_redis_data_uat:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  eclose_pg_data_uat:
+  eclose_redis_data_uat:

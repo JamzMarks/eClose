@@ -11,8 +11,8 @@ export type ChatUserSuggestionRowProps = {
   user: ChatNewMessageUserSuggestion;
   textColor: string;
   subtitleColor: string;
-  borderColor: string;
-  showDivider?: boolean;
+  /** Fundo do avatar placeholder (sem letra). */
+  placeholderSurfaceColor: string;
   onPress: () => void;
   /** Quando definido, mostra indicador de selecção à direita. */
   selection?: "checked" | "unchecked";
@@ -22,8 +22,7 @@ export function ChatUserSuggestionRow({
   user,
   textColor,
   subtitleColor,
-  borderColor,
-  showDivider = true,
+  placeholderSurfaceColor,
   onPress,
   selection,
 }: ChatUserSuggestionRowProps) {
@@ -33,15 +32,8 @@ export function ChatUserSuggestionRow({
       accessibilityRole="button"
       accessibilityLabel={user.displayName}
       accessibilityState={selection ? { selected: selection === "checked" } : undefined}>
-      <View
-        style={[
-          styles.row,
-          showDivider && {
-            borderBottomWidth: StyleSheet.hairlineWidth,
-            borderBottomColor: borderColor,
-          },
-        ]}>
-        <View style={[styles.avatarWrap, { backgroundColor: borderColor }]}>
+      <View style={styles.row}>
+        <View style={[styles.avatarWrap, { backgroundColor: placeholderSurfaceColor }]}>
           {user.avatarUrl ? (
             <Image
               source={{ uri: user.avatarUrl }}
@@ -69,7 +61,7 @@ export function ChatUserSuggestionRow({
             style={[
               styles.selectDot,
               {
-                borderColor: selection === "checked" ? AppPalette.primary : borderColor,
+                borderColor: selection === "checked" ? AppPalette.primary : placeholderSurfaceColor,
                 backgroundColor: selection === "checked" ? AppPalette.primary : "transparent",
               },
             ]}>
@@ -84,10 +76,11 @@ export function ChatUserSuggestionRow({
 }
 
 const styles = StyleSheet.create({
+  /** Alinhado ao `ChatConversationCard` (lista principal). */
   row: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 12,
+    paddingVertical: 8,
   },
   avatarWrap: {
     width: AVATAR,

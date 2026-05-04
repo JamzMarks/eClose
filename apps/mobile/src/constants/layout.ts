@@ -40,8 +40,9 @@ export const Layout = {
   tab: {
     header: {
       horizontalPadding: Paddings.xl,
-      verticalPadding: 10,
-      rowMinHeight: 40,
+      /** Barra de título das tabs: compacta para ganhar conteúdo abaixo do status bar. */
+      verticalPadding: 6,
+      rowMinHeight: 36,
       edgeSlotWidth: 44,
       dividerOpacity: 0.38,
       naturalGap: 8,

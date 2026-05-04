@@ -38,7 +38,7 @@ export function LegalDocumentModalLayout({
   const isDark = scheme === "dark";
 
   return (
-    <View style={[styles.root, { backgroundColor: c.background, paddingTop: insets.top }]}>
+    <View style={[styles.root, { backgroundColor: c.surface, paddingTop: insets.top }]}>
       {showDragHandle ? (
         <View style={styles.handleWrap} importantForAccessibility="no">
           <View style={[styles.handle, { backgroundColor: c.borderStrong }]} />

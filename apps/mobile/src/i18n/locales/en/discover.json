@@ -153,5 +153,12 @@
   "venueTrustStatus_verified_l2": "Verified (semi-trusted)",
   "venueTrustStatus_rejected": "Rejected — you can resubmit",
   "venueManageVerification": "Complete verification",
-  "venueViewAsOwner": "Manage this venue"
+  "venueViewAsOwner": "Manage this venue",
+  "venueUpcomingEventsSection": "Upcoming events here",
+  "venueUpcomingEventsMockHint": "Demo listings — will filter by venue when linked in the API.",
+  "venuePracticalSection": "Practical info",
+  "venueOpeningHoursPlaceholder": "Opening hours will appear here once configured.",
+  "venueTimezoneLabel": "Time zone",
+  "venueVerificationSoonTitle": "Coming soon",
+  "venueVerificationSoonBody": "Venue verification will open here in a future release."
 }

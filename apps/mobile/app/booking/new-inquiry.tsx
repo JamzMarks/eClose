@@ -110,28 +110,29 @@ export default function NewBookingInquiryScreen() {
       contentContainerStyle={styles.content}
       keyboardShouldPersistTaps="handled">
       {venueId ? (
-        <>
-          <Text style={[styles.label, { color: c.textSecondary }]}>
-            {t("bookingOrganizerArtistLabel")}
-          </Text>
-          <TextInput
-            value={organizerArtistId}
-            onChangeText={setOrganizerArtistId}
-            placeholder={t("bookingOrganizerArtistPlaceholder")}
-            placeholderTextColor={c.textMuted}
-            autoCapitalize="none"
-            style={[styles.input, { color: c.text, borderColor: c.border }]}
-          />
-        </>
+        <TextInput
+          value={organizerArtistId}
+          onChangeText={setOrganizerArtistId}
+          placeholder={t("bookingOrganizerArtistPlaceholder")}
+          placeholderTextColor={c.textMuted}
+          autoCapitalize="none"
+          accessibilityLabel={t("bookingOrganizerArtistLabel")}
+          style={[styles.input, { color: c.text, borderColor: c.border }]}
+        />
       ) : null}
-      <Text style={[styles.label, { color: c.textSecondary }]}>{t("bookingNotesLabel")}</Text>
       <TextInput
         value={notes}
         onChangeText={setNotes}
         placeholder={t("bookingNotesLabel")}
         placeholderTextColor={c.textMuted}
         multiline
-        style={[styles.input, styles.notes, { color: c.text, borderColor: c.border }]}
+        accessibilityLabel={t("bookingNotesLabel")}
+        style={[
+          styles.input,
+          styles.notes,
+          { color: c.text, borderColor: c.border },
+          venueId ? styles.inputAfterBlock : null,
+        ]}
       />
       {error ? <Text style={styles.err}>{error}</Text> : null}
       <Pressable
@@ -154,7 +155,6 @@ const styles = StyleSheet.create({
   centered: { flex: 1, justifyContent: "center", alignItems: "center", padding: 24 },
   hint: { textAlign: "center", fontSize: 16, lineHeight: 22 },
   backBtn: { marginTop: 16 },
-  label: { fontSize: 13, fontWeight: "600", marginBottom: 8, marginTop: 12 },
   input: {
     borderWidth: StyleSheet.hairlineWidth,
     borderRadius: 10,
@@ -163,6 +163,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   notes: { minHeight: 100, textAlignVertical: "top" },
+  inputAfterBlock: { marginTop: 16 },
   err: { color: AppPalette.error, marginTop: 12 },
   submit: { marginTop: 24, paddingVertical: 14, borderRadius: 12, alignItems: "center" },
   submitText: { color: "#fff", fontWeight: "700", fontSize: 16 },

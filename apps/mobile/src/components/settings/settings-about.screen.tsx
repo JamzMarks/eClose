@@ -36,7 +36,7 @@ export function SettingsAboutScreen() {
     navigation,
     title: t("aboutScreenTitle"),
     headerTitleColor: c.text,
-    headerBackgroundColor: c.background,
+    headerBackgroundColor: c.surface,
     tintColor: c.text,
     scheme: isDark ? "dark" : "light",
     backAccessibilityLabel: tCommon("backA11y"),
@@ -68,12 +68,12 @@ export function SettingsAboutScreen() {
     textColor: c.text,
     subtitleColor: c.textMuted,
     borderColor: c.border,
-    backgroundColor: c.background,
+    backgroundColor: "transparent",
     flat: true as const,
   };
 
   return (
-    <View style={[styles.root, { backgroundColor: c.background }]}>
+    <View style={[styles.root, { backgroundColor: c.surface }]}>
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: Layout.tab.content.horizontalPadding,

@@ -215,7 +215,7 @@ export function WishlistsIndexScreen({ hrefBase = "/wishlists" }: WishlistsIndex
           if (i === -1) setCreateOpen(false);
         }}
         backdropComponent={renderBackdrop}
-        backgroundStyle={{ backgroundColor: c.background }}
+        backgroundStyle={{ backgroundColor: c.surface }}
         handleIndicatorStyle={{ backgroundColor: c.border }}>
         <BottomSheetScrollView
           contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 32 }}
